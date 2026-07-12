@@ -1,0 +1,284 @@
+2026-07-13 00:34:57 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:34:57 | INFO | ACTION=INSERT | ID=T03 | ชื่อ=StockTest | จำนวน=3 | ราคา=5.0 | หมวด=Cat
+2026-07-13 00:34:57 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=TestItem | จำนวน=5 | ราคา=10.0 | หมวด=TestCat
+2026-07-13 00:34:57 | INFO | ACTION=INSERT | ID=T02 | ชื่อ=Original | จำนวน=5 | ราคา=10.0 | หมวด=Cat
+2026-07-13 00:34:57 | INFO | ACTION=UPDATE | ID=T02 | ชื่อ=Updated | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=A01 | ชื่อ=Atomic Item | จำนวน=10 | ราคา=99.0 | หมวด=Test
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C01 | ชื่อ=Concurrent Item 1 | จำนวน=1 | ราคา=1.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C02 | ชื่อ=Concurrent Item 2 | จำนวน=2 | ราคา=2.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C03 | ชื่อ=Concurrent Item 3 | จำนวน=3 | ราคา=3.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C08 | ชื่อ=Concurrent Item 8 | จำนวน=8 | ราคา=8.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C07 | ชื่อ=Concurrent Item 7 | จำนวน=7 | ราคา=7.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C04 | ชื่อ=Concurrent Item 4 | จำนวน=4 | ราคา=4.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C06 | ชื่อ=Concurrent Item 6 | จำนวน=6 | ราคา=6.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C09 | ชื่อ=Concurrent Item 9 | จำนวน=9 | ราคา=9.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C10 | ชื่อ=Concurrent Item 10 | จำนวน=10 | ราคา=10.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=C05 | ชื่อ=Concurrent Item 5 | จำนวน=5 | ราคา=5.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=D01 | ชื่อ=Original Name | จำนวน=10 | ราคา=50.0 | หมวด=Test
+2026-07-13 00:40:01 | INFO | ACTION=UPDATE | ID=D01 | ชื่อ=Updated Name | จำนวน=99 | ราคา=99.0 | หมวด=NewCat
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=F01 | ชื่อ=Limited Stock | จำนวน=3 | ราคา=10.0 | หมวด=Test
+2026-07-13 00:40:01 | INFO | ACTION=STOCK_OUT | ID=F01 | ตัดออก=3 | คงเหลือ=0
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=TEST_INSERT | ID=G01 | ทดสอบการบันทึก Log
+2026-07-13 00:40:01 | INFO | ACTION=TEST_UPDATE | ID=G01 | อัปเดตข้อมูล
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=มาม่าหมูสับรสเผ็ด | จำนวน=50 | ราคา=7.0 | หมวด=อาหาร
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=U01 | ชื่อ=New Item | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:40:01 | INFO | ACTION=UPDATE | ID=U01 | ชื่อ=Updated Item | จำนวน=99 | ราคา=55.0 | หมวด=NewCat
+2026-07-13 00:40:01 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P001 | ชื่อ=Product 001 | จำนวน=2 | ราคา=1.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P002 | ชื่อ=Product 002 | จำนวน=4 | ราคา=2.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P003 | ชื่อ=Product 003 | จำนวน=6 | ราคา=3.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P004 | ชื่อ=Product 004 | จำนวน=8 | ราคา=4.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P005 | ชื่อ=Product 005 | จำนวน=10 | ราคา=5.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P006 | ชื่อ=Product 006 | จำนวน=12 | ราคา=6.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P007 | ชื่อ=Product 007 | จำนวน=14 | ราคา=7.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P008 | ชื่อ=Product 008 | จำนวน=16 | ราคา=8.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P009 | ชื่อ=Product 009 | จำนวน=18 | ราคา=9.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P010 | ชื่อ=Product 010 | จำนวน=20 | ราคา=10.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P011 | ชื่อ=Product 011 | จำนวน=22 | ราคา=11.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P012 | ชื่อ=Product 012 | จำนวน=24 | ราคา=12.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P013 | ชื่อ=Product 013 | จำนวน=26 | ราคา=13.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P014 | ชื่อ=Product 014 | จำนวน=28 | ราคา=14.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P015 | ชื่อ=Product 015 | จำนวน=30 | ราคา=15.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P016 | ชื่อ=Product 016 | จำนวน=32 | ราคา=16.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P017 | ชื่อ=Product 017 | จำนวน=34 | ราคา=17.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P018 | ชื่อ=Product 018 | จำนวน=36 | ราคา=18.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P019 | ชื่อ=Product 019 | จำนวน=38 | ราคา=19.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P020 | ชื่อ=Product 020 | จำนวน=40 | ราคา=20.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P021 | ชื่อ=Product 021 | จำนวน=42 | ราคา=21.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P022 | ชื่อ=Product 022 | จำนวน=44 | ราคา=22.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P023 | ชื่อ=Product 023 | จำนวน=46 | ราคา=23.0 | หมวด=Drink
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P024 | ชื่อ=Product 024 | จำนวน=48 | ราคา=24.0 | หมวด=Food
+2026-07-13 00:40:01 | INFO | ACTION=INSERT | ID=P025 | ชื่อ=Product 025 | จำนวน=50 | ราคา=25.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=A01 | ชื่อ=Atomic Item | จำนวน=10 | ราคา=99.0 | หมวด=Test
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C01 | ชื่อ=Concurrent Item 1 | จำนวน=1 | ราคา=1.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C05 | ชื่อ=Concurrent Item 5 | จำนวน=5 | ราคา=5.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C02 | ชื่อ=Concurrent Item 2 | จำนวน=2 | ราคา=2.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C03 | ชื่อ=Concurrent Item 3 | จำนวน=3 | ราคา=3.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C06 | ชื่อ=Concurrent Item 6 | จำนวน=6 | ราคา=6.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C08 | ชื่อ=Concurrent Item 8 | จำนวน=8 | ราคา=8.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C10 | ชื่อ=Concurrent Item 10 | จำนวน=10 | ราคา=10.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C07 | ชื่อ=Concurrent Item 7 | จำนวน=7 | ราคา=7.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C09 | ชื่อ=Concurrent Item 9 | จำนวน=9 | ราคา=9.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=C04 | ชื่อ=Concurrent Item 4 | จำนวน=4 | ราคา=4.0 | หมวด=ConcurrentTest
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=D01 | ชื่อ=Original Name | จำนวน=10 | ราคา=50.0 | หมวด=Test
+2026-07-13 00:40:44 | INFO | ACTION=UPDATE | ID=D01 | ชื่อ=Updated Name | จำนวน=99 | ราคา=99.0 | หมวด=NewCat
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=F01 | ชื่อ=Limited Stock | จำนวน=3 | ราคา=10.0 | หมวด=Test
+2026-07-13 00:40:44 | INFO | ACTION=STOCK_OUT | ID=F01 | ตัดออก=3 | คงเหลือ=0
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=TEST_INSERT | ID=G01 | ทดสอบการบันทึก Log
+2026-07-13 00:40:44 | INFO | ACTION=TEST_UPDATE | ID=G01 | อัปเดตข้อมูล
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=มาม่าหมูสับรสเผ็ด | จำนวน=50 | ราคา=7.0 | หมวด=อาหาร
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=U01 | ชื่อ=New Item | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:40:44 | INFO | ACTION=UPDATE | ID=U01 | ชื่อ=Updated Item | จำนวน=99 | ราคา=55.0 | หมวด=NewCat
+2026-07-13 00:40:44 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P001 | ชื่อ=Product 001 | จำนวน=2 | ราคา=1.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P002 | ชื่อ=Product 002 | จำนวน=4 | ราคา=2.0 | หมวด=Food
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P003 | ชื่อ=Product 003 | จำนวน=6 | ราคา=3.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P004 | ชื่อ=Product 004 | จำนวน=8 | ราคา=4.0 | หมวด=Food
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P005 | ชื่อ=Product 005 | จำนวน=10 | ราคา=5.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P006 | ชื่อ=Product 006 | จำนวน=12 | ราคา=6.0 | หมวด=Food
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P007 | ชื่อ=Product 007 | จำนวน=14 | ราคา=7.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P008 | ชื่อ=Product 008 | จำนวน=16 | ราคา=8.0 | หมวด=Food
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P009 | ชื่อ=Product 009 | จำนวน=18 | ราคา=9.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P010 | ชื่อ=Product 010 | จำนวน=20 | ราคา=10.0 | หมวด=Food
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P011 | ชื่อ=Product 011 | จำนวน=22 | ราคา=11.0 | หมวด=Drink
+2026-07-13 00:40:44 | INFO | ACTION=INSERT | ID=P012 | ชื่อ=Product 012 | จำนวน=24 | ราคา=12.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P013 | ชื่อ=Product 013 | จำนวน=26 | ราคา=13.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P014 | ชื่อ=Product 014 | จำนวน=28 | ราคา=14.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P015 | ชื่อ=Product 015 | จำนวน=30 | ราคา=15.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P016 | ชื่อ=Product 016 | จำนวน=32 | ราคา=16.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P017 | ชื่อ=Product 017 | จำนวน=34 | ราคา=17.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P018 | ชื่อ=Product 018 | จำนวน=36 | ราคา=18.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P019 | ชื่อ=Product 019 | จำนวน=38 | ราคา=19.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P020 | ชื่อ=Product 020 | จำนวน=40 | ราคา=20.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P021 | ชื่อ=Product 021 | จำนวน=42 | ราคา=21.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P022 | ชื่อ=Product 022 | จำนวน=44 | ราคา=22.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P023 | ชื่อ=Product 023 | จำนวน=46 | ราคา=23.0 | หมวด=Drink
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P024 | ชื่อ=Product 024 | จำนวน=48 | ราคา=24.0 | หมวด=Food
+2026-07-13 00:40:45 | INFO | ACTION=INSERT | ID=P025 | ชื่อ=Product 025 | จำนวน=50 | ราคา=25.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=A01 | ชื่อ=Atomic Item | จำนวน=10 | ราคา=99.0 | หมวด=Test
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C01 | ชื่อ=Concurrent Item 1 | จำนวน=1 | ราคา=1.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C02 | ชื่อ=Concurrent Item 2 | จำนวน=2 | ราคา=2.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C03 | ชื่อ=Concurrent Item 3 | จำนวน=3 | ราคา=3.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C05 | ชื่อ=Concurrent Item 5 | จำนวน=5 | ราคา=5.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C08 | ชื่อ=Concurrent Item 8 | จำนวน=8 | ราคา=8.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C09 | ชื่อ=Concurrent Item 9 | จำนวน=9 | ราคา=9.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C10 | ชื่อ=Concurrent Item 10 | จำนวน=10 | ราคา=10.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C04 | ชื่อ=Concurrent Item 4 | จำนวน=4 | ราคา=4.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C06 | ชื่อ=Concurrent Item 6 | จำนวน=6 | ราคา=6.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=C07 | ชื่อ=Concurrent Item 7 | จำนวน=7 | ราคา=7.0 | หมวด=ConcurrentTest
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=D01 | ชื่อ=Original Name | จำนวน=10 | ราคา=50.0 | หมวด=Test
+2026-07-13 00:41:09 | INFO | ACTION=UPDATE | ID=D01 | ชื่อ=Updated Name | จำนวน=99 | ราคา=99.0 | หมวด=NewCat
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=F01 | ชื่อ=Limited Stock | จำนวน=3 | ราคา=10.0 | หมวด=Test
+2026-07-13 00:41:09 | INFO | ACTION=STOCK_OUT | ID=F01 | ตัดออก=3 | คงเหลือ=0
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=TEST_INSERT | ID=G01 | ทดสอบการบันทึก Log
+2026-07-13 00:41:09 | INFO | ACTION=TEST_UPDATE | ID=G01 | อัปเดตข้อมูล
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=มาม่าหมูสับรสเผ็ด | จำนวน=50 | ราคา=7.0 | หมวด=อาหาร
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=U01 | ชื่อ=New Item | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:41:09 | INFO | ACTION=UPDATE | ID=U01 | ชื่อ=Updated Item | จำนวน=99 | ราคา=55.0 | หมวด=NewCat
+2026-07-13 00:41:09 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P001 | ชื่อ=Product 001 | จำนวน=2 | ราคา=1.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P002 | ชื่อ=Product 002 | จำนวน=4 | ราคา=2.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P003 | ชื่อ=Product 003 | จำนวน=6 | ราคา=3.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P004 | ชื่อ=Product 004 | จำนวน=8 | ราคา=4.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P005 | ชื่อ=Product 005 | จำนวน=10 | ราคา=5.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P006 | ชื่อ=Product 006 | จำนวน=12 | ราคา=6.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P007 | ชื่อ=Product 007 | จำนวน=14 | ราคา=7.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P008 | ชื่อ=Product 008 | จำนวน=16 | ราคา=8.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P009 | ชื่อ=Product 009 | จำนวน=18 | ราคา=9.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P010 | ชื่อ=Product 010 | จำนวน=20 | ราคา=10.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P011 | ชื่อ=Product 011 | จำนวน=22 | ราคา=11.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P012 | ชื่อ=Product 012 | จำนวน=24 | ราคา=12.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P013 | ชื่อ=Product 013 | จำนวน=26 | ราคา=13.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P014 | ชื่อ=Product 014 | จำนวน=28 | ราคา=14.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P015 | ชื่อ=Product 015 | จำนวน=30 | ราคา=15.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P016 | ชื่อ=Product 016 | จำนวน=32 | ราคา=16.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P017 | ชื่อ=Product 017 | จำนวน=34 | ราคา=17.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P018 | ชื่อ=Product 018 | จำนวน=36 | ราคา=18.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P019 | ชื่อ=Product 019 | จำนวน=38 | ราคา=19.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P020 | ชื่อ=Product 020 | จำนวน=40 | ราคา=20.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P021 | ชื่อ=Product 021 | จำนวน=42 | ราคา=21.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P022 | ชื่อ=Product 022 | จำนวน=44 | ราคา=22.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P023 | ชื่อ=Product 023 | จำนวน=46 | ราคา=23.0 | หมวด=Drink
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P024 | ชื่อ=Product 024 | จำนวน=48 | ราคา=24.0 | หมวด=Food
+2026-07-13 00:41:09 | INFO | ACTION=INSERT | ID=P025 | ชื่อ=Product 025 | จำนวน=50 | ราคา=25.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=A01 | ชื่อ=Atomic Item | จำนวน=10 | ราคา=99.0 | หมวด=Test
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C01 | ชื่อ=Concurrent Item 1 | จำนวน=1 | ราคา=1.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C10 | ชื่อ=Concurrent Item 10 | จำนวน=10 | ราคา=10.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C06 | ชื่อ=Concurrent Item 6 | จำนวน=6 | ราคา=6.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C05 | ชื่อ=Concurrent Item 5 | จำนวน=5 | ราคา=5.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C07 | ชื่อ=Concurrent Item 7 | จำนวน=7 | ราคา=7.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C04 | ชื่อ=Concurrent Item 4 | จำนวน=4 | ราคา=4.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C02 | ชื่อ=Concurrent Item 2 | จำนวน=2 | ราคา=2.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C03 | ชื่อ=Concurrent Item 3 | จำนวน=3 | ราคา=3.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C08 | ชื่อ=Concurrent Item 8 | จำนวน=8 | ราคา=8.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=C09 | ชื่อ=Concurrent Item 9 | จำนวน=9 | ราคา=9.0 | หมวด=ConcurrentTest
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=D01 | ชื่อ=Original Name | จำนวน=10 | ราคา=50.0 | หมวด=Test
+2026-07-13 00:44:14 | INFO | ACTION=UPDATE | ID=D01 | ชื่อ=Updated Name | จำนวน=99 | ราคา=99.0 | หมวด=NewCat
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=F01 | ชื่อ=Limited Stock | จำนวน=3 | ราคา=10.0 | หมวด=Test
+2026-07-13 00:44:14 | INFO | ACTION=STOCK_OUT | ID=F01 | ตัดออก=3 | คงเหลือ=0
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=TEST_INSERT | ID=G01 | ทดสอบการบันทึก Log
+2026-07-13 00:44:14 | INFO | ACTION=TEST_UPDATE | ID=G01 | อัปเดตข้อมูล
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=มาม่าหมูสับรสเผ็ด | จำนวน=50 | ราคา=7.0 | หมวด=อาหาร
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=U01 | ชื่อ=New Item | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:44:14 | INFO | ACTION=UPDATE | ID=U01 | ชื่อ=Updated Item | จำนวน=99 | ราคา=55.0 | หมวด=NewCat
+2026-07-13 00:44:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P001 | ชื่อ=Product 001 | จำนวน=2 | ราคา=1.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P002 | ชื่อ=Product 002 | จำนวน=4 | ราคา=2.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P003 | ชื่อ=Product 003 | จำนวน=6 | ราคา=3.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P004 | ชื่อ=Product 004 | จำนวน=8 | ราคา=4.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P005 | ชื่อ=Product 005 | จำนวน=10 | ราคา=5.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P006 | ชื่อ=Product 006 | จำนวน=12 | ราคา=6.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P007 | ชื่อ=Product 007 | จำนวน=14 | ราคา=7.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P008 | ชื่อ=Product 008 | จำนวน=16 | ราคา=8.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P009 | ชื่อ=Product 009 | จำนวน=18 | ราคา=9.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P010 | ชื่อ=Product 010 | จำนวน=20 | ราคา=10.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P011 | ชื่อ=Product 011 | จำนวน=22 | ราคา=11.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P012 | ชื่อ=Product 012 | จำนวน=24 | ราคา=12.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P013 | ชื่อ=Product 013 | จำนวน=26 | ราคา=13.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P014 | ชื่อ=Product 014 | จำนวน=28 | ราคา=14.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P015 | ชื่อ=Product 015 | จำนวน=30 | ราคา=15.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P016 | ชื่อ=Product 016 | จำนวน=32 | ราคา=16.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P017 | ชื่อ=Product 017 | จำนวน=34 | ราคา=17.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P018 | ชื่อ=Product 018 | จำนวน=36 | ราคา=18.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P019 | ชื่อ=Product 019 | จำนวน=38 | ราคา=19.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P020 | ชื่อ=Product 020 | จำนวน=40 | ราคา=20.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P021 | ชื่อ=Product 021 | จำนวน=42 | ราคา=21.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P022 | ชื่อ=Product 022 | จำนวน=44 | ราคา=22.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P023 | ชื่อ=Product 023 | จำนวน=46 | ราคา=23.0 | หมวด=Drink
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P024 | ชื่อ=Product 024 | จำนวน=48 | ราคา=24.0 | หมวด=Food
+2026-07-13 00:44:14 | INFO | ACTION=INSERT | ID=P025 | ชื่อ=Product 025 | จำนวน=50 | ราคา=25.0 | หมวด=Drink
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=A01 | ชื่อ=Atomic Item | จำนวน=10 | ราคา=99.0 | หมวด=Test
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C01 | ชื่อ=Concurrent Item 1 | จำนวน=1 | ราคา=1.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C05 | ชื่อ=Concurrent Item 5 | จำนวน=5 | ราคา=5.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C03 | ชื่อ=Concurrent Item 3 | จำนวน=3 | ราคา=3.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C04 | ชื่อ=Concurrent Item 4 | จำนวน=4 | ราคา=4.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C07 | ชื่อ=Concurrent Item 7 | จำนวน=7 | ราคา=7.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C02 | ชื่อ=Concurrent Item 2 | จำนวน=2 | ราคา=2.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C08 | ชื่อ=Concurrent Item 8 | จำนวน=8 | ราคา=8.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C06 | ชื่อ=Concurrent Item 6 | จำนวน=6 | ราคา=6.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C10 | ชื่อ=Concurrent Item 10 | จำนวน=10 | ราคา=10.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=C09 | ชื่อ=Concurrent Item 9 | จำนวน=9 | ราคา=9.0 | หมวด=ConcurrentTest
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=D01 | ชื่อ=Original Name | จำนวน=10 | ราคา=50.0 | หมวด=Test
+2026-07-13 00:45:13 | INFO | ACTION=UPDATE | ID=D01 | ชื่อ=Updated Name | จำนวน=99 | ราคา=99.0 | หมวด=NewCat
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=F01 | ชื่อ=Limited Stock | จำนวน=3 | ราคา=10.0 | หมวด=Test
+2026-07-13 00:45:13 | INFO | ACTION=STOCK_OUT | ID=F01 | ตัดออก=3 | คงเหลือ=0
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=TEST_INSERT | ID=G01 | ทดสอบการบันทึก Log
+2026-07-13 00:45:13 | INFO | ACTION=TEST_UPDATE | ID=G01 | อัปเดตข้อมูล
+2026-07-13 00:45:13 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:13 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=มาม่าหมูสับรสเผ็ด | จำนวน=50 | ราคา=7.0 | หมวด=อาหาร
+2026-07-13 00:45:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=U01 | ชื่อ=New Item | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:45:14 | INFO | ACTION=UPDATE | ID=U01 | ชื่อ=Updated Item | จำนวน=99 | ราคา=55.0 | หมวด=NewCat
+2026-07-13 00:45:14 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P001 | ชื่อ=Product 001 | จำนวน=2 | ราคา=1.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P002 | ชื่อ=Product 002 | จำนวน=4 | ราคา=2.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P003 | ชื่อ=Product 003 | จำนวน=6 | ราคา=3.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P004 | ชื่อ=Product 004 | จำนวน=8 | ราคา=4.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P005 | ชื่อ=Product 005 | จำนวน=10 | ราคา=5.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P006 | ชื่อ=Product 006 | จำนวน=12 | ราคา=6.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P007 | ชื่อ=Product 007 | จำนวน=14 | ราคา=7.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P008 | ชื่อ=Product 008 | จำนวน=16 | ราคา=8.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P009 | ชื่อ=Product 009 | จำนวน=18 | ราคา=9.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P010 | ชื่อ=Product 010 | จำนวน=20 | ราคา=10.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P011 | ชื่อ=Product 011 | จำนวน=22 | ราคา=11.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P012 | ชื่อ=Product 012 | จำนวน=24 | ราคา=12.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P013 | ชื่อ=Product 013 | จำนวน=26 | ราคา=13.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P014 | ชื่อ=Product 014 | จำนวน=28 | ราคา=14.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P015 | ชื่อ=Product 015 | จำนวน=30 | ราคา=15.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P016 | ชื่อ=Product 016 | จำนวน=32 | ราคา=16.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P017 | ชื่อ=Product 017 | จำนวน=34 | ราคา=17.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P018 | ชื่อ=Product 018 | จำนวน=36 | ราคา=18.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P019 | ชื่อ=Product 019 | จำนวน=38 | ราคา=19.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P020 | ชื่อ=Product 020 | จำนวน=40 | ราคา=20.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P021 | ชื่อ=Product 021 | จำนวน=42 | ราคา=21.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P022 | ชื่อ=Product 022 | จำนวน=44 | ราคา=22.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P023 | ชื่อ=Product 023 | จำนวน=46 | ราคา=23.0 | หมวด=Drink
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P024 | ชื่อ=Product 024 | จำนวน=48 | ราคา=24.0 | หมวด=Food
+2026-07-13 00:45:14 | INFO | ACTION=INSERT | ID=P025 | ชื่อ=Product 025 | จำนวน=50 | ราคา=25.0 | หมวด=Drink
+2026-07-13 00:48:11 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:48:11 | INFO | ACTION=INSERT | ID=T03 | ชื่อ=StockTest | จำนวน=3 | ราคา=5.0 | หมวด=Cat
+2026-07-13 00:48:11 | INFO | ACTION=INSERT | ID=T01 | ชื่อ=TestItem | จำนวน=5 | ราคา=10.0 | หมวด=TestCat
+2026-07-13 00:48:11 | INFO | ACTION=INSERT | ID=T02 | ชื่อ=Original | จำนวน=5 | ราคา=10.0 | หมวด=Cat
+2026-07-13 00:48:11 | INFO | ACTION=UPDATE | ID=T02 | ชื่อ=Updated | จำนวน=10 | ราคา=20.0 | หมวด=Cat
+2026-07-13 00:52:29 | INFO | ACTION=INIT | สร้างฐานข้อมูลใหม่พร้อมข้อมูลตัวอย่าง
+2026-07-13 00:55:02 | INFO | ACTION=INSERT | ID=104 | ชื่อ=Lemon Slime | จำนวน=2 | ราคา=30.0 | หมวด=Toys
+2026-07-13 00:55:45 | INFO | ACTION=STOCK_OUT | ID=104 | ตัดออก=1 | คงเหลือ=1
+2026-07-13 00:56:14 | INFO | ACTION=EXIT | ผู้ใช้ปิดโปรแกรม
