@@ -1,7 +1,6 @@
 # ENGSE225 — ระบบสินค้าคงคลัง (Inventory System)
 
 > **วิชา ENGSE225 | Software Quality Assurance**  
-> **วันที่อัปเดต:** 13 กรกฎาคม 2569
 
 ---
 
@@ -144,10 +143,9 @@ OK
 ENGSE225-INVENTORY-SYSTEM/
 ├── app_v1.py              # ต้นฉบับ — มีความเสี่ยง 12 รายการ
 ├── app_v2.py              # เวอร์ชันแก้ไข — แก้ครบทุกความเสี่ยง
-├── risk_register_app_v1.md # ทะเบียนความเสี่ยง (Risk Register)
-├── test_app.py            # ไฟล์ทดสอบเพิ่มเติม
 ├── inventory.db           # ฐานข้อมูล SQLite (สร้างอัตโนมัติ)
 ├── inventory.log          # ไฟล์บันทึก Log (สร้างอัตโนมัติ)
+├── test_app.py            # ไฟล์ Script เพิ่อใช้ Test โดยละเอียด
 └── README.md              # ไฟล์นี้
 ```
 
