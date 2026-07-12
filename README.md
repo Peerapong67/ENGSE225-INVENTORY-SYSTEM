@@ -144,8 +144,6 @@ OK
 ENGSE225-INVENTORY-SYSTEM/
 ├── app_v1.py              # ต้นฉบับ — มีความเสี่ยง 12 รายการ
 ├── app_v2.py              # เวอร์ชันแก้ไข — แก้ครบทุกความเสี่ยง
-├── risk_register_app_v1.md # ทะเบียนความเสี่ยง (Risk Register)
-├── test_app.py            # ไฟล์ทดสอบเพิ่มเติม
 ├── inventory.db           # ฐานข้อมูล SQLite (สร้างอัตโนมัติ)
 ├── inventory.log          # ไฟล์บันทึก Log (สร้างอัตโนมัติ)
 └── README.md              # ไฟล์นี้
