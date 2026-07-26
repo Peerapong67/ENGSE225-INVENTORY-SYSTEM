@@ -35,20 +35,24 @@ PAGE_SIZE = 10  # Risk #12: จำนวนสินค้าต่อหน้�
 # ─────────────────────────────────────────────
 # Risk #8: ตั้งค่าระบบ Log อัตโนมัติ
 # ─────────────────────────────────────────────
-logging.basicConfig(
-    filename=LOG_PATH,
-    level=logging.INFO,
-    # Risk #9: กำหนด encoding=utf-8 สำหรับ log file
-    encoding="utf-8",
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+_logger = logging.getLogger("inventory_system")
+_logger.setLevel(logging.INFO)
+_logger.propagate = False  # ไม่ส่งต่อไปยัง root logger (กัน pytest/lib อื่นชนกัน)
+
+if not _logger.handlers:  # กันการแนบ handler ซ้ำเวลา import module ซ้ำ
+    _file_handler = logging.FileHandler(LOG_PATH, encoding="utf-8")
+    _file_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
+    _logger.addHandler(_file_handler)
 
 
 def write_log(action: str, detail: str) -> None:
     """Risk #8: บันทึก log ทุกครั้งที่มีการเปลี่ยนแปลงข้อมูล"""
-    logging.info(f"ACTION={action} | {detail}")
-
+    _logger.info(f"ACTION={action} | {detail}")
 
 # ─────────────────────────────────────────────
 # Risk #3: ใช้ SQLite แทน JSON รองรับการใช้งานพร้อมกัน (Concurrent Access)

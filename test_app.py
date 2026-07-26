@@ -68,18 +68,21 @@ def assert_test(
     test_name: str,
     detail: str,
     passed: bool,
-    actual: str = "",
+    actual_pass: str,
+    actual_fail: str,
     risk_no: int = 0,
 ) -> None:
     """พิมพ์ผลการ test 1 รายการ และเก็บสถิติ"""
     tag  = PASS_TAG if passed else FAIL_TAG
     icon = "✔" if passed else "✘"
-    print(f"  {tag} {icon} {test_name}")
-    print(f"       ↳ {detail}")
-    if actual:
-        color = GREEN if passed else RED
-        print(f"       ↳ ผลลัพธ์ : {color}{actual}{RESET}")
+    print(f"  {tag} {icon} ชื่อเทสต์      : {test_name}")
+    print(f"       ↳ detail          : {detail}")
+    if passed:
+        print(f"       ↳ ผลลัพธ์ (PASS)  : {GREEN}{actual_pass}{RESET}")
+    else:
+        print(f"       ↳ ผลลัพธ์ (FAIL)  : {RED}{actual_fail}{RESET}")
     _results.append({"risk": risk_no, "name": test_name, "passed": passed})
+    assert passed, f"Risk #{risk_no} — {test_name} | {actual_fail if not passed else actual_pass}"
 
 
 def setup_temp_db() -> str:
@@ -123,10 +126,11 @@ def test_risk_1():
         ).fetchone()
     ok = row is not None and row["product_name"] == "Atomic Item"
     assert_test(
-        "ข้อมูลยังคงอยู่ครบหลังบันทึก",
-        "upsert_product() → query กลับมาได้ครบ",
+        "ข้อมูลสินค้าในคลังต้องถูกบันทึกสำเร็จและข้อมูลถูกต้อง",
+        "เรียก upsert_product() บันทึกข้อมูล แล้วทำการ query ข้อมูลกลับมาเช็ค",
         ok,
-        f"product_name = '{row['product_name'] if row else 'None'}'",
+        "พบสินค้า 'Atomic Item' ในฐานข้อมูลตรงตามที่บันทึกไว้",
+        f"ไม่พบสินค้า 'Atomic Item' หรือได้ข้อมูลเป็น '{row['product_name'] if row else 'None'}' แทน",
         risk_no=1,
     )
 
@@ -145,10 +149,11 @@ def test_risk_1():
         ).fetchone()
     ok2 = row2 is None
     assert_test(
-        "Transaction Rollback ทำงาน — ข้อมูลเก่าไม่เสียหาย",
-        "INSERT ที่ผิด CHECK constraint ต้องถูก rollback ไม่บันทึกลง DB",
+        "การทำธุรกรรม (Transaction) ต้องถูก Rollback เมื่อเกิดข้อผิดพลาดในการบันทึก",
+        "พยายาม INSERT ข้อมูลที่ผิดเงื่อนไข (CHECK constraint จำนวนติดลบ) แล้วตรวจสอบว่าข้อมูลถูกบันทึกหรือไม่",
         ok2,
-        "A02 ไม่ถูกบันทึก (rollback สำเร็จ)" if ok2 else "A02 ถูกบันทึกทั้งที่ไม่ควร",
+        "ข้อมูลไม่ถูกบันทึกลงในฐานข้อมูลตามที่คาดไว้ (Rollback สำเร็จ)",
+        "พบข้อมูลสินค้า ID 'A02' ในฐานข้อมูล ทั้งที่การบันทึกต้องล้มเหลวและ rollback",
         risk_no=1,
     )
 
@@ -173,10 +178,11 @@ def test_risk_2():
         result = app_v2.input_non_negative_int("qty: ")
     ok = result == 5
     assert_test(
-        "input_non_negative_int รับ 'abc' แล้ววนซ้ำ → รับ '5' ได้",
-        "กรอก 'abc' (invalid) → กรอก '5' (valid) → คืนค่า 5",
+        "ฟังก์ชัน input_non_negative_int ต้องรับเฉพาะจำนวนเต็มที่ไม่ติดลบและขอข้อมูลใหม่หากกรอกไม่ถูกต้อง",
+        "กรอกตัวอักษร 'abc' จากนั้นกรอกตัวเลข '5' แล้วเช็คว่าฟังก์ชันคืนค่า 5",
         ok,
-        f"ได้รับค่า {result}",
+        "ได้รับค่าเป็น 5 ตรงกับที่คาดหวัง",
+        f"ได้รับค่าเป็น {result} ซึ่งไม่ถูกต้อง",
         risk_no=2,
     )
 
@@ -185,10 +191,11 @@ def test_risk_2():
         result2 = app_v2.input_non_negative_float("price: ")
     ok2 = abs(result2 - 3.14) < 1e-9
     assert_test(
-        "input_non_negative_float รับ '3.14' ได้",
-        "กรอก '3.14' → คืนค่า float 3.14",
+        "ฟังก์ชัน input_non_negative_float ต้องรับทศนิยมที่เป็นบวกได้ถูกต้อง",
+        "กรอกตัวเลขทศนิยม '3.14' แล้วเช็คว่าฟังก์ชันคืนค่า 3.14",
         ok2,
-        f"ได้รับค่า {result2}",
+        "ได้รับค่าเป็น 3.14 ตรงกับที่คาดหวัง",
+        f"ได้รับค่าเป็น {result2} ซึ่งต่างจากค่าที่คาดหวัง 3.14",
         risk_no=2,
     )
 
@@ -197,10 +204,11 @@ def test_risk_2():
         result3 = app_v2.input_non_negative_float("price: ")
     ok3 = result3 == 50.0
     assert_test(
-        "input_non_negative_float รับ 'xyz' แล้ววนซ้ำ → รับ '50.0' ได้",
-        "กรอก 'xyz' (invalid) → กรอก '50.0' (valid) → คืนค่า 50.0",
+        "ฟังก์ชัน input_non_negative_float ต้องปฏิเสธตัวอักษรและขอข้อมูลใหม่จนกว่าจะได้ทศนิยมที่เป็นบวก",
+        "กรอกตัวอักษร 'xyz' จากนั้นกรอกตัวเลข '50.0' แล้วเช็คว่าคืนค่า 50.0",
         ok3,
-        f"ได้รับค่า {result3}",
+        "ได้รับค่าเป็น 50.0 ตรงกับที่คาดหวัง",
+        f"ได้รับค่าเป็น {result3} ซึ่งไม่ถูกต้อง",
         risk_no=2,
     )
 
@@ -209,10 +217,11 @@ def test_risk_2():
         result4 = app_v2.input_non_empty("name: ")
     ok4 = result4 == "Hello"
     assert_test(
-        "input_non_empty ปฏิเสธ string ว่าง → รับ 'Hello' ได้",
-        "กรอก '' (empty) → '  ' (whitespace) → 'Hello' (valid)",
+        "ฟังก์ชัน input_non_empty ต้องไม่ยอมรับข้อความว่างหรือเว้นวรรค และขอข้อมูลใหม่จนกว่าจะกรอกข้อความ",
+        "กรอกข้อความว่าง '', เว้นวรรค '  ', และข้อความ 'Hello' แล้วเช็คว่าคืนค่า 'Hello'",
         ok4,
-        f"ได้รับค่า '{result4}'",
+        "ได้รับค่าเป็น 'Hello' ตรงกับที่คาดหวัง",
+        f"ได้รับค่าเป็น '{result4}' ซึ่งไม่ถูกต้อง",
         risk_no=2,
     )
 
@@ -260,17 +269,19 @@ def test_risk_3():
     ok_all_saved = count == 10
 
     assert_test(
-        "10 Thread เขียนพร้อมกัน — ไม่มี Exception",
-        "แต่ละ thread เรียก upsert_product() พร้อมกัน ต้องไม่มี error",
+        "ระบบต้องไม่มี Error หรือขัดข้องเมื่อเขียนข้อมูลพร้อมกันจากหลาย Thread (Concurrency)",
+        "จำลองสถานการณ์เปิดใช้งาน 10 Thread เพื่อเขียนข้อมูลลงฐานข้อมูลพร้อมกัน และตรวจสอบว่าไม่มี Error ใดๆ เกิดขึ้น",
         ok_no_error,
-        f"errors = {errors if errors else 'ไม่มี'}",
+        "ไม่พบ Error หรือ Exception ใดๆ ในทุก Thread",
+        f"พบข้อผิดพลาดระหว่างเขียนข้อมูล: {errors}",
         risk_no=3,
     )
     assert_test(
-        "10 Thread เขียนพร้อมกัน — ข้อมูลครบ 10 รายการ",
-        "นับสินค้าที่บันทึกจาก 10 thread ต้องได้ครบ 10",
+        "ข้อมูลทั้งหมดต้องถูกบันทึกสำเร็จครบถ้วนเมื่อเขียนพร้อมกันจากหลาย Thread",
+        "นับจำนวนรายการข้อมูลทั้งหมดที่บันทึกจริงในฐานข้อมูลหลังจากรัน 10 Thread พร้อมกัน",
         ok_all_saved,
-        f"บันทึกได้ {count}/10 รายการ",
+        "พบสินค้าที่บันทึกสำเร็จครบถ้วนจำนวน 10 รายการ",
+        f"ข้อมูลสูญหาย บันทึกได้เพียง {count} จากทั้งหมด 10 รายการ",
         risk_no=3,
     )
 
@@ -304,10 +315,11 @@ def test_risk_4():
         ).fetchone()
     ok_cancel = row["product_name"] == "Original Name"
     assert_test(
-        "กด 'n' (ปฏิเสธ) → ข้อมูลไม่เปลี่ยน",
-        "กรอกข้อมูลใหม่แล้วกด n ที่ขั้นตอนยืนยัน → product_name ยังเป็น 'Original Name'",
+        "ข้อมูลเก่าต้องไม่ถูกแก้ไขหากผู้ใช้กดปฏิเสธ ('n') ในขั้นตอนยืนยัน",
+        "ป้อนข้อมูลใหม่ แต่เมื่อระบบถามยืนยันให้กรอก 'n' แล้วตรวจสอบว่าชื่อสินค้ายังเป็นชื่อเดิม",
         ok_cancel,
-        f"product_name = '{row['product_name']}'",
+        "ชื่อสินค้ายังเป็น 'Original Name' ตามเดิมไม่เปลี่ยนแปลง",
+        f"ข้อมูลถูกเปลี่ยนไปเป็น '{row['product_name'] if row else 'None'}' ทั้งที่กดปฏิเสธการยืนยัน",
         risk_no=4,
     )
 
@@ -323,10 +335,11 @@ def test_risk_4():
         ).fetchone()
     ok_confirm = row2["product_name"] == "Updated Name"
     assert_test(
-        "กด 'y' (ยืนยัน) → ข้อมูลถูกบันทึก",
-        "กรอกข้อมูลใหม่แล้วกด y → product_name เปลี่ยนเป็น 'Updated Name'",
+        "ข้อมูลใหม่ต้องถูกบันทึกสำเร็จเมื่อผู้ใช้กดยืนยัน ('y')",
+        "ป้อนข้อมูลใหม่ เมื่อระบบถามยืนยันให้กรอก 'y' แล้วตรวจสอบว่าชื่อสินค้าอัปเดตเป็นชื่อใหม่",
         ok_confirm,
-        f"product_name = '{row2['product_name']}'",
+        "ชื่อสินค้าถูกอัปเดตเป็น 'Updated Name' ตรงกับที่คาดหวัง",
+        f"ข้อมูลไม่เปลี่ยน หรือเป็น '{row2['product_name'] if row2 else 'None'}' ทั้งที่กดยืนยันแล้ว",
         risk_no=4,
     )
 
@@ -356,10 +369,11 @@ def test_risk_5():
         result = app_v2.input_non_negative_int("qty: ")
     ok_int = result == 0
     assert_test(
-        "input_non_negative_int ปฏิเสธ -5 → รับ 0 ได้",
-        "กรอก -5 (invalid) → กรอก 0 (valid) → คืนค่า 0",
+        "ฟังก์ชัน input_non_negative_int ต้องปฏิเสธเลขติดลบและยอมรับเฉพาะจำนวนที่ไม่ติดลบ",
+        "กรอกจำนวนติดลบ '-5' จากนั้นกรอก '0' แล้วเช็คว่าคืนค่า 0",
         ok_int,
-        f"ได้รับค่า {result}",
+        "ได้รับค่าเป็น 0 ตรงตามที่คาดหวัง",
+        f"ได้รับค่าเป็น {result} ทั้งที่กรอกเลขติดลบไปก่อนหน้า",
         risk_no=5,
     )
 
@@ -368,10 +382,11 @@ def test_risk_5():
         result2 = app_v2.input_non_negative_float("price: ")
     ok_float = result2 == 10.0
     assert_test(
-        "input_non_negative_float ปฏิเสธ -99.9 → รับ 10.0 ได้",
-        "กรอก -99.9 (invalid) → กรอก 10.0 (valid) → คืนค่า 10.0",
+        "ฟังก์ชัน input_non_negative_float ต้องปฏิเสธเลขติดลบและยอมรับเฉพาะทศนิยมที่ไม่ติดลบ",
+        "กรอกราคาสินค้าติดลบ '-99.9' จากนั้นกรอก '10.0' แล้วเช็คว่าคืนค่า 10.0",
         ok_float,
-        f"ได้รับค่า {result2}",
+        "ได้รับค่าเป็น 10.0 ตรงตามที่คาดหวัง",
+        f"ได้รับค่าเป็น {result2} ทั้งที่กรอกเลขติดลบไปก่อนหน้า",
         risk_no=5,
     )
 
@@ -386,10 +401,11 @@ def test_risk_5():
     except sqlite3.IntegrityError:
         raised = True
     assert_test(
-        "SQLite CHECK constraint ปฏิเสธ price = -1.0",
-        "INSERT ราคาติดลบต้อง raise IntegrityError",
+        "ฐานข้อมูล SQLite ต้องปฏิเสธการเพิ่มราคาสินค้าที่ติดลบผ่าน CHECK Constraint",
+        "พยายาม INSERT สินค้าที่ราคาสินค้าเป็นลบ (-1.0) ลงในฐานข้อมูลตรงๆ และตรวจสอบว่าจะเกิด IntegrityError หรือไม่",
         raised,
-        "IntegrityError raised ✔" if raised else "ไม่มี error — ข้อมูลผิดถูกบันทึก ✘",
+        "ฐานข้อมูลเกิด IntegrityError (ปฏิเสธราคาสินค้าติดลบสำเร็จ)",
+        "ไม่มีข้อผิดพลาดเกิดขึ้นและราคาสินค้าติดลบถูกบันทึกลงในฐานข้อมูล",
         risk_no=5,
     )
 
@@ -404,10 +420,11 @@ def test_risk_5():
     except sqlite3.IntegrityError:
         raised2 = True
     assert_test(
-        "SQLite CHECK constraint ปฏิเสธ quantity = -1",
-        "INSERT จำนวนติดลบต้อง raise IntegrityError",
+        "ฐานข้อมูล SQLite ต้องปฏิเสธการเพิ่มจำนวนสินค้าที่ติดลบผ่าน CHECK Constraint",
+        "พยายาม INSERT สินค้าที่จำนวนสินค้าเป็นลบ (-1) ลงในฐานข้อมูลตรงๆ และตรวจสอบว่าจะเกิด IntegrityError หรือไม่",
         raised2,
-        "IntegrityError raised ✔" if raised2 else "ไม่มี error — ข้อมูลผิดถูกบันทึก ✘",
+        "ฐานข้อมูลเกิด IntegrityError (ปฏิเสธจำนวนสินค้าติดลบสำเร็จ)",
+        "ไม่มีข้อผิดพลาดเกิดขึ้นและจำนวนสินค้าติดลบถูกบันทึกลงในฐานข้อมูล",
         risk_no=5,
     )
 
@@ -442,10 +459,11 @@ def test_risk_6():
         ).fetchone()
     ok_no_change = row["quantity"] == 3
     assert_test(
-        "ตัดสต็อกเกินที่มี (3 มีแต่ตัด 10) → สต็อกไม่เปลี่ยน",
-        "menu_stock_out() ตรวจพบ stock ไม่พอ → ไม่บันทึก → quantity ยังเป็น 3",
+        "ระบบต้องไม่อนุญาตให้ตัดสต็อกสินค้าเกินกว่าจำนวนที่มีอยู่ในปัจจุบัน",
+        "สินค้ามีสต็อก 3 รายการ ทำการจำลองตัดสต็อก 10 รายการ แล้วเช็คว่าจำนวนสินค้าคงเดิมคือ 3",
         ok_no_change,
-        f"quantity = {row['quantity']}",
+        "สต็อกสินค้าไม่มีการเปลี่ยนแปลง (ยังคงมีจำนวน 3 ชิ้น)",
+        f"สต็อกสินค้าถูกเปลี่ยนเป็น {row['quantity'] if row else 'None'} ทั้งที่ตัดสินค้าเกินสต็อกที่มี",
         risk_no=6,
     )
 
@@ -461,10 +479,11 @@ def test_risk_6():
         ).fetchone()
     ok_zero = row2["quantity"] == 0
     assert_test(
-        "ตัดสต็อกพอดี (3 ตัด 3) → เหลือ 0 ไม่ใช่ติดลบ",
-        "max(0, new_quantity) ต้องให้ค่า 0",
+        "การตัดสต็อกสินค้าพอดีกับจำนวนที่มีต้องทำให้คงเหลือเป็น 0",
+        "สินค้ามีสต็อก 3 รายการ ทำการจำลองตัดสต็อกออก 3 รายการ แล้วเช็คว่าคงเหลือ 0",
         ok_zero,
-        f"quantity = {row2['quantity']}",
+        "จำนวนสินค้าในสต็อกคงเหลือ 0 ชิ้นตรงตามคาดไว้",
+        f"จำนวนสินค้าคงเหลือเป็น {row2['quantity'] if row2 else 'None'} ซึ่งไม่ใช่ 0",
         risk_no=6,
     )
 
@@ -478,10 +497,11 @@ def test_risk_6():
     except sqlite3.IntegrityError:
         raised = True
     assert_test(
-        "SQLite CHECK constraint ปฏิเสธ UPDATE quantity = -1",
-        "UPDATE ให้ quantity ติดลบต้อง raise IntegrityError",
+        "ฐานข้อมูล SQLite ต้องปฏิเสธการอัปเดตสต็อกให้ติดลบผ่าน CHECK Constraint",
+        "พยายามสั่ง SQL UPDATE เพื่อลดสต็อกของสินค้าชิ้นหนึ่งให้ติดลบ (-1) และตรวจหา IntegrityError",
         raised,
-        "IntegrityError raised ✔" if raised else "ไม่มี error ✘",
+        "ฐานข้อมูลเกิด IntegrityError (ปฏิเสธไม่ให้อัปเดตสต็อกติดลบสำเร็จ)",
+        "ไม่มีข้อผิดพลาดเกิดขึ้นและข้อมูลสต็อกติดลบถูกบันทึกลงฐานข้อมูล",
         risk_no=6,
     )
 
@@ -507,10 +527,11 @@ def test_risk_7():
     db_dir = os.path.dirname(app_v2.DATABASE_PATH)
     ok_db = db_dir == script_dir
     assert_test(
-        "DATABASE_PATH อยู่ใน directory เดียวกับ app_v2.py",
-        f"script dir = {script_dir}",
+        "ไฟล์ฐานข้อมูล (DATABASE_PATH) ต้องอยู่ในไดเรกทอรีเดียวกับไฟล์โค้ดหลัก",
+        f"ตรวจสอบว่าพาธไดเรกทอรีของฐานข้อมูลตรงกับไดเรกทอรีของ app_v2.py ({script_dir})",
         ok_db,
-        f"DATABASE_PATH dir = {db_dir}",
+        "ไดเรกทอรีของไฟล์ฐานข้อมูลตรงกับไดเรกทอรีของแอปพลิเคชัน",
+        f"ไฟล์ฐานข้อมูลถูกตั้งไว้ที่อื่น: {db_dir}",
         risk_no=7,
     )
 
@@ -518,10 +539,11 @@ def test_risk_7():
     log_dir = os.path.dirname(app_v2.LOG_PATH)
     ok_log = log_dir == script_dir
     assert_test(
-        "LOG_PATH อยู่ใน directory เดียวกับ app_v2.py",
-        f"script dir = {script_dir}",
+        "ไฟล์บันทึกประวัติ (LOG_PATH) ต้องอยู่ในไดเรกทอรีเดียวกับไฟล์โค้ดหลัก",
+        f"ตรวจสอบว่าพาธไดเรกทอรีของไฟล์ log ตรงกับไดเรกทอรีของ app_v2.py ({script_dir})",
         ok_log,
-        f"LOG_PATH dir = {log_dir}",
+        "ไดเรกทอรีของไฟล์บันทึกประวัติตรงกับไดเรกทอรีของแอปพลิเคชัน",
+        f"ไฟล์บันทึกประวัติถูกตั้งไว้ที่อื่น: {log_dir}",
         risk_no=7,
     )
 
@@ -529,17 +551,19 @@ def test_risk_7():
     ok_abs_db  = os.path.isabs(app_v2.DATABASE_PATH)
     ok_abs_log = os.path.isabs(app_v2.LOG_PATH)
     assert_test(
-        "DATABASE_PATH เป็น absolute path",
-        "os.path.isabs(DATABASE_PATH) ต้องคืน True",
+        "พาธไฟล์ฐานข้อมูล (DATABASE_PATH) ต้องกำหนดเป็น Absolute Path",
+        "ใช้ฟังก์ชัน os.path.isabs() เช็คว่า DATABASE_PATH เป็น Absolute Path หรือไม่",
         ok_abs_db,
-        str(app_v2.DATABASE_PATH),
+        f"DATABASE_PATH เป็น Absolute Path ({app_v2.DATABASE_PATH})",
+        f"DATABASE_PATH ไม่เป็น Absolute Path ({app_v2.DATABASE_PATH})",
         risk_no=7,
     )
     assert_test(
-        "LOG_PATH เป็น absolute path",
-        "os.path.isabs(LOG_PATH) ต้องคืน True",
+        "พาธไฟล์บันทึกประวัติ (LOG_PATH) ต้องกำหนดเป็น Absolute Path",
+        "ใช้ฟังก์ชัน os.path.isabs() เช็คว่า LOG_PATH เป็น Absolute Path หรือไม่",
         ok_abs_log,
-        str(app_v2.LOG_PATH),
+        f"LOG_PATH เป็น Absolute Path ({app_v2.LOG_PATH})",
+        f"LOG_PATH ไม่เป็น Absolute Path ({app_v2.LOG_PATH})",
         risk_no=7,
     )
 
@@ -556,55 +580,47 @@ def test_risk_8():
         fix_from="ไม่มีระบบ log เลย → ไม่รู้ว่าใครแก้ไขข้อมูลอะไร เมื่อไหร่",
         fix_to="write_log() บันทึก action + รายละเอียดลง inventory.log ทุกครั้งที่มี INSERT/UPDATE/STOCK_OUT",
     )
-    original_db, tmp_db = setup_temp_db()
 
-    # ใช้ log file ชั่วคราวแยกต่างหาก
-    tmp_log = tempfile.NamedTemporaryFile(suffix=".log", delete=False, mode="w", encoding="utf-8")
-    tmp_log.close()
+    # ใช้ marker เฉพาะเจาะจงเพื่อไม่ชนกับ log entry เก่า
+    marker = f"PYTESTMARK_{id(object())}"
+    app_v2.write_log("TEST_INSERT", f"ID=G01 | {marker} | ทดสอบการบันทึก Log")
+    app_v2.write_log("TEST_UPDATE", f"ID=G01 | {marker} | อัปเดตข้อมูล")
 
-    # เพิ่ม FileHandler ชั่วคราวไปยัง root logger
-    tmp_handler = logging.FileHandler(tmp_log.name, encoding="utf-8")
-    tmp_handler.setFormatter(logging.Formatter("%(message)s"))
-    logging.getLogger().addHandler(tmp_handler)
+    # flush handler ของ logger เฉพาะแอป ก่อนอ่านไฟล์
+    for handler in app_v2._logger.handlers:
+        handler.flush()
 
-    app_v2.write_log("TEST_INSERT", "ID=G01 | ทดสอบการบันทึก Log")
-    app_v2.write_log("TEST_UPDATE", "ID=G01 | อัปเดตข้อมูล")
-
-    tmp_handler.flush()
-    tmp_handler.close()
-    logging.getLogger().removeHandler(tmp_handler)
-
-    with open(tmp_log.name, "r", encoding="utf-8") as f:
+    with open(app_v2.LOG_PATH, "r", encoding="utf-8") as f:
         log_content = f.read()
 
-    ok_insert = "TEST_INSERT" in log_content and "G01" in log_content
+    ok_insert = f"TEST_INSERT" in log_content and marker in log_content
     ok_update = "TEST_UPDATE" in log_content
     ok_thai   = "ทดสอบการบันทึก Log" in log_content
 
     assert_test(
-        "write_log() บันทึก action=TEST_INSERT ลงไฟล์ได้",
-        "เรียก write_log('TEST_INSERT', ...) แล้วตรวจในไฟล์ log",
+        "ฟังก์ชัน write_log ต้องสามารถบันทึกกิจกรรมการเพิ่มข้อมูล (TEST_INSERT) ลงในไฟล์ Log ได้สำเร็จ",
+        "เรียกใช้ write_log() บันทึก TEST_INSERT แล้วตรวจสอบว่ามีข้อความบันทึกในไฟล์ log จริง",
         ok_insert,
-        "พบ 'TEST_INSERT' และ 'G01' ในไฟล์" if ok_insert else "ไม่พบ",
+        "พบข้อความกิจกรรมการบันทึกข้อมูลใหม่ (TEST_INSERT) ในไฟล์ Log ตรงตามที่คาดหวัง",
+        "ไม่พบกิจกรรมการบันทึกข้อมูลใหม่ (TEST_INSERT) หรือมาร์กเกอร์ในไฟล์ Log",
         risk_no=8,
     )
     assert_test(
-        "write_log() บันทึก action=TEST_UPDATE ลงไฟล์ได้",
-        "เรียก write_log('TEST_UPDATE', ...) แล้วตรวจในไฟล์ log",
+        "ฟังก์ชัน write_log ต้องสามารถบันทึกกิจกรรมการแก้ไขข้อมูล (TEST_UPDATE) ลงในไฟล์ Log ได้สำเร็จ",
+        "เรียกใช้ write_log() บันทึก TEST_UPDATE แล้วตรวจสอบว่ามีข้อความบันทึกในไฟล์ log จริง",
         ok_update,
-        "พบ 'TEST_UPDATE' ในไฟล์" if ok_update else "ไม่พบ",
+        "พบข้อความกิจกรรมการแก้ไขข้อมูล (TEST_UPDATE) ในไฟล์ Log ตรงตามที่คาดหวัง",
+        "ไม่พบกิจกรรมการแก้ไขข้อมูล (TEST_UPDATE) ในไฟล์ Log",
         risk_no=8,
     )
     assert_test(
-        "ไฟล์ Log รองรับภาษาไทย (UTF-8)",
-        "ข้อความภาษาไทยใน log ต้องอ่านกลับมาได้ถูกต้อง",
+        "ไฟล์บันทึกประวัติ (Log) ต้องเก็บและอ่านตัวอักษรภาษาไทยได้ถูกต้องโดยไม่เพี้ยน",
+        "ตรวจสอบข้อความภาษาไทย 'ทดสอบการบันทึก Log' ที่บันทึกในไฟล์ Log ว่ายังแสดงผลได้สมบูรณ์และถูกต้อง",
         ok_thai,
-        "พบ 'ทดสอบการบันทึก Log' ✔" if ok_thai else "ข้อความเพี้ยน ✘",
+        "ข้อความภาษาไทยถูกบันทึกและอ่านออกมาได้สมบูรณ์ถูกต้องตามคาด",
+        "ภาษาไทยในไฟล์ Log ผิดเพี้ยนหรืออ่านไม่ออก",
         risk_no=8,
     )
-
-    os.unlink(tmp_log.name)
-    teardown_temp_db(original_db, tmp_db)
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -634,17 +650,19 @@ def test_risk_9():
     ok_cat  = row is not None and row["category"] == "อาหาร"
 
     assert_test(
-        "บันทึกชื่อภาษาไทยและอ่านกลับได้ถูกต้อง",
-        f"บันทึก product_name='{thai_name}' แล้วอ่านกลับ",
+        "ชื่อสินค้าที่เป็นภาษาไทยต้องถูกบันทึกลงฐานข้อมูลและดึงออกมาแสดงผลได้ถูกต้อง",
+        f"เพิ่มสินค้าใหม่ที่มีชื่อภาษาไทยเป็น '{thai_name}' แล้ว query กลับมาตรวจสอบชื่อ",
         ok_name,
-        f"product_name = '{row['product_name'] if row else 'None'}'",
+        "ดึงข้อมูลชื่อสินค้าออกมาพบเป็นภาษาไทยถูกต้องตามคาด",
+        f"ชื่อภาษาไทยในฐานข้อมูลผิดเพี้ยน ได้ค่าเป็น '{row['product_name'] if row else 'None'}'",
         risk_no=9,
     )
     assert_test(
-        "บันทึก category ภาษาไทยและอ่านกลับได้ถูกต้อง",
-        "บันทึก category='อาหาร' แล้วอ่านกลับ",
+        "หมวดหมู่สินค้าที่เป็นภาษาไทยต้องถูกบันทึกและดึงออกมาแสดงผลได้ถูกต้อง",
+        "เพิ่มสินค้าใหม่ที่มีหมวดหมู่สินค้าเป็นภาษาไทย 'อาหาร' แล้ว query กลับมาตรวจสอบหมวดหมู่",
         ok_cat,
-        f"category = '{row['category'] if row else 'None'}'",
+        "ดึงข้อมูลหมวดหมู่สินค้าออกมาพบเป็นภาษาไทยถูกต้องตามคาด",
+        f"หมวดหมู่ภาษาไทยในฐานข้อมูลผิดเพี้ยน ได้ค่าเป็น '{row['category'] if row else 'None'}'",
         risk_no=9,
     )
 
@@ -654,10 +672,11 @@ def test_risk_9():
         source = f.read()
     ok_enc = 'encoding="utf-8"' in source or "encoding='utf-8'" in source
     assert_test(
-        "Source code กำหนด encoding='utf-8' ในการเปิดไฟล์ Log",
-        "ตรวจ source code app_v2.py ว่ามี encoding='utf-8'",
+        "ซอร์สโค้ดของแอปพลิเคชันต้องระบุ encoding='utf-8' เสมอเมื่อเรียกเปิดไฟล์ข้อความ",
+        "สแกนหาข้อความ \"encoding='utf-8'\" หรือ 'encoding=\"utf-8\"' ในไฟล์ app_v2.py",
         ok_enc,
-        "พบ encoding='utf-8' ✔" if ok_enc else "ไม่พบ ✘",
+        "พบการระบุ encoding='utf-8' ในจุดเปิดไฟล์เพื่อความเข้ากันได้ของฟอนต์ไทย",
+        "ไม่พบการระบุ encoding='utf-8' ในซอร์สโค้ด ซึ่งเสี่ยงต่อการเกิดปัญหาการอ่านภาษาไทยเพี้ยนในบางระบบปฏิบัติการ",
         risk_no=9,
     )
 
@@ -682,10 +701,11 @@ def test_risk_10():
     result = app_v2.upsert_product("U01", "New Item", 10, 20.0, "Cat")
     ok_ins = result == "inserted"
     assert_test(
-        "upsert_product() กับ ID ใหม่ → คืน 'inserted'",
-        "เรียก upsert_product('U01', ...) กับ ID ที่ยังไม่มีใน DB",
+        "ฟังก์ชัน upsert_product ต้องรายงานผลเป็นการเพิ่มสินค้าใหม่ ('inserted') เมื่อระบุรหัสสินค้าที่ไม่มีในระบบ",
+        "เรียก upsert_product() เพื่อบันทึกสินค้าใหม่รหัส 'U01' แล้วเช็คค่าส่งกลับ (return value)",
         ok_ins,
-        f"return value = '{result}'",
+        "ฟังก์ชันคืนค่า 'inserted' สำเร็จถูกต้อง",
+        f"ฟังก์ชันไม่ได้คืนค่า 'inserted' แต่ได้ค่าเป็น '{result}' แทน",
         risk_no=10,
     )
 
@@ -698,17 +718,19 @@ def test_risk_10():
         ).fetchone()
     ok_data = row["product_name"] == "Updated Item" and row["quantity"] == 99
     assert_test(
-        "upsert_product() กับ ID เดิม → คืน 'updated'",
-        "เรียก upsert_product('U01', ...) กับ ID ที่มีอยู่แล้วใน DB",
+        "ฟังก์ชัน upsert_product ต้องรายงานผลเป็นการปรับปรุงสินค้า ('updated') เมื่อระบุรหัสสินค้าที่มีอยู่แล้ว",
+        "เรียก upsert_product() เพื่อบันทึกแก้ไขสินค้าเดิมรหัส 'U01' แล้วเช็คค่าส่งกลับ (return value)",
         ok_upd,
-        f"return value = '{result2}'",
+        "ฟังก์ชันคืนค่า 'updated' สำเร็จถูกต้อง",
+        f"ฟังก์ชันไม่ได้คืนค่า 'updated' แต่ได้ค่าเป็น '{result2}' แทน",
         risk_no=10,
     )
     assert_test(
-        "upsert_product() อัปเดตข้อมูลได้ถูกต้อง",
-        "ตรวจว่า product_name และ quantity เปลี่ยนเป็นค่าใหม่",
+        "ฟังก์ชัน upsert_product ต้องทำการแก้ไขข้อมูลสินค้าเดิมในฐานข้อมูลอย่างถูกต้อง",
+        "ตรวจสอบว่าข้อมูลชื่อสินค้าและจำนวนสินค้าเปลี่ยนไปเป็นค่าที่อัปเดตล่าสุดจริง",
         ok_data,
-        f"product_name='{row['product_name']}', quantity={row['quantity']}",
+        "ข้อมูลสินค้าถูกแก้ไขเป็น 'Updated Item' และสต็อก 99 ชิ้นเรียบร้อยตรงตามคาด",
+        f"ข้อมูลในฐานข้อมูลไม่ได้รับการปรับปรุง: product_name='{row['product_name']}', quantity={row['quantity']}",
         risk_no=10,
     )
 
@@ -723,10 +745,11 @@ def test_risk_10():
     # สิ่งสำคัญคือไม่มีการเขียน INSERT ซ้ำนอก upsert_product (ต้องน้อยกว่า 5)
     ok_no_dup = len(insert_lines) < 5
     assert_test(
-        "โค้ด INSERT ไม่ซ้ำซ้อน — logic หลักรวมอยู่ใน upsert_product()",
-        f"ตรวจ source code ว่า INSERT INTO inventory มีน้อยกว่า 5 ครั้ง (พบ: {len(insert_lines)})",
+        "ต้องไม่มีการเขียนโค้ดเพิ่มข้อมูลสินค้า (INSERT) ซ้ำซ้อนภายนอกฟังก์ชัน upsert_product ในระบบหลัก",
+        "สแกนหาข้อความ 'INSERT INTO inventory' ในไฟล์ app_v2.py เพื่อตรวจสอบความซ้ำซ้อนของโค้ดหลัก",
         ok_no_dup,
-        f"พบ 'INSERT INTO inventory' จำนวน {len(insert_lines)} ครั้ง {'✔' if ok_no_dup else '✘'}",
+        f"โค้ดไม่มีความซ้ำซ้อน (พบคำสั่ง INSERT ทั้งสิ้น {len(insert_lines)} จุด ซึ่งอยู่ในขอบเขตที่ควบคุมได้)",
+        f"พบคำสั่ง INSERT มากเกินไป ({len(insert_lines)} จุด) แสดงว่าโค้ดไม่มีการ Reuse และซ้ำซ้อน",
         risk_no=10,
     )
 
@@ -756,10 +779,11 @@ def test_risk_11():
     for name in good_names:
         found = name in source
         assert_test(
-            f"พบชื่อตัวแปร '{name}' ใน source code",
-            f"app_v2.py ต้องใช้ชื่อ '{name}' ที่สื่อความหมาย",
+            f"ต้องใช้ชื่อตัวแปรหลักที่ชัดเจนและสื่อความหมาย ('{name}') ในแอปพลิเคชัน",
+            f"สแกนซอร์สโค้ด app_v2.py ว่ามีชื่อตัวแปร '{name}' ปรากฏอยู่",
             found,
-            "✔ พบ" if found else "✘ ไม่พบ",
+            f"พบชื่อตัวแปรสื่อความหมายดี '{name}' ในโค้ดหลัก",
+            f"ไม่พบตัวแปรชื่อ '{name}' ในโค้ดหลักเพื่อใช้อ้างอิงการเก็บข้อมูลหลัก",
             risk_no=11,
         )
 
@@ -768,10 +792,11 @@ def test_risk_11():
     for bad in bad_single_chars:
         found_bad = bad in source
         assert_test(
-            f"ไม่มีตัวแปรชื่อสั้นไม่สื่อความหมาย ('{bad.strip()}')",
-            f"ตรวจ source code ว่าไม่มีการประกาศ '{bad.strip()}' แบบ v1",
+            f"ต้องไม่ใช้ชื่อตัวแปรสั้นและคลุมเครือ ('{bad.strip()}') ในการเก็บข้อมูลหลัก",
+            f"สแกนซอร์สโค้ด app_v2.py ว่าไม่มีการกำหนดตัวแปรด้วยรูปแบบ '{bad.strip()}'",
             not found_bad,
-            "✔ ไม่พบ (ดี)" if not found_bad else f"✘ พบ '{bad.strip()}' ซึ่งไม่สื่อความหมาย",
+            f"ไม่พบรูปแบบการประกาศตัวแปรที่ไม่ชัดเจน '{bad.strip()}' ในซอร์สโค้ด",
+            f"พบข้อผิดพลาด: มีการประกาศตัวแปรลอยๆ ที่ไม่ชัดเจน '{bad.strip()}' อยู่ในซอร์สโค้ด",
             risk_no=11,
         )
 
@@ -811,10 +836,11 @@ def test_risk_12():
     expected_pages = (total + app_v2.PAGE_SIZE - 1) // app_v2.PAGE_SIZE
     ok_pages = expected_pages == 3   # 25 items / 10 per page = 3 pages
     assert_test(
-        f"คำนวณ total_pages ถูกต้อง ({total} รายการ / {app_v2.PAGE_SIZE} ต่อหน้า = {expected_pages} หน้า)",
-        "ตรวจ formula (total + PAGE_SIZE - 1) // PAGE_SIZE",
+        "สูตรคำนวณจำนวนหน้า (total_pages) ต้องถูกต้องตามขนาดของสินค้าต่อหน้า",
+        f"คำนวณจำนวนหน้าโดยใช้สูตรหารปัดเศษขึ้น สำหรับสินค้าจำนวน {total} รายการ และหน้าละ {app_v2.PAGE_SIZE} รายการ",
         ok_pages,
-        f"total_pages = {expected_pages}",
+        f"คำนวณจำนวนหน้าได้ {expected_pages} หน้า ตรงตามคาด",
+        f"คำนวณจำนวนหน้าผิดเพี้ยน ได้ค่าเป็น {expected_pages} หน้า",
         risk_no=12,
     )
 
@@ -822,10 +848,11 @@ def test_risk_12():
     page1_rows = all_rows[0:app_v2.PAGE_SIZE]
     ok_p1 = len(page1_rows) == app_v2.PAGE_SIZE
     assert_test(
-        f"หน้า 1 มีสินค้าครบ {app_v2.PAGE_SIZE} รายการ",
-        f"all_rows[0:{app_v2.PAGE_SIZE}] ต้องมี {app_v2.PAGE_SIZE} รายการ",
+        "จำนวนสินค้าคงคลังที่นำมาแสดงผลหน้าแรก (หน้า 1) ต้องเต็มหน้ากระดาษ (10 รายการ)",
+        f"ดึงแถวสินค้าหน้าแรก (ลำดับที่ 0 ถึง {app_v2.PAGE_SIZE-1}) แล้วเช็คขนาดของรายการ",
         ok_p1,
-        f"รายการในหน้า 1 = {len(page1_rows)}",
+        f"ดึงสินค้าหน้าแรกมาแสดงผลได้ครบจำนวน {app_v2.PAGE_SIZE} รายการตามกำหนด",
+        f"หน้าแรกแสดงจำนวนสินค้าเป็น {len(page1_rows)} รายการ ไม่เป็นไปตาม {app_v2.PAGE_SIZE} รายการต่อหน้า",
         risk_no=12,
     )
 
@@ -834,10 +861,11 @@ def test_risk_12():
     expected_last = total - (expected_pages - 1) * app_v2.PAGE_SIZE
     ok_last = len(last_page_rows) == expected_last
     assert_test(
-        f"หน้าสุดท้ายมีสินค้า {expected_last} รายการ (ส่วนที่เหลือ)",
-        f"all_rows[{(expected_pages-1)*app_v2.PAGE_SIZE}:] ต้องมี {expected_last} รายการ",
+        "จำนวนสินค้าที่นำมาแสดงผลหน้าสุดท้ายต้องเป็นรายการเศษที่เหลืออยู่อย่างถูกต้อง",
+        f"ดึงข้อมูลแถวสินค้าของหน้าสุดท้ายและคำนวณว่ามีขนาดเท่ากับเศษที่เหลือ ({expected_last} รายการ)",
         ok_last,
-        f"รายการในหน้าสุดท้าย = {len(last_page_rows)}",
+        f"ดึงสินค้าหน้าสุดท้ายมาแสดงผลสำเร็จ มีขนาด {expected_last} รายการตรงตามที่ต้องเหลือ",
+        f"หน้าสุดท้ายมีสินค้าหลุดมา {len(last_page_rows)} รายการ ซึ่งไม่เท่ากับ {expected_last} รายการ",
         risk_no=12,
     )
 
@@ -861,10 +889,11 @@ def test_risk_12():
         ).fetchone()[0]
     ok_search = len(search_rows) == expected_food_rows and expected_food_rows > 0
     assert_test(
-        f"ค้นหา 'Food' ได้ผลลัพธ์ถูกต้อง ({expected_food_rows} รายการ)",
-        "SELECT ... WHERE category LIKE '%Food%' ต้องได้ผลตรงกับจำนวนสินค้า category=Food",
+        "ระบบค้นหาสินค้าต้องค้นหาและกรองรายการตามหมวดหมู่ได้อย่างถูกต้องตรงประเด็น",
+        "ค้นหาด้วยคำว่า 'Food' จากฐานข้อมูล แล้วเทียบจำนวนผลลัพธ์กับสินค้าหมวดหมู่ Food ทั้งหมดที่มี",
         ok_search,
-        f"พบ {len(search_rows)} รายการ (คาดหวัง {expected_food_rows}) {'✔' if ok_search else '✘'}",
+        f"ผลลัพธ์การค้นหาด้วย 'Food' คืนรายการจำนวน {len(search_rows)} รายการตรงกับฐานข้อมูลจริง",
+        f"พบผลการค้นหาไม่สอดคล้อง ดึงมาได้ {len(search_rows)} รายการ ทั้งที่คาดหวัง {expected_food_rows} รายการ",
         risk_no=12,
     )
 
@@ -875,10 +904,11 @@ def test_risk_12():
         ).fetchall()
     ok_empty = len(empty_rows) == 0
     assert_test(
-        "ค้นหา keyword ที่ไม่มีในระบบ → ได้ผลลัพธ์ว่าง",
-        "SELECT ... WHERE ... LIKE '%XXXXXX%' ต้องได้ 0 รายการ",
+        "ระบบค้นหาสินค้าต้องไม่แสดงรายการใดๆ หากคำค้นหาไม่มีอยู่ในระบบ",
+        "ค้นหาด้วยคำลอยๆ ที่ไม่มีจริง '%XXXXXX%' แล้วทำการตรวจสอบว่าผลลัพธ์การค้นหาต้องเป็นศูนย์",
         ok_empty,
-        f"พบ {len(empty_rows)} รายการ",
+        "ไม่พบข้อมูลสินค้าตรงตามที่คาดหวัง (ได้ 0 รายการ)",
+        f"พบสินค้าตกค้างในการค้นหาคำที่ไม่มีอยู่จริง จำนวน {len(empty_rows)} รายการ",
         risk_no=12,
     )
 
