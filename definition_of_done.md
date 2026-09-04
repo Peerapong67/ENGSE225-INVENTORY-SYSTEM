@@ -18,14 +18,29 @@
 - [ ] Regression test suite ที่มีอยู่เดิมรันผ่านทั้งหมด (ไม่ใช่แค่ "เชื่อว่าไม่พัง" ต้องรันแล้วผ่านจริง)
 - [ ] ทำ manual smoke test อย่างน้อย 1 รอบตาม test case ที่ทีมกำหนดไว้ล่วงหน้า และบันทึกผลไว้ใน ticket
 
-## 3. Merge Policy (Git Workflow + CI/CD)
+## 3. Merge & Release Policy (Git Workflow + CI/CD)
 
-การ merge เข้า branch `develop` ต้องผ่านเงื่อนไข **ทั้งสองข้อ** พร้อมกัน ขาดข้อใดข้อหนึ่งไม่ได้:
+ทีมนี้มี branch หลัก 2 ระดับ คือ `develop` (รวมงานระหว่าง sprint) และ `main` (พร้อม release) แต่ละระดับมีผู้อนุมัติคนละคน ไม่ใช้ authority เดียวกัน:
+
+### 3.1 Merge เข้า `develop` (จาก feature branch)
+
+ต้องผ่านเงื่อนไข **ทั้งสองข้อ** พร้อมกัน ขาดข้อใดข้อหนึ่งไม่ได้:
 
 - [ ] **pytest บน CI/CD (GitHub Actions) ต้องผ่านทั้งหมด** — status check ต้องเป็นสีเขียวก่อนเสมอ QA เป็นผู้รับผิดชอบเขียน test เหล่านี้
-- [ ] **QA ต้อง approve Pull Request** — Developer เปิด PR แล้วต้องรอ QA ตรวจและกด approve ก่อนจึง merge ได้ แนะนำตั้งเป็น branch protection rule ใน GitHub (Settings > Branches: require status check + require approval) เพื่อบังคับจริงในระบบ ไม่ใช่แค่ตกลงกันปากเปล่า
+- [ ] **QA ต้อง approve Pull Request** — Developer เปิด PR แล้วต้องรอ QA ตรวจและกด approve ก่อนจึง merge ได้
 
 ลำดับ: **Code เสร็จ → เปิด PR → CI/CD รัน pytest อัตโนมัติ → QA ตรวจสอบและ approve → merge เข้า `develop`**
+
+### 3.2 Merge เข้า `main` (Release)
+
+ต้องผ่านเงื่อนไข **ทั้งสองข้อ** พร้อมกัน ขาดข้อใดข้อหนึ่งไม่ได้:
+
+- [ ] **`develop` ต้องอยู่ในสถานะที่ CI/CD ผ่านทั้งหมด** ณ จุดที่จะ release (pytest เขียวล่าสุด ไม่ใช่ผ่านตอนก่อนหน้าที่มีการ merge อย่างอื่นทับเข้ามาแล้ว)
+- [ ] **Tech Lead เป็นผู้ตรวจสอบ (inspect) และ approve Pull Request จาก `develop` เข้า `main`** — เป็นด่านสุดท้ายก่อน release เท่านั้น ไม่ใช่ตรวจแทน QA ในขั้นตอน 3.1
+
+ลำดับ: **`develop` พร้อม release → เปิด PR จาก `develop` เข้า `main` → Tech Lead ตรวจสอบและ approve → merge เข้า `main`**
+
+แนะนำตั้ง branch protection rule ใน GitHub (Settings > Branches) แยกกันสำหรับทั้งสอง branch — `develop` บังคับ CI ผ่าน + QA approve, `main` บังคับ CI ผ่าน + Tech Lead approve — เพื่อบังคับใช้จริงในระบบ ไม่ใช่แค่ตกลงกันปากเปล่า
 
 ## 4. เกณฑ์ระดับเอกสาร/กระบวนการ
 
@@ -36,7 +51,7 @@
 
 ## 5. การยืนยันปิดงาน
 
-- [ ] Code Review ผ่านจาก Tech Lead อย่างน้อย 1 ครั้ง และ comment ที่ขอแก้ถูกจัดการครบแล้ว
+- [ ] ผ่านการอนุมัติตามลำดับชั้นใน Merge & Release Policy (ข้อ 3) ครบตามระดับของงานนั้น — QA approve สำหรับงานที่จบที่ `develop`, Tech Lead approve เพิ่มสำหรับงานที่ release เข้า `main`
 - [ ] **PM/PO เป็นผู้ยืนยันปิด ticket เป็น Done ครั้งสุดท้าย** หลังจากทุกเกณฑ์ข้างต้นผ่านครบ — ไม่ปล่อยให้แต่ละคนตัดสินใจเองว่างานของตัวเอง "เสร็จ" แล้ว
 
 ---
