@@ -1,0 +1,39 @@
+name: Tests
+
+# รันอัตโนมัติทุกครั้งที่ push หรือเปิด/อัปเดต Pull Request เข้า branch main/develop
+# ตาม Merge & Release Policy ใน definition_of_done.md ข้อ 3
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+  # กดรันเองได้จากแท็บ Actions บน GitHub เผื่อไม่มี push/PR ใหม่แต่อยากเช็คซ้ำ
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        run: python -m pytest -v
