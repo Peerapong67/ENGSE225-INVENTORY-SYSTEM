@@ -192,13 +192,14 @@ class InventoryApp:
 
 
 # ============================================================
-# ส่วนทดสอบ Definition of Done (DoD) สำหรับ SCRUM-11
+# Entry point:
+#   python inventory_app.py              -> เข้าเมนูจริง (interactive) ทันที — ค่า default
+#   python inventory_app.py --selftest   -> รัน self-test สำหรับ DoD ของ SCRUM-11/12
+#                                            (ใช้ตอน dev ตรวจ DoD เร็วๆ ไม่ต้อง
+#                                            เปิดเมนูเอง — ไม่ใช่ทางเข้าใช้งานหลัก)
 # ============================================================
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "--interactive":
-        app = InventoryApp()
-        app.run()
-    else:
+    if len(sys.argv) > 1 and sys.argv[1] == "--selftest":
         print("--- เริ่มการทดสอบ Definition of Done (SCRUM-12) ---")
         app = InventoryApp()
 
@@ -243,3 +244,7 @@ if __name__ == "__main__":
                 app.repo.db.executeQuery("DELETE FROM products WHERE product_id = ?", (p.product_id,))
             app.repo.db.commit()
             print("✓ เคลียร์ข้อมูลทดสอบเรียบร้อย")
+    else:
+        # ค่า default: ไม่มี flag ใดๆ -> เข้าเมนู interactive ทันที
+        app = InventoryApp()
+        app.run()
