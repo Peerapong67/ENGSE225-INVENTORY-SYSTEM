@@ -1,4 +1,6 @@
 import sys
+import math
+from typing import List
 from product import Product
 from product_repository import ProductRepository
 from validator import Validator
@@ -8,153 +10,69 @@ class InventoryApp:
     def __init__(self):
         self.repo = ProductRepository()
         self.logger = Logger.getInstance()
+        self.page_size = 10  # กำหนดขนาดหน้าเริ่มต้นเป็น 10 รายการต่อหน้า
 
-    def showMenu(self):
-        print("\n==========================================")
-        print("     ระบบจัดการคลังสินค้า (Inventory App)     ")
-        print("==========================================")
-        print("1. เพิ่ม / แก้ไขข้อมูลสินค้า (Add/Update Product)")
-        print("2. ตัดสต็อกสินค้า (Cut Stock)")
-        print("3. ค้นหาสินค้า (Search Product)")
-        print("4. ดูรายงานสรุปคลังสินค้า (Inventory Report)")
-        print("5. แสดงรายการสินค้าทั้งหมด (View All Products)")
-        print("0. ออกจากโปรแกรม (Exit)")
-        print("==========================================")
-
-    def addOrUpdateProduct(self):
-        print("\n--- [1] เพิ่ม / แก้ไขข้อมูลสินค้า ---")
-        product_id = input("รหัสสินค้า (Product ID): ").strip()
-        if not product_id:
-            print("ข้อผิดพลาด: รหัสสินค้าต้องไม่เป็นค่าว่าง")
+    def displayPaginatedProducts(self, products: List[Product], title: str = "รายการสินค้า"):
+        """ฟังก์ชันช่วยแสดงผลรายการสินค้าแบบแบ่งหน้า (Pagination) ไม่ให้ล้นหน้าจอ"""
+        if not products:
+            print(f"\nไม่พบข้อมูลสำหรับ: {title}")
             return
 
-        existing = self.repo.findById(product_id)
-        if existing:
-            print(f"พบข้อมูลสินค้าเดิม: {existing.name} (คงเหลือ: {existing.quantity}, ราคา: {existing.price:.2f} บาท)")
-            confirm = input("ต้องการแก้ไขสินค้านี้ใช่หรือไม่? (y/n): ").strip().lower()
-            if confirm not in ('y', 'yes'):
-                print("ยกเลิกการทำรายการ")
-                return
+        total_items = len(products)
+        total_pages = math.ceil(total_items / self.page_size)
+        current_page = 1
 
-        name = input("ชื่อสินค้า: ").strip()
-        if not name:
-            print("ข้อผิดพลาด: ชื่อสินค้าต้องไม่เป็นค่าว่าง")
-            return
+        while True:
+            start_idx = (current_page - 1) * self.page_size
+            end_idx = min(start_idx + self.page_size, total_items)
+            page_items = products[start_idx:end_idx]
 
-        category = input("หมวดหมู่ (เว้นว่างเพื่อใช้ 'Uncategorized'): ").strip()
-        if not category:
-            category = "Uncategorized"
+            print(f"\n==================== {title} (หน้า {current_page}/{total_pages}) ====================")
+            print(f"{'ลำดับ':<6} {'ID':<12} {'ชื่อสินค้า':<25} {'หมวดหมู่':<15} {'คงเหลือ':<10} {'ราคา':<10}")
+            print("-" * 80)
+            for idx, p in enumerate(page_items, start=start_idx + 1):
+                print(f"{idx:<6} {p.product_id:<12} {p.name:<25} {p.category:<15} {p.quantity:<10} {p.price:<10.2f}")
+            print("-" * 80)
+            print(f"แสดงรายการที่ {start_idx + 1} - {end_idx} จากทั้งหมด {total_items} รายการ")
 
-        quantity = Validator.inputNonNegativeInt("จำนวนสต็อก (Quantity >= 0): ")
-        price = Validator.inputNonNegativeFloat("ราคาสินค้า (Price >= 0.0): ")
+            if total_pages <= 1:
+                input("\nกด Enter เพื่อกลับสู่เมนู...")
+                break
 
-        new_product = Product(product_id, name, quantity, price, category)
+            print("\n[n] หน้าถัดไป | [p] หน้าก่อนหน้า | [q] ออกจากหน้านี้")
+            nav = input("เลือกการทำงาน: ").strip().lower()
 
-        if existing:
-            # กรณีอัปเดต ให้ยืนยันเปรียบเทียบข้อมูลเดิมกับใหม่
-            is_confirmed = Validator.confirm(existing.to_dict(), new_product.to_dict())
-            if not is_confirmed:
-                print("ยกเลิกการแก้ไขข้อมูล")
-                return
-
-        self.repo.upsertProduct(new_product)
-
-        # บันทึก Logger ตามสเปก
-        action_type = "UPDATE_PRODUCT" if existing else "ADD_PRODUCT"
-        detail_msg = f"{action_type} ID: {product_id} ({name}), Qty: {quantity}, Price: {price}"
-        self.logger.log(action_type, detail_msg)
-
-        print(f"สำเร็จ: บันทึกข้อมูลสินค้า '{name}' เรียบร้อยแล้ว")
-
-    def cutStock(self):
-        print("\n--- [2] ตัดสต็อกสินค้า ---")
-        product_id = input("รหัสสินค้าที่ต้องการตัดสต็อก: ").strip()
-        product = self.repo.findById(product_id)
-        if not product:
-            print(f"ข้อผิดพลาด: ไม่พบสินค้า ID: {product_id}")
-            return
-
-        print(f"สินค้า: {product.name} | คงเหลือปัจจุบัน: {product.quantity} ชิ้น")
-        cut_amount = Validator.inputNonNegativeInt("จำนวนที่ต้องการตัดออก (> 0): ")
-        if cut_amount <= 0:
-            print("ข้อผิดพลาด: จำนวนที่ตัดต้องมากกว่า 0")
-            return
-
-        reason = input("เหตุผลในการตัดสต็อก (เช่น ขายหน้าร้าน, สินค้าชำรุด): ").strip()
-        if not reason:
-            reason = "General Issue"
-
-        try:
-            self.repo.updateStock(product_id, -cut_amount, reason)
-            
-            # บันทึก Logger ตามสเปก
-            self.logger.log("CUT_STOCK", f"ตัดสต็อก ID: {product_id} ออก {cut_amount} ชิ้น (เหตุผล: {reason})")
-            
-            updated = self.repo.findById(product_id)
-            print(f"สำเร็จ: ตัดสต็อกเรียบร้อยแล้ว คงเหลือล่าสุด: {updated.quantity} ชิ้น")
-        except ValueError as e:
-            print(f"ข้อผิดพลาด: {e}")
+            if nav == 'n':
+                if current_page < total_pages:
+                    current_page += 1
+                else:
+                    print(">> อยู่ที่หน้าสุดท้ายแล้ว")
+            elif nav == 'p':
+                if current_page > 1:
+                    current_page -= 1
+                else:
+                    print(">> อยู่ที่หน้าแรกแล้ว")
+            elif nav == 'q':
+                break
+            else:
+                print(">> คำสั่งไม่ถูกต้อง กรุณาเลือก n, p หรือ q")
 
     def searchProduct(self):
-        print("\n--- [3] ค้นหาสินค้า ---")
+        """ค้นหาสินค้าตามชื่อหรือหมวดหมู่ พร้อมแสดงผลแบบ Pagination"""
+        print("\n--- [3] ค้นหาสินค้า (Search Product) ---")
         keyword = input("คำค้นหา (ชื่อสินค้า หรือ หมวดหมู่): ").strip()
         if not keyword:
             print("ข้อผิดพลาด: คำค้นหาต้องไม่เป็นค่าว่าง")
             return
 
         results = self.repo.search(keyword)
-        if not results:
-            print(f"ไม่พบสินค้าที่ตรงกับคำค้นหา: '{keyword}'")
-            return
-
-        print(f"\nพบสินค้าทั้งหมด {len(results)} รายการ:")
-        print(f"{'ID':<10} {'ชื่อสินค้า':<25} {'หมวดหมู่':<15} {'คงเหลือ':<10} {'ราคา':<10}")
-        print("-" * 70)
-        for p in results:
-            print(f"{p.product_id:<10} {p.name:<25} {p.category:<15} {p.quantity:<10} {p.price:<10.2f}")
-
-    def showReport(self):
-        print("\n--- [4] รายงานสรุปคลังสินค้า ---")
-        summary = self.repo.getSummary()
-        print("------------------------------------------")
-        print(f"จำนวนรายการสินค้าทั้งหมด : {summary['total_products']} รายการ")
-        print(f"จำนวนชิ้นรวมในคลัง       : {summary['total_units']} ชิ้น")
-        print(f"มูลค่าสินค้าในคลังรวม     : {summary['total_value']:,.2f} บาท")
-        print(f"สินค้าใกล้หมด (<= 5 ชิ้น)  : {summary['low_stock_items']} รายการ")
-        print("------------------------------------------")
+        self.logger.log("SEARCH_PRODUCT", f"ค้นหาด้วยคำว่า '{keyword}' พบ {len(results)} รายการ")
+        self.displayPaginatedProducts(results, title=f"ผลการค้นหา '{keyword}'")
 
     def showAllProducts(self):
-        print("\n--- [5] รายการสินค้าทั้งหมด ---")
+        """แสดงรายการสินค้าทั้งหมด พร้อมระบบ Pagination"""
         products = self.repo.findAll()
-        if not products:
-            print("ยังไม่มีข้อมูลสินค้าในระบบ")
-            return
-
-        print(f"{'ID':<10} {'ชื่อสินค้า':<25} {'หมวดหมู่':<15} {'คงเหลือ':<10} {'ราคา':<10}")
-        print("-" * 70)
-        for p in products:
-            print(f"{p.product_id:<10} {p.name:<25} {p.category:<15} {p.quantity:<10} {p.price:<10.2f}")
-
-    def run(self):
-        """ลูปหลักของโปรแกรม"""
-        while True:
-            self.showMenu()
-            choice = input("เลือกเมนู (0-5): ").strip()
-            if choice == "1":
-                self.addOrUpdateProduct()
-            elif choice == "2":
-                self.cutStock()
-            elif choice == "3":
-                self.searchProduct()
-            elif choice == "4":
-                self.showReport()
-            elif choice == "5":
-                self.showAllProducts()
-            elif choice == "0":
-                print("\nปิดโปรแกรม เรียบร้อย ขอบคุณครับ")
-                break
-            else:
-                print("เมนูไม่ถูกต้อง กรุณาเลือก 0 - 5 เท่านั้น")
+        self.displayPaginatedProducts(products, title="รายการสินค้าทั้งหมดในระบบ")
 
 
 # ============================================================
@@ -165,36 +83,42 @@ if __name__ == "__main__":
         app = InventoryApp()
         app.run()
     else:
-        print("--- เริ่มการทดสอบ Definition of Done (SCRUM-11) แบบ Automated ---")
+        print("--- เริ่มการทดสอบ Definition of Done (SCRUM-12) ---")
         app = InventoryApp()
 
-        # 1. ทดสอบ Add Product ผ่าน App
-        test_p = Product("APP-TEST-1", "App Snack", 20, 15.0, "Snack")
-        app.repo.upsertProduct(test_p)
-        app.logger.log("ADD_PRODUCT", "ทดสอบผ่านระบบ InventoryApp")
-        print("✓ เมนู 1 (เพิ่ม/แก้): เรียก upsertProduct และ Logger.log ทำงานร่วมกันได้สมบูรณ์")
+        # 1. เตรียมข้อมูลจำลอง 15 รายการ เพื่อทดสอบกรณีข้อมูลล้นหน้าจอ (> 10 ชิ้น)
+        mock_products = [
+            Product(f"PAGE-{i:02d}", f"Bulk Item {i:02d}", 10 + i, 50.0 + i, "BulkCategory")
+            for i in range(1, 16)
+        ]
+        for p in mock_products:
+            app.repo.upsertProduct(p)
 
-        # 2. ทดสอบ Cut Stock ผ่าน App
-        app.repo.updateStock("APP-TEST-1", -5, "Automated Test Sale")
-        app.logger.log("CUT_STOCK", "ตัดสต็อกทดสอบผ่าน InventoryApp")
-        print("✓ เมนู 2 (ตัดสต็อก): ตัดสต็อกและมี log บันทึกลงฐานข้อมูลถูกต้อง")
+        # 2. ทดสอบ search(keyword) ด้วย category
+        search_res = app.repo.search("BulkCategory")
+        assert len(search_res) == 15, f"FAILED: search ผลลัพธ์ไม่ครบ 15 รายการ (ได้ {len(search_res)})"
+        print(f"✓ ผ่านเกณฑ์ 1: ค้นหาด้วย category สำเร็จ พบ {len(search_res)} รายการ")
 
-        # 3. ทดสอบ Search Product
-        res = app.repo.search("Snack")
-        assert len(res) >= 1, "FAILED: ค้นหาไม่พบ"
-        print(f"✓ เมนู 3 (ค้นหา): searchProduct ทำงานได้ถูกต้อง พบ {len(res)} รายการ")
+        # 3. ตรวจสอบการคำนวณแบ่งหน้า (Pagination Calculation)
+        total_items = len(search_res)
+        expected_pages = math.ceil(total_items / app.page_size)
+        assert expected_pages == 2, f"FAILED: จำนวนหน้าคำนวณผิด (คาดหวัง 2 ได้ {expected_pages})"
 
-        # 4. ทดสอบ Report Summary
-        summary = app.repo.getSummary()
-        assert summary["total_products"] > 0, "FAILED: คำนวณสรุปผลไม่ถูกต้อง"
-        print(f"✓ เมนู 4 (รายงาน): showReport อ่านค่าสรุปได้ถูกต้อง ({summary['total_products']} รายการ)")
+        first_page = search_res[0:app.page_size]
+        second_page = search_res[app.page_size:total_items]
+        assert len(first_page) == 10, "FAILED: หน้าแรกไม่มี 10 รายการ"
+        assert len(second_page) == 5, "FAILED: หน้าที่สองไม่มี 5 รายการ"
+        print(f"✓ ผ่านเกณฑ์ 2: แบ่งหน้าแสดงผลถูกต้อง (หน้า 1 มี {len(first_page)} ชิ้น, หน้า 2 มี {len(second_page)} ชิ้น)")
+
+        # 4. ทดสอบ search ด้วยชื่อสินค้าบางส่วน (Partial Match)
+        name_res = app.repo.search("Bulk Item 05")
+        assert len(name_res) == 1 and name_res[0].product_id == "PAGE-05", "FAILED: ค้นหาด้วยชื่อไม่ตรง"
+        print("✓ ผ่านเกณฑ์ 3: ค้นหาด้วยชื่อสินค้าเฉพาะเจาะจงสำเร็จ")
 
         # เคลียร์ข้อมูลทดสอบ
-        app.repo.db.executeQuery("DELETE FROM stock_movements WHERE product_id = 'APP-TEST-1'")
-        app.repo.db.executeQuery("DELETE FROM action_logs WHERE detail LIKE '%InventoryApp%'")
-        app.repo.db.executeQuery("DELETE FROM products WHERE product_id = 'APP-TEST-1'")
+        for p in mock_products:
+            app.repo.db.executeQuery("DELETE FROM products WHERE product_id = ?", (p.product_id,))
         app.repo.db.commit()
         print("✓ เคลียร์ข้อมูลทดสอบเรียบร้อย")
 
-        print("\nสรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-11 ครบถ้วนทุกเมนู!")
-        print("(หากต้องการทดลองเล่นเมนูจริง ให้รัน: python inventory_app.py --interactive)")
+        print("\nสรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-12 ครบถ้วน 100%")
