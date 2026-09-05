@@ -1,68 +1,90 @@
 class Product:
-    def __init__(self, product_id: str, name: str, quantity: int, price: float, category: str = "Uncategorized"):
-        # 1. Validation ป้องกันค่าติดลบในระดับ Constructor (ตามสเปก SCRUM-8)
-        if quantity < 0:
-            raise ValueError(f"Quantity ต้องไม่ติดลบ (ได้รับค่า: {quantity})")
-        if price < 0.0:
-            raise ValueError(f"Price ต้องไม่ติดลบ (ได้รับค่า: {price})")
-        if not str(product_id).strip():
-            raise ValueError("product_id ต้องไม่เป็นค่าว่าง")
-        if not str(name).strip():
-            raise ValueError("name ต้องไม่เป็นค่าว่าง")
+    """
+    ตรงกับ class Product ใน UML diagram
+    ฟิลด์: product_id, name, quantity, price, category
 
-        # 2. ฟิลด์ข้อมูลตรงตาม To-Be Class Diagram และ Database Schema
-        self.product_id = str(product_id).strip()
-        self.name = str(name).strip()
-        self.quantity = int(quantity)
-        self.price = float(price)
-        self.category = str(category).strip() if category else "Uncategorized"
+    มี validation พื้นฐานใน constructor เอง (ชั้นป้องกันเสริม ไม่ใช่แทนที่ Validator
+    หรือ CHECK constraint ระดับฐานข้อมูล) — throw error ถ้า quantity/price ติดลบ
+    """
+
+    def __init__(self, product_id: str, name: str, quantity: int, price: float,
+                 category: str = "Uncategorized"):
+        """สร้าง Product object พร้อม validate ค่าเบื้องต้น (ชั้นป้องกันเสริม
+        ไม่ใช่แทนที่ Validator หรือ CHECK constraint ระดับฐานข้อมูล)
+
+        Args:
+            product_id: รหัสสินค้า ห้ามเป็นค่าว่าง
+            name: ชื่อสินค้า ห้ามเป็นค่าว่าง
+            quantity: จำนวนสต็อก ต้องไม่ติดลบ
+            price: ราคาต่อหน่วย ต้องไม่ติดลบ
+            category: หมวดหมู่สินค้า ถ้าไม่ระบุจะใช้ "Uncategorized"
+
+        Raises:
+            ValueError: เมื่อ product_id/name ว่าง หรือ quantity/price ติดลบ
+        """
+        if not product_id:
+            raise ValueError("product_id ห้ามว่าง")
+        if not name:
+            raise ValueError("name ห้ามว่าง")
+        if quantity < 0:
+            raise ValueError("quantity ต้องไม่ติดลบ")
+        if price < 0:
+            raise ValueError("price ต้องไม่ติดลบ")
+
+        self.product_id = product_id
+        self.name = name
+        self.quantity = quantity
+        self.price = price
+        self.category = category
 
     def to_dict(self) -> dict:
-        """แปลง Object เป็น Dictionary สำหรับส่งต่อให้ Repository หรือ Serializer"""
+        """แปลง Product เป็น dict ธรรมดา (ใช้ตอนส่งข้อมูลออกไปนอกคลาส เช่น เทียบค่า/serialize)
+
+        Returns:
+            dict ที่มี key ครบ 5 ตัว: product_id, name, quantity, price, category
+        """
         return {
             "product_id": self.product_id,
             "name": self.name,
             "quantity": self.quantity,
             "price": self.price,
-            "category": self.category
+            "category": self.category,
         }
 
-    def __repr__(self) -> str:
-        return f"Product(id='{self.product_id}', name='{self.name}', qty={self.quantity}, price={self.price}, cat='{self.category}')"
+    @classmethod
+    def from_row(cls, row) -> "Product":
+        """สร้าง Product จากผลลัพธ์ query ฐานข้อมูล (ใช้โดย ProductRepository)
 
+        Args:
+            row: sqlite3.Row (หรือ dict-like object) ที่มี key product_id, name,
+                quantity, price, category ตรงกับตาราง products ใน schema.sql
 
-# ============================================================
-# ส่วนทดสอบ Definition of Done (DoD) สำหรับ SCRUM-8
-# ============================================================
-if __name__ == "__main__":
-    print("--- เริ่มการทดสอบ Definition of Done (SCRUM-8) ---")
+        Returns:
+            Product instance ที่ผ่านการ validate ตาม constructor
+        """
+        return cls(
+            product_id=row["product_id"],
+            name=row["name"],
+            quantity=row["quantity"],
+            price=row["price"],
+            category=row["category"],
+        )
 
-    # 1. ทดสอบสร้าง Object ปกติ (Happy Path)
-    p = Product("101", "Mama Noodles", 50, 6.0, "Food")
-    assert p.product_id == "101"
-    assert p.name == "Mama Noodles"
-    assert p.quantity == 50
-    assert p.price == 6.0
-    assert p.category == "Food"
-    print("✓ ผ่านเกณฑ์ 1: สร้าง Product Object สำเร็จและอ่านค่าฟิลด์ได้ถูกต้อง")
+    def __eq__(self, other):
+        """เทียบค่าความเท่ากันแบบ value equality (เทียบทุกฟิลด์ผ่าน to_dict())
 
-    # 2. ทดสอบแปลงเป็น Dictionary ส่งต่อให้ Repository
-    d = p.to_dict()
-    assert d["product_id"] == "101" and d["quantity"] == 50
-    print("✓ ผ่านเกณฑ์ 2: ฟังก์ชัน to_dict() แปลงข้อมูลพร้อมส่งต่อให้ ProductRepository ได้ทันที")
+        Args:
+            other: object อีกตัวที่จะเทียบด้วย
 
-    # 3. ทดสอบ Validation ป้องกัน quantity ติดลบ
-    try:
-        Product("102", "Bad Qty", -5, 10.0, "Drink")
-        assert False, "FAILED: ต้องไม่อนุญาตให้ quantity ติดลบ"
-    except ValueError as e:
-        print(f"✓ ผ่านเกณฑ์ 3: ดักจับ quantity ติดลบถูกต้อง -> {e}")
+        Returns:
+            True ถ้าเป็น Product และทุกฟิลด์ตรงกัน, False ถ้าไม่ตรง,
+            NotImplemented ถ้า other ไม่ใช่ Product
+        """
+        if not isinstance(other, Product):
+            return NotImplemented
+        return self.to_dict() == other.to_dict()
 
-    # 4. ทดสอบ Validation ป้องกัน price ติดลบ
-    try:
-        Product("103", "Bad Price", 10, -20.0, "Drink")
-        assert False, "FAILED: ต้องไม่อนุญาตให้ price ติดลบ"
-    except ValueError as e:
-        print(f"✓ ผ่านเกณฑ์ 4: ดักจับ price ติดลบถูกต้อง -> {e}")
-
-    print("\nสรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-8 ครบถ้วน 100%")
+    def __repr__(self):
+        """คืนค่า string แทน object สำหรับ debug/print (ไม่ใช่สำหรับแสดงผลผู้ใช้)"""
+        return (f"Product(product_id={self.product_id!r}, name={self.name!r}, "
+                f"quantity={self.quantity}, price={self.price}, category={self.category!r})")

@@ -6,7 +6,14 @@ class DatabaseConnection:
     _instance = None
 
     def __init__(self, db_name="inventory.db"):
-        """Constructor: ป้องกันไม่ให้เรียกสร้างตรงๆ จากภายนอก"""
+        """Constructor: ป้องกันไม่ให้เรียกสร้างตรงๆ จากภายนอก (ใช้ getInstance() แทน)
+
+        Args:
+            db_name: ชื่อไฟล์/path ของ SQLite database ที่จะเชื่อมต่อ
+
+        Raises:
+            Exception: เมื่อมี instance อยู่แล้ว (ต้องเรียกผ่าน getInstance() เท่านั้น)
+        """
         if DatabaseConnection._instance is not None:
             raise Exception("คลาสนี้เป็น Singleton! ห้ามสร้างใหม่ ให้เรียกใช้ผ่าน getInstance() เท่านั้น")
         
@@ -18,38 +25,66 @@ class DatabaseConnection:
 
     @classmethod
     def getInstance(cls, db_name="inventory.db"):
-        """เมธอด static สำหรับดึง Connection เดียวทั้งระบบ"""
+        """เมธอด static สำหรับดึง Connection เดียวทั้งระบบ (สร้างครั้งแรกถ้ายังไม่มี)
+
+        Args:
+            db_name: ชื่อไฟล์/path ของ SQLite database (ใช้เฉพาะตอนสร้างครั้งแรก
+                เท่านั้น ถ้ามี instance อยู่แล้ว พารามิเตอร์นี้จะถูกละเว้น)
+
+        Returns:
+            DatabaseConnection instance เดิมเสมอไม่ว่าจะเรียกจากจุดไหนก็ตาม
+        """
         if cls._instance is None:
             cls._instance = DatabaseConnection(db_name)
         return cls._instance
 
     def _init_tables(self):
-        """อ่านไฟล์ schema.sql มารันสร้างตารางอัตโนมัติหากยังไม่มี"""
+        """อ่านไฟล์ schema.sql มารันสร้างตารางอัตโนมัติหากยังไม่มี
+
+        ใช้ path แบบ absolute อิงตำแหน่งไฟล์นี้เอง (__file__) แทน relative path
+        ตรงๆ เพราะโปรแกรมอาจถูกรันจาก working directory ใดก็ได้ ไม่ใช่แค่ root
+        ของ repo เสมอไป schema.sql อยู่โฟลเดอร์เดียวกับไฟล์นี้ (repo เป็นโครงสร้าง
+        แบบแบนราบ ไม่มี src/ แยก)
+        """
         cursor = self.connection.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
-        
-        if os.path.exists("schema.sql"):
-            with open("schema.sql", "r", encoding="utf-8") as f:
+
+        schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
+
+        if os.path.exists(schema_path):
+            with open(schema_path, "r", encoding="utf-8") as f:
                 schema_sql = f.read()
             cursor.executescript(schema_sql)
             self.connection.commit()
 
     def executeQuery(self, sql: str, params: tuple = ()):
-        """เมธอดสำหรับรัน SQL Query ทั่วไป"""
+        """รัน SQL query (SELECT/INSERT/UPDATE/DELETE) ผ่าน connection เดียวของระบบ
+
+        Args:
+            sql: คำสั่ง SQL ที่จะรัน ใช้ "?" แทนค่าพารามิเตอร์ (parameterized query
+                ป้องกัน SQL injection)
+            params: ค่าที่จะแทนที่ "?" ใน sql ตามลำดับ
+
+        Returns:
+            sqlite3.Cursor ที่ใช้เรียก .fetchone()/.fetchall() ต่อได้ทันที
+        """
         cursor = self.connection.cursor()
         cursor.execute(sql, params)
         return cursor
 
     def beginTransaction(self):
-        """เริ่ม Transaction (sqlite3 จัดการให้อัตโนมัติเมื่อ execute)"""
+        """เริ่ม transaction — ปัจจุบันเป็น no-op เพราะ sqlite3 module จัดการ
+        transaction ให้อัตโนมัติอยู่แล้วเมื่อเรียก executeQuery() (isolation_level
+        เริ่มต้นเปิด implicit transaction ให้ตอนมีคำสั่ง INSERT/UPDATE/DELETE)
+        """
         pass
 
     def commit(self):
-        """ยืนยันการเปลี่ยนแปลงข้อมูลลงฐานข้อมูล"""
+        """ยืนยันการเปลี่ยนแปลงข้อมูล (INSERT/UPDATE/DELETE) ที่ยังไม่ commit ลงฐานข้อมูลจริง"""
         self.connection.commit()
 
     def rollback(self):
-        """ยกเลิกการเปลี่ยนแปลงข้อมูลเมื่อเกิดข้อผิดพลาด"""
+        """ยกเลิกการเปลี่ยนแปลงข้อมูลที่ยังไม่ commit ทั้งหมด กลับไปเป็นสถานะก่อนหน้า"""
         self.connection.rollback()
 
 
