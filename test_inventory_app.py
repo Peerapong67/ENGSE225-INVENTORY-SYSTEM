@@ -51,7 +51,7 @@ def test_show_menu_prints_all_six_options(db, capsys):
 
 def test_add_new_product_saves_and_logs(monkeypatch, db, repo):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food", "", "5"])
+    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -61,21 +61,10 @@ def test_add_new_product_saves_and_logs(monkeypatch, db, repo):
     assert _count_logs(db, "ADD_PRODUCT") == 1
 
 
-def test_add_new_product_with_barcode_and_reorder_point(monkeypatch, db, repo):
-    """CR-01: ผู้ใช้กรอกบาร์โค้ดและ Reorder Point เองได้"""
-    app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food", "8850999327015", "3"])
-    app.addOrUpdateProduct()
-
-    saved = repo.findById("P1")
-    assert saved.barcode == "8850999327015"
-    assert saved.reorder_point == 3
-
-
 def test_add_or_update_existing_id_confirmed_updates(monkeypatch, db, repo):
     repo.upsertProduct(Product("P1", "Old Name", 5, 20.0, "Food"))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "", "5", "y"])
+    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "y"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -87,7 +76,7 @@ def test_add_or_update_existing_id_confirmed_updates(monkeypatch, db, repo):
 def test_add_or_update_existing_id_declined_does_not_change(monkeypatch, db, repo):
     repo.upsertProduct(Product("P1", "Old Name", 5, 20.0, "Food"))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "", "5", "n"])
+    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "n"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -98,7 +87,7 @@ def test_add_or_update_existing_id_declined_does_not_change(monkeypatch, db, rep
 def test_add_product_with_negative_quantity_input_shows_error_no_save(monkeypatch, db, repo):
     """Validator.inputNonNegativeInt วนถามใหม่จนกว่าจะไม่ติดลบ ผลลัพธ์สุดท้ายต้องไม่ติดลบเสมอ"""
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "Item", "-5", "10", "20.0", "Food", "", "5"])
+    _mock_inputs(monkeypatch, ["P1", "Item", "-5", "10", "20.0", "Food"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -227,10 +216,9 @@ def test_show_all_products_prints_every_item(monkeypatch, db, repo, capsys):
 # run() — ลูปเมนูหลักครบทุกทางเลือก ต้องไม่ error
 # ------------------------------------------------------------------
 
-def test_run_exits_cleanly_on_choice_7(monkeypatch, db, capsys):
-    """เมนู Exit ย้ายจากเลข 6 เป็นเลข 7 หลังเพิ่มเมนู Low Stock Alerts (CR-01)"""
+def test_run_exits_cleanly_on_choice_6(monkeypatch, db, capsys):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["7"])
+    _mock_inputs(monkeypatch, ["6"])
     app.run()  # ต้องไม่ throw exception ใดๆ
     out = capsys.readouterr().out
     assert "ขอบคุณที่ใช้บริการ" in out
@@ -238,38 +226,24 @@ def test_run_exits_cleanly_on_choice_7(monkeypatch, db, capsys):
 
 def test_run_invalid_choice_then_exit(monkeypatch, db, capsys):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["9", "7"])
+    _mock_inputs(monkeypatch, ["9", "6"])
     app.run()
     out = capsys.readouterr().out
     assert "ตัวเลือกไม่ถูกต้อง" in out
 
 
-def test_run_shows_low_stock_alerts_on_choice_6(monkeypatch, db, repo, capsys):
-    """CR-01: เมนู 6 ต้องเรียก Low Stock Alerts ได้โดยไม่ error"""
-    repo.upsertProduct(Product("P1", "Almost Out", 2, 5.0, "Food", reorder_point=5))
-
-    app = InventoryApp()
-    _mock_inputs(monkeypatch, ["6", "7"])  # 6: Low Stock Alerts, 7: Exit
-    app.run()
-
-    out = capsys.readouterr().out
-    assert "Almost Out" in out
-    assert "ต้องสั่งซื้อเพิ่ม" in out
-
-
 def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys):
-    """จำลองผู้ใช้เดินครบทุกเมนู 1-7 ในรอบเดียว (ตาม DoD: ใช้งานได้ครบทุกเมนูโดยไม่ error)"""
+    """จำลองผู้ใช้เดินครบทุกเมนู 1-6 ในรอบเดียว (ตาม DoD: ใช้งานได้ครบทุกเมนูโดยไม่ error)"""
     repo.upsertProduct(Product("P1", "Existing Item", 10, 5.0, "Food"))
 
     app = InventoryApp()
     _mock_inputs(monkeypatch, [
         "1", "",              # 1: Show all -> กด Enter กลับเมนู
-        "2", "P2", "New", "3", "9.0", "Food", "", "5",   # 2: Add new product (id ใหม่, ไม่ใส่ barcode, reorder_point=5)
+        "2", "P2", "New", "3", "9.0", "Food",   # 2: Add new product (id ใหม่ ไม่ต้อง confirm)
         "3", "P1", "2",       # 3: Cut stock
         "4",                  # 4: Report
         "5", "Existing", "",  # 5: Search -> กด Enter กลับเมนู
-        "6",                  # 6: Low Stock Alerts (CR-01)
-        "7",                  # 7: Exit
+        "6",                  # 6: Exit
     ])
     app.run()  # ต้องไม่ throw exception ใดๆ ตลอดทั้ง flow
 
