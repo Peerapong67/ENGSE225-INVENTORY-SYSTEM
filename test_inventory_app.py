@@ -54,7 +54,7 @@ def test_show_menu_prints_all_six_options(db, capsys):
 
 def test_add_new_product_saves_and_logs(monkeypatch, db, repo):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food", "", "5"])
+    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -64,21 +64,10 @@ def test_add_new_product_saves_and_logs(monkeypatch, db, repo):
     assert _count_logs(db, "ADD_PRODUCT") == 1
 
 
-def test_add_new_product_with_barcode_and_reorder_point(monkeypatch, db, repo):
-    """CR-01: ผู้ใช้กรอกบาร์โค้ดและ Reorder Point เองได้"""
-    app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Item", "10", "20.0", "Food", "8850999327015", "3"])
-    app.addOrUpdateProduct()
-
-    saved = repo.findById("P1")
-    assert saved.barcode == "8850999327015"
-    assert saved.reorder_point == 3
-
-
 def test_add_or_update_existing_id_confirmed_updates(monkeypatch, db, repo):
     repo.upsertProduct(Product("P1", "Old Name", 5, 20.0, "Food"))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "", "5", "y"])
+    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "y"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -90,7 +79,7 @@ def test_add_or_update_existing_id_confirmed_updates(monkeypatch, db, repo):
 def test_add_or_update_existing_id_declined_does_not_change(monkeypatch, db, repo):
     repo.upsertProduct(Product("P1", "Old Name", 5, 20.0, "Food"))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "", "5", "n"])
+    _mock_inputs(monkeypatch, ["P1", "New Name", "8", "25.0", "Drink", "n"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -100,7 +89,7 @@ def test_add_or_update_existing_id_declined_does_not_change(monkeypatch, db, rep
 
 def test_add_product_with_negative_quantity_input_shows_error_no_save(monkeypatch, db, repo):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "Item", "-5", "10", "20.0", "Food", "", "5"])
+    _mock_inputs(monkeypatch, ["P1", "Item", "-5", "10", "20.0", "Food"])
     app.addOrUpdateProduct()
 
     saved = repo.findById("P1")
@@ -240,7 +229,7 @@ def test_run_exits_cleanly_on_choice_7(monkeypatch, db, capsys):
 
 def test_run_invalid_choice_then_exit(monkeypatch, db, capsys):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["9", "7"])
+    _mock_inputs(monkeypatch, ["9", "6"])
     app.run()
     out = capsys.readouterr().out
     assert "ตัวเลือกไม่ถูกต้อง" in out

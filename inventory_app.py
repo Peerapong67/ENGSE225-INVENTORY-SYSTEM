@@ -25,8 +25,7 @@ class InventoryApp:
         print("3. ตัดสต็อก (Cut stock)")
         print("4. รายงานสรุป (Report)")
         print("5. ค้นหาสินค้า (Search)")
-        print("6. แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) [CR-01]")
-        print("7. ออกจากโปรแกรม (Exit)")
+        print("6. ออกจากโปรแกรม (Exit)")
 
     def run(self):
         """ลูปหลักของโปรแกรม: แสดงเมนู รับคำสั่ง แล้ว dispatch ไปยังเมธอดที่เกี่ยวข้อง
@@ -47,12 +46,10 @@ class InventoryApp:
             elif choice == "5":
                 self.searchProduct()
             elif choice == "6":
-                self.showLowStockAlerts()
-            elif choice == "7":
                 print("ขอบคุณที่ใช้บริการ")
                 break
             else:
-                print(">> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-7")
+                print(">> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-6")
 
     def addOrUpdateProduct(self):
         """เพิ่มสินค้าใหม่ หรือแก้ไขสินค้าที่มีอยู่แล้ว (upsert ผ่าน ProductRepository)
@@ -73,12 +70,9 @@ class InventoryApp:
         quantity = Validator.inputNonNegativeInt("จำนวนคงเหลือ: ")
         price = Validator.inputNonNegativeFloat("ราคาต่อหน่วย: ")
         category = input("หมวดหมู่: ").strip() or "Uncategorized"
-        barcode = input("บาร์โค้ด (เว้นว่างได้): ").strip()
-        reorder_point = Validator.inputNonNegativeInt("จุดสั่งซื้อขั้นต่ำ (Reorder Point) [ค่าเริ่มต้น 5]: ")
 
         try:
-            new_product = Product(product_id, name, quantity, price, category,
-                                   barcode=barcode, reorder_point=reorder_point)
+            new_product = Product(product_id, name, quantity, price, category)
         except ValueError as e:
             print(f"ข้อผิดพลาด: {e}")
             return
@@ -133,23 +127,6 @@ class InventoryApp:
         print(f"จำนวนหน่วยสินค้ารวม: {summary['total_units']}")
         print(f"มูลค่าสินค้ารวม: {summary['total_value']:.2f} บาท")
         print(f"จำนวนสินค้าใกล้หมด (<= {LOW_STOCK_THRESHOLD}): {summary['low_stock_items']}")
-
-    def showLowStockAlerts(self):
-        """CR-01: แสดงรายการสินค้าที่ถึงจุดสั่งซื้อขั้นต่ำแล้ว (Reorder Point Alert)"""
-        print("\n--- [6] แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) ---")
-        alerts = self.repo.getLowStockAlerts()
-        if not alerts:
-            print("ไม่มีสินค้าที่ถึงจุดสั่งซื้อขั้นต่ำในขณะนี้")
-            return
-
-        print(f"{'ID':<12} {'ชื่อสินค้า':<25} {'บาร์โค้ด':<16} {'คงเหลือ':<10} {'จุดสั่งซื้อ':<10}")
-        print("-" * 75)
-        for p in alerts:
-            print(f"{p.product_id:<12} {p.name:<25} {p.barcode or '-':<16} "
-                  f"{p.quantity:<10} {p.reorder_point:<10}")
-        print("-" * 75)
-        print(f"รวม {len(alerts)} รายการที่ต้องสั่งซื้อเพิ่ม")
-        self.logger.log("LOW_STOCK_ALERT_VIEWED", f"พบ {len(alerts)} รายการ")
 
     def displayPaginatedProducts(self, products: List[Product], title: str = "รายการสินค้า"):
         """ฟังก์ชันช่วยแสดงผลรายการสินค้าแบบแบ่งหน้า (Pagination) ไม่ให้ล้นหน้าจอ"""
