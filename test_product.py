@@ -59,6 +59,8 @@ def test_to_dict_returns_all_fields():
         "quantity": 5,
         "price": 9.5,
         "category": "Drink",
+        "barcode": "",
+        "reorder_point": 5,
     }
 
 
