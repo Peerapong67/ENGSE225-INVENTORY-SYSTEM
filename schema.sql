@@ -14,18 +14,13 @@ PRAGMA foreign_keys = ON;
 --    เพิ่ม created_at/updated_at เพื่อรองรับการทำรายงาน/ตรวจสอบย้อนหลัง
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS products (
-    product_id     TEXT PRIMARY KEY,
-    name           TEXT NOT NULL,
-    category       TEXT NOT NULL DEFAULT 'Uncategorized',
-    quantity       INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-    price          REAL NOT NULL DEFAULT 0 CHECK (price >= 0),
-    -- CR-01: Barcode & Reorder Point Alert
-    -- barcode/reorder_point มีค่า default เพื่อ Backward Compatibility
-    -- กับแถวเก่าที่มีอยู่ก่อน migrate (ไม่ทำให้ query เดิมพัง)
-    barcode        TEXT NOT NULL DEFAULT '',
-    reorder_point  INTEGER NOT NULL DEFAULT 5 CHECK (reorder_point >= 0),
-    created_at     TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at     TEXT NOT NULL DEFAULT (datetime('now'))
+    product_id  TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    category    TEXT NOT NULL DEFAULT 'Uncategorized',
+    quantity    INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+    price       REAL NOT NULL DEFAULT 0 CHECK (price >= 0),
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- ใช้เร่งความเร็วให้ ProductRepository.search(keyword) และ findAll() ที่มี filter/sort
