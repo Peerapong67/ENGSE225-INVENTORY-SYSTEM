@@ -30,15 +30,19 @@ class ProductRepository:
         """
         self.db.executeQuery(
             """
-            INSERT INTO products (product_id, name, category, quantity, price)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO products
+                (product_id, name, category, quantity, price, barcode, reorder_point)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(product_id) DO UPDATE SET
                 name = excluded.name,
                 category = excluded.category,
                 quantity = excluded.quantity,
-                price = excluded.price
+                price = excluded.price,
+                barcode = excluded.barcode,
+                reorder_point = excluded.reorder_point
             """,
-            (p.product_id, p.name, p.category, p.quantity, p.price),
+            (p.product_id, p.name, p.category, p.quantity, p.price,
+             p.barcode, p.reorder_point),
         )
         self.db.commit()
 
@@ -140,3 +144,19 @@ class ProductRepository:
             "total_value": row["total_value"],
             "low_stock_items": row["low_stock_items"] or 0,
         }
+
+    def getLowStockAlerts(self) -> List[Product]:
+        """CR-01: ดึงรายการสินค้าที่ถึงจุดต้องสั่งซื้อเพิ่มแล้ว (Reorder Point Alert)
+
+        ใช้เงื่อนไข quantity <= reorder_point ต่อสินค้าแต่ละชิ้น (ต่างจาก
+        LOW_STOCK_THRESHOLD ตายตัวที่ getSummary() ใช้ — ที่นี่แต่ละสินค้ามี
+        จุดแจ้งเตือนของตัวเองตามที่กำหนดไว้)
+
+        Returns:
+            list ของ Product ที่ quantity <= reorder_point เรียงตามชื่อ
+            (list ว่างถ้าไม่มีสินค้าใกล้หมดเลย)
+        """
+        cursor = self.db.executeQuery(
+            "SELECT * FROM products WHERE quantity <= reorder_point ORDER BY name"
+        )
+        return [Product.from_row(row) for row in cursor.fetchall()]
