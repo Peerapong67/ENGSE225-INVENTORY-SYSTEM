@@ -156,3 +156,42 @@ def test_get_summary_counts_low_stock_items(repo):
 
     summary = repo.getSummary()
     assert summary["low_stock_items"] == 2  # P1 กับ P2 (<=5), P3 ไม่นับ
+
+
+# ============================================================
+# CR-01: Barcode & Reorder Point Alert (SCRUM-CR01)
+# ============================================================
+
+def test_upsert_product_persists_barcode_and_reorder_point(repo):
+    p = Product("P1", "Scanned Item", quantity=10, price=6.0,
+                barcode="8850999327015", reorder_point=8)
+    repo.upsertProduct(p)
+
+    found = repo.findById("P1")
+    assert found.barcode == "8850999327015"
+    assert found.reorder_point == 8
+
+
+def test_get_low_stock_alerts_returns_products_at_or_below_reorder_point(repo):
+    repo.upsertProduct(Product("P1", "Low Item", quantity=3, price=1.0, reorder_point=5))
+    repo.upsertProduct(Product("P2", "Boundary Item", quantity=5, price=1.0, reorder_point=5))
+    repo.upsertProduct(Product("P3", "Normal Item", quantity=6, price=1.0, reorder_point=5))
+
+    alerts = repo.getLowStockAlerts()
+    alert_ids = [p.product_id for p in alerts]
+
+    assert "P1" in alert_ids   # quantity 3 < reorder_point 5
+    assert "P2" in alert_ids   # quantity == reorder_point (boundary, ต้องนับ)
+    assert "P3" not in alert_ids  # quantity 6 > reorder_point 5
+    assert len(alerts) == 2
+
+
+def test_get_low_stock_alerts_returns_empty_when_no_products_low(repo):
+    repo.upsertProduct(Product("P1", "Plenty Item", quantity=100, price=1.0, reorder_point=5))
+    alerts = repo.getLowStockAlerts()
+    assert alerts == []
+
+
+def test_get_low_stock_alerts_returns_empty_when_no_products_at_all(repo):
+    alerts = repo.getLowStockAlerts()
+    assert alerts == []
