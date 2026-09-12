@@ -17,10 +17,13 @@ InventoryApp   ─┬─ uses ─▶ Validator          (ตรวจสอบ i
 
 ProductRepository ─┬─ creates and manages ─▶ Product            (entity)
                     └─ uses (Singleton)     ─▶ DatabaseConnection (เชื่อมต่อ SQLite เดียวทั้งระบบ)
+
+CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสระจาก UI/Repository — Static Method, ไม่มี State)
 ```
 
 - **Repository Pattern** — `ProductRepository` เป็นจุดเดียวที่คุยกับฐานข้อมูล ทำให้ `InventoryApp` ไม่ผูกติดกับวิธีเก็บข้อมูล และทดสอบแยกส่วนได้ง่าย
 - **Singleton Pattern** — `DatabaseConnection` และ `Logger` มี instance เดียวทั้งโปรแกรม ป้องกันการเปิด connection ซ้ำซ้อน
+- **Single Responsibility (CsvReportExporter)** — แยกการ Export CSV ออกจาก UI/Repository เดิมโดยสิ้นเชิง ออกแบบเป็น Static Method ไร้ State ทดสอบแยกได้อิสระ
 
 ## ฟีเจอร์หลัก
 
@@ -31,7 +34,8 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 | ตัดสต็อก | ลดจำนวนสินค้า พร้อมเตือนเมื่อสต็อกเหลือน้อย (≤ 5 ชิ้น) และป้องกันไม่ให้สต็อกติดลบ |
 | รายงานสรุป | จำนวนชนิดสินค้า, จำนวนหน่วยรวม, มูลค่ารวม, จำนวนสินค้าใกล้หมด |
 | ค้นหาสินค้า | ค้นหาแบบ partial match จากชื่อหรือหมวดหมู่ พร้อมแบ่งหน้า |
-| **แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts)** | **[CR-01]** ดึงรายชื่อสินค้าที่ `quantity <= reorder_point` เพื่อแจ้งเตือนให้สั่งซื้อเพิ่มโดยอัตโนมัติ |
+| แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) | **[CR-01]** ดึงรายชื่อสินค้าที่ `quantity <= reorder_point` เพื่อแจ้งเตือนให้สั่งซื้อเพิ่มโดยอัตโนมัติ |
+| **Export รายงานสินค้าใกล้หมดเป็น CSV** | **[CR-02]** ส่งออกรายชื่อสินค้าใกล้หมดเป็นไฟล์ `.csv` (Header: ProductID, ProductName, Barcode, Quantity, ReorderPoint, Price) สำหรับใช้สั่งซื้อ/ส่งต่อทีมจัดซื้อ |
 
 ทุก action ที่แก้ไขข้อมูล (เพิ่ม/แก้/ตัดสต็อก/ค้นหา) จะถูกบันทึกลงตาราง `action_logs` โดยอัตโนมัติผ่าน `Logger`
 
@@ -42,6 +46,7 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 ├── inventory_app.py          # แอปหลัก (เมนู interactive)
 ├── product.py                 # Entity: Product (มี barcode, reorder_point, is_low_stock())
 ├── product_repository.py      # Repository: เข้าถึงข้อมูลสินค้า (มี getLowStockAlerts())
+├── csv_report_exporter.py     # [CR-02] Export สินค้าสต็อกต่ำเป็นไฟล์ CSV (Static Method, แยกอิสระ)
 ├── database_connection.py     # Singleton: เชื่อมต่อ SQLite
 ├── logger.py                  # Singleton: บันทึก action log
 ├── validator.py                # ตรวจสอบ input จากผู้ใช้
@@ -49,7 +54,7 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 ├── seed_data.sql                # ข้อมูลตั้งต้นสำหรับทดสอบ/demo
 ├── app_v1.py                   # เวอร์ชันต้นแบบเดิม (เก็บไว้อ้างอิง ไม่ใช้งานจริงแล้ว)
 ├── conftest.py                  # pytest fixtures ส่วนกลาง (reset singleton, isolated db)
-├── test_*.py                    # unit test แยกตามคลาส
+├── test_*.py                    # unit test แยกตามคลาส (แต่ละไฟล์รันเป็น Terminal Demo ได้ด้วย python test_*.py)
 ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
 ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
 ├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
@@ -77,10 +82,16 @@ sqlite3 inventory.db < seed_data.sql
 
 ## การรันเทสต์
 
-โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (111 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
+โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (113 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
 
 ```bash
 python -m pytest -v
+```
+
+แต่ละไฟล์ `test_*.py` ยังรันแบบ Terminal Demo ได้โดยตรง (แสดงผลตรวจสอบ Definition of Done แบบอ่านง่ายเป็นภาษาไทย) เช่น
+
+```bash
+python test_csv_report_exporter.py
 ```
 
 CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติทุกครั้งที่ push หรือเปิด/อัปเดต Pull Request เข้า branch `main` และ `develop` บน Python 3.10, 3.11 และ 3.12
@@ -105,3 +116,4 @@ CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติ�
 | CR ID | ชื่อ | สถานะ | เอกสารประกอบ |
 |---|---|---|---|
 | CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./Change_Request_And_Impact_Analysis_Report.md) |
+| CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | 🟡 พัฒนาเสร็จ รอ Merge เข้า develop | `csv_report_exporter.py`, `test_csv_report_exporter.py` |
