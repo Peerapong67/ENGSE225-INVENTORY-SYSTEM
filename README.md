@@ -27,10 +27,11 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 | เมนู | คำอธิบาย |
 |---|---|
 | แสดงสินค้าทั้งหมด | แสดงรายการสินค้าทั้งหมด พร้อมแบ่งหน้า (pagination) ครั้งละ 10 รายการ |
-| เพิ่ม/แก้ไขสินค้า | Upsert สินค้าตาม product_id พร้อมให้ยืนยันก่อนเขียนทับข้อมูลเดิม |
+| เพิ่ม/แก้ไขสินค้า | Upsert สินค้าตาม product_id พร้อมให้ยืนยันก่อนเขียนทับข้อมูลเดิม รองรับกรอก Barcode และ Reorder Point |
 | ตัดสต็อก | ลดจำนวนสินค้า พร้อมเตือนเมื่อสต็อกเหลือน้อย (≤ 5 ชิ้น) และป้องกันไม่ให้สต็อกติดลบ |
 | รายงานสรุป | จำนวนชนิดสินค้า, จำนวนหน่วยรวม, มูลค่ารวม, จำนวนสินค้าใกล้หมด |
 | ค้นหาสินค้า | ค้นหาแบบ partial match จากชื่อหรือหมวดหมู่ พร้อมแบ่งหน้า |
+| **แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts)** | **[CR-01]** ดึงรายชื่อสินค้าที่ `quantity <= reorder_point` เพื่อแจ้งเตือนให้สั่งซื้อเพิ่มโดยอัตโนมัติ |
 
 ทุก action ที่แก้ไขข้อมูล (เพิ่ม/แก้/ตัดสต็อก/ค้นหา) จะถูกบันทึกลงตาราง `action_logs` โดยอัตโนมัติผ่าน `Logger`
 
@@ -39,8 +40,8 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 ```
 .
 ├── inventory_app.py          # แอปหลัก (เมนู interactive)
-├── product.py                 # Entity: Product
-├── product_repository.py      # Repository: เข้าถึงข้อมูลสินค้า
+├── product.py                 # Entity: Product (มี barcode, reorder_point, is_low_stock())
+├── product_repository.py      # Repository: เข้าถึงข้อมูลสินค้า (มี getLowStockAlerts())
 ├── database_connection.py     # Singleton: เชื่อมต่อ SQLite
 ├── logger.py                  # Singleton: บันทึก action log
 ├── validator.py                # ตรวจสอบ input จากผู้ใช้
@@ -52,6 +53,7 @@ ProductRepository ─┬─ creates and manages ─▶ Product            (entit
 ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
 ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
 ├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
+├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
 └── .github/workflows/tests.yml   # CI: รัน pytest อัตโนมัติทุก push/PR เข้า main และ develop
 ```
 
@@ -75,7 +77,7 @@ sqlite3 inventory.db < seed_data.sql
 
 ## การรันเทสต์
 
-โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (98 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
+โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (111 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
 
 ```bash
 python -m pytest -v
@@ -94,6 +96,12 @@ CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติ�
 
 ใช้ SQLite มี 3 ตารางหลัก (นิยามใน [`schema.sql`](./schema.sql)):
 
-- **products** — ข้อมูลสินค้า (product_id, name, category, quantity, price)
+- **products** — ข้อมูลสินค้า (product_id, name, category, quantity, price, barcode, reorder_point)
 - **stock_movements** — ประวัติการเปลี่ยนแปลงสต็อกทุกครั้ง
 - **action_logs** — ประวัติ action สำคัญของระบบ (เพิ่ม/แก้/ตัดสต็อก/ค้นหา)
+
+## Change Request Log
+
+| CR ID | ชื่อ | สถานะ | เอกสารประกอบ |
+|---|---|---|---|
+| CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./Change_Request_And_Impact_Analysis_Report.md) |
