@@ -31,7 +31,7 @@ CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสร�
 |---|---|
 | แสดงสินค้าทั้งหมด | แสดงรายการสินค้าทั้งหมด พร้อมแบ่งหน้า (pagination) ครั้งละ 10 รายการ |
 | เพิ่ม/แก้ไขสินค้า | Upsert สินค้าตาม product_id พร้อมให้ยืนยันก่อนเขียนทับข้อมูลเดิม รองรับกรอก Barcode และ Reorder Point |
-| ตัดสต็อก | ลดจำนวนสินค้า พร้อมเตือนเมื่อสต็อกเหลือน้อย (≤ 5 ชิ้น) และป้องกันไม่ให้สต็อกติดลบ |
+| ตัดสต็อก | ลดจำนวนสินค้า พร้อมเตือนเมื่อสต็อกเหลือน้อย (≤ Reorder Point ของสินค้าชิ้นนั้น) และป้องกันไม่ให้สต็อกติดลบ |
 | รายงานสรุป | จำนวนชนิดสินค้า, จำนวนหน่วยรวม, มูลค่ารวม, จำนวนสินค้าใกล้หมด |
 | ค้นหาสินค้า | ค้นหาแบบ partial match จากชื่อหรือหมวดหมู่ พร้อมแบ่งหน้า |
 | แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) | **[CR-01]** ดึงรายชื่อสินค้าที่ `quantity <= reorder_point` เพื่อแจ้งเตือนให้สั่งซื้อเพิ่มโดยอัตโนมัติ |
@@ -82,7 +82,7 @@ sqlite3 inventory.db < seed_data.sql
 
 ## การรันเทสต์
 
-โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (113 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
+โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (119 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
 
 ```bash
 python -m pytest -v
@@ -117,3 +117,4 @@ CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติ�
 |---|---|---|---|
 | CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./Change_Request_And_Impact_Analysis_Report.md) |
 | CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | 🟡 พัฒนาเสร็จ รอ Merge เข้า develop | `csv_report_exporter.py`, `test_csv_report_exporter.py` |
+| BUG-102 | Barcode ซ้ำ + Low Stock Alert อิง threshold ผิด + เมนู CSV Export ยังไม่ถูกเชื่อมเข้า UI | ✅ แก้ไขแล้วบน branch นี้ | `schema.sql`, `inventory_app.py`, `test_inventory_app.py` |

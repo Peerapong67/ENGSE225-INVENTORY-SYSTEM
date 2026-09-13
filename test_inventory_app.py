@@ -150,20 +150,35 @@ def test_cut_stock_product_not_found_shows_error(monkeypatch, db, repo, capsys):
     assert "ไม่พบสินค้า" in out
 
 
-def test_cut_stock_triggers_low_stock_warning(monkeypatch, db, repo, capsys):
-    repo.upsertProduct(Product("P1", "Item", 6, 5.0, "Food"))
+def test_cut_stock_triggers_low_stock_warning_using_products_own_reorder_point(monkeypatch, db, repo, capsys):
+    """BUG-102 regression: reorder_point=8 (ไม่ใช่ 5) ตั้งใจให้ต่างจาก
+    LOW_STOCK_THRESHOLD เดิมที่เคยฝังไว้ใน cutStock() เพื่อพิสูจน์ว่า
+    คำเตือนอิงตาม reorder_point ของสินค้าชิ้นนั้นจริง ไม่ใช่ค่าคงที่ตายตัว"""
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0, "Food", reorder_point=8))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "2"])
+    _mock_inputs(monkeypatch, ["P1", "3"])  # เหลือ 7 ชิ้น <= reorder_point (8)
     app.cutStock()
 
     out = capsys.readouterr().out
     assert "คำเตือน" in out
 
 
-def test_cut_stock_no_warning_when_stock_stays_at_or_above_threshold(monkeypatch, db, repo, capsys):
-    repo.upsertProduct(Product("P1", "Item", 10, 5.0, "Food"))
+def test_cut_stock_triggers_low_stock_warning_at_boundary_equal_to_reorder_point(monkeypatch, db, repo, capsys):
+    """TC-CR01-02 (Boundary Case): quantity เท่ากับ reorder_point พอดี
+    ต้องแจ้งเตือนด้วย (is_low_stock() ใช้ <= ไม่ใช่ <)"""
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0, "Food", reorder_point=6))
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["P1", "5"])
+    _mock_inputs(monkeypatch, ["P1", "4"])  # เหลือ 6 ชิ้น == reorder_point (6)
+    app.cutStock()
+
+    out = capsys.readouterr().out
+    assert "คำเตือน" in out
+
+
+def test_cut_stock_no_warning_when_stock_stays_above_reorder_point(monkeypatch, db, repo, capsys):
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0, "Food", reorder_point=3))
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["P1", "2"])  # เหลือ 8 ชิ้น > reorder_point (3)
     app.cutStock()
 
     out = capsys.readouterr().out
@@ -229,10 +244,10 @@ def test_show_all_products_prints_every_item(monkeypatch, db, repo, capsys):
 # run()
 # ------------------------------------------------------------
 
-def test_run_exits_cleanly_on_choice_7(monkeypatch, db, capsys):
-    """เมนู Exit คือเลข 7 เมื่อมีเมนู Low Stock Alerts (CR-01)"""
+def test_run_exits_cleanly_on_choice_8(monkeypatch, db, capsys):
+    """เมนู Exit คือเลข 8 เมื่อมีเมนู Low Stock Alerts (CR-01) และ CSV Export (CR-02)"""
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["7"])
+    _mock_inputs(monkeypatch, ["8"])
     app.run()
     out = capsys.readouterr().out
     assert "ขอบคุณที่ใช้บริการ" in out
@@ -240,7 +255,7 @@ def test_run_exits_cleanly_on_choice_7(monkeypatch, db, capsys):
 
 def test_run_invalid_choice_then_exit(monkeypatch, db, capsys):
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["9", "7"])
+    _mock_inputs(monkeypatch, ["9", "8"])
     app.run()
     out = capsys.readouterr().out
     assert "ตัวเลือกไม่ถูกต้อง" in out
@@ -250,15 +265,30 @@ def test_run_shows_low_stock_alerts_on_choice_6(monkeypatch, db, repo, capsys):
     repo.upsertProduct(Product("P1", "Almost Out", 2, 5.0, "Food", reorder_point=5))
 
     app = InventoryApp()
-    _mock_inputs(monkeypatch, ["6", "", "7"])  # 6 -> Enter กลับเมนู -> 7 ออก
+    _mock_inputs(monkeypatch, ["6", "", "8"])  # 6 -> Enter กลับเมนู -> 8 ออก
     app.run()
 
     out = capsys.readouterr().out
     assert "Almost Out" in out or "พบ" in out
 
 
-def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys):
+def test_run_exports_low_stock_csv_on_choice_7(monkeypatch, db, repo, capsys, tmp_path):
+    """CR-02: เมนู 7 ต้องเรียก CsvReportExporter ผ่าน exportLowStockCsv() ได้จริง"""
+    repo.upsertProduct(Product("P1", "Almost Out", 2, 5.0, "Food", reorder_point=5))
+    output_file = str(tmp_path / "low_stock.csv")
+
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["7", output_file, "8"])  # 7 -> ระบุชื่อไฟล์ -> 8 ออก
+    app.run()
+
+    out = capsys.readouterr().out
+    assert "Export สำเร็จ" in out
+    assert os.path.exists(output_file)
+
+
+def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys, tmp_path):
     repo.upsertProduct(Product("P1", "Existing Item", 10, 5.0, "Food"))
+    output_file = str(tmp_path / "low_stock.csv")
 
     app = InventoryApp()
     _mock_inputs(monkeypatch, [
@@ -268,7 +298,8 @@ def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys):
         "4",                                                  # 4: Report
         "5", "Existing", "",                                  # 5: Search -> Enter
         "6", "",                                              # 6: Low stock alert -> Enter
-        "7",                                                  # 7: Exit
+        "7", output_file,                                     # 7: Export CSV -> ระบุชื่อไฟล์
+        "8",                                                  # 8: Exit
     ])
     app.run()
 
@@ -277,6 +308,7 @@ def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys):
     assert _count_logs(db, "ADD_PRODUCT") == 1
     assert _count_logs(db, "CUT_STOCK") == 1
     assert _count_logs(db, "SEARCH_PRODUCT") == 1
+    assert _count_logs(db, "EXPORT_LOW_STOCK_CSV") == 1
 
 
 def test_add_product_with_duplicate_barcode_shows_error_no_crash(monkeypatch, db, repo, capsys):
@@ -307,7 +339,7 @@ def _run_with_mock_inputs(fn, inputs):
         try:
             return next(it)
         except StopIteration:
-            return "7"  # คืนค่า Exit (7) เสมอหาก input หมด ป้องกัน Infinite Loop
+            return "8"  # คืนค่า Exit (8) เสมอหาก input หมด ป้องกัน Infinite Loop
 
     builtins.input = safe_mock_input
     sys.stdout = captured
@@ -358,8 +390,8 @@ def _run_terminal_demo():
             "method": "CLI Menu Structure Verification",
             "data": "app.showMenu()",
             "action": lambda: _capture_output(lambda: app.showMenu()),
-            "verify": lambda out: all(x in out for x in ["1.", "2.", "3.", "4.", "5.", "6."]),
-            "expected": "แสดงเมนูหลักครบถ้วนทั้ง 6 ตัวเลือกพื้นฐาน (รวม Exit ทางออก)"
+            "verify": lambda out: all(x in out for x in ["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8."]),
+            "expected": "แสดงเมนูหลักครบถ้วนทั้ง 7 ฟีเจอร์ (รวม CR-01/CR-02) บวก Exit ทางออก"
         },
         {
             "id": "TC-APP-02",
@@ -406,8 +438,8 @@ def _run_terminal_demo():
         {
             "id": "TC-APP-07",
             "method": "Full End-to-End User Simulation Flow",
-            "data": "เดินเมนู Show All -> Add -> Cut -> Report -> Search -> Low Stock -> Exit",
-            # เดินเมนู 1 ถึง 7 ตามลำดับของเมนูจริง
+            "data": "เดินเมนู Show All -> Add -> Cut -> Report -> Search -> Low Stock -> Export CSV -> Exit",
+            # เดินเมนู 1 ถึง 8 ตามลำดับของเมนูจริง
             "action": lambda: _run_with_mock_inputs(app.run, [
                 "1", "",                                          # 1: Show all -> Enter
                 "2", "P102", "Milk", "10", "12.0", "Drink", "", "5",  # 2: Add
@@ -415,7 +447,8 @@ def _run_terminal_demo():
                 "4",                                              # 4: Report
                 "5", "Milk", "",                                  # 5: Search -> Enter
                 "6", "",                                          # 6: Low Stock Alert -> Enter
-                "7"                                               # 7: Exit
+                "7", "terminal_demo_low_stock.csv",               # 7: Export CSV -> ระบุชื่อไฟล์
+                "8"                                               # 8: Exit
             ]),
             "verify": lambda out: "ขอบคุณที่ใช้บริการ" in out,
             "expected": "ทำงานผ่าน CLI ตลอดทั้งรอบครบทุกคำสั่งโดยไม่เกิด Exception หรือแอปแครช"
@@ -456,6 +489,11 @@ def _run_terminal_demo():
     if os.path.exists(test_db_name):
         try:
             os.remove(test_db_name)
+        except PermissionError:
+            pass
+    if os.path.exists("terminal_demo_low_stock.csv"):
+        try:
+            os.remove("terminal_demo_low_stock.csv")
         except PermissionError:
             pass
 

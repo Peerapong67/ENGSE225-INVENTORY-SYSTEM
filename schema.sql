@@ -32,6 +32,14 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE INDEX IF NOT EXISTS idx_products_name     ON products(name);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 
+-- BUG-102 Fix (Defense in Depth): กันบาร์โค้ดซ้ำระดับฐานข้อมูล เสริมจากการเช็ค
+-- ใน ProductRepository.upsertProduct() ฝั่งแอปพลิเคชัน (เช่นเดียวกับที่ quantity/price
+-- มี CHECK constraint เป็นชั้นป้องกันสุดท้ายอยู่แล้วด้านบน)
+-- ใช้ Partial UNIQUE INDEX (WHERE barcode != '') ไม่ใช่ UNIQUE ตรงคอลัมน์ตรงๆ
+-- เพราะสินค้าที่ "ยังไม่มีบาร์โค้ด" (barcode = '') ต้องมีได้หลายชิ้นพร้อมกัน
+CREATE UNIQUE INDEX IF NOT EXISTS idx_products_barcode_unique
+    ON products(barcode) WHERE barcode != '';
+
 -- SQLite ไม่มี ON UPDATE CURRENT_TIMESTAMP แบบ MySQL ต้องใช้ trigger แทน
 CREATE TRIGGER IF NOT EXISTS trg_products_updated_at
 AFTER UPDATE ON products
