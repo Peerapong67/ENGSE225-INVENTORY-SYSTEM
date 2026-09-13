@@ -279,6 +279,19 @@ def test_run_full_menu_flow_all_options_no_error(monkeypatch, db, repo, capsys):
     assert _count_logs(db, "SEARCH_PRODUCT") == 1
 
 
+def test_add_product_with_duplicate_barcode_shows_error_no_crash(monkeypatch, db, repo, capsys):
+    """BUG-102: กรอก Barcode ซ้ำกับสินค้าอื่น ต้องขึ้น error สวยงาม ไม่ Crash โปรแกรม"""
+    repo.upsertProduct(Product("101", "Sugar", 10, 20.0, barcode="8850001", reorder_point=5))
+
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["102", "Salt", "10", "15.0", "Food", "8850001", "5"])
+    app.addOrUpdateProduct()  # ต้องไม่ throw exception ออกมาให้โปรแกรมพัง
+
+    out = capsys.readouterr().out
+    assert "ข้อผิดพลาด" in out
+    assert repo.findById("102") is None  # ต้องไม่ถูกบันทึกลงฐานข้อมูล
+
+
 # ============================================================
 # ส่วนแสดงผล Terminal รายละเอียดเชิงลึกเมื่อรัน python test_inventory_app.py
 # ============================================================
@@ -406,6 +419,14 @@ def _run_terminal_demo():
             ]),
             "verify": lambda out: "ขอบคุณที่ใช้บริการ" in out,
             "expected": "ทำงานผ่าน CLI ตลอดทั้งรอบครบทุกคำสั่งโดยไม่เกิด Exception หรือแอปแครช"
+        },
+        {
+            "id": "TC-APP-08",
+            "method": "BUG-102: Duplicate Barcode Rejection at UI Layer (Bug Fix ของ CR-01)",
+            "data": "เพิ่ม P201 (barcode='8850099') สำเร็จก่อน แล้วลองเพิ่ม P202 ด้วย barcode='8850099' ซ้ำ",
+            "action": lambda: _test_duplicate_barcode_ui(app, repo),
+            "verify": lambda out: "ข้อผิดพลาด" in out and repo.findById("P202") is None,
+            "expected": "ขึ้นข้อความ 'ข้อผิดพลาด' แจ้ง Barcode ซ้ำ ไม่ Crash และไม่สร้างสินค้า P202 ขึ้นมา"
         }
     ]
 
@@ -437,6 +458,15 @@ def _run_terminal_demo():
             os.remove(test_db_name)
         except PermissionError:
             pass
+
+
+def _test_duplicate_barcode_ui(app, repo):
+    """เพิ่มสินค้า P201 ก่อน แล้วลองเพิ่ม P202 ด้วย barcode ซ้ำกัน คืนค่าข้อความ output ของครั้งที่สอง"""
+    _run_with_mock_inputs(app.addOrUpdateProduct,
+                           ["P201", "Original", "5", "10.0", "Food", "8850099", "5"])
+    out_duplicate = _run_with_mock_inputs(app.addOrUpdateProduct,
+                                           ["P202", "Duplicate", "5", "10.0", "Food", "8850099", "5"])
+    return out_duplicate
 
 
 if __name__ == "__main__":

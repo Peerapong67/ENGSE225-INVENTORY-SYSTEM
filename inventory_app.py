@@ -89,7 +89,12 @@ class InventoryApp:
                 print("ยกเลิกการบันทึก")
                 return
 
-        self.repo.upsertProduct(new_product)
+        try:
+            self.repo.upsertProduct(new_product)
+        except ValueError as e:
+            print(f"ข้อผิดพลาด: {e}")
+            return
+
         action = "UPDATE_PRODUCT" if existing is not None else "ADD_PRODUCT"
         self.logger.log(action, f"product_id={product_id}")
         print("บันทึกสำเร็จ")

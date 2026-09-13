@@ -25,9 +25,28 @@ class ProductRepository:
         """บันทึกสินค้า: insert ใหม่ถ้ายังไม่มี product_id นี้ หรือ update ทับถ้ามีอยู่แล้ว
         (ON CONFLICT DO UPDATE ตาม schema — ป้องกันไม่ให้เกิดแถวซ้ำ id เดิม)
 
+        BUG-102 Fix (Bug Fix ของ CR-01): ตรวจสอบ Barcode ซ้ำก่อนบันทึกเสมอ
+        พบระหว่าง Bug Bashing Case A — เดิมระบบยอมให้สินค้าคนละชิ้นมี Barcode
+        ซ้ำกันได้ ซึ่งจะทำให้เครื่องแคชเชียร์สแกนแล้วสับสนว่าจะตัดสต็อกชิ้นไหน
+        (ยกเว้น Barcode ว่าง "" ซึ่งถือเป็น "ยังไม่มี Barcode" อนุญาตให้ซ้ำได้)
+
         Args:
             p: Product object ที่จะบันทึก
+
+        Raises:
+            ValueError: ถ้า barcode ไม่ว่าง และซ้ำกับสินค้าชิ้นอื่นที่ product_id ต่างกัน
         """
+        if p.barcode:
+            existing = self.db.executeQuery(
+                "SELECT product_id FROM products WHERE barcode = ? AND product_id != ?",
+                (p.barcode, p.product_id),
+            ).fetchone()
+            if existing:
+                raise ValueError(
+                    f"Barcode '{p.barcode}' ถูกใช้แล้วโดยสินค้า '{existing['product_id']}' "
+                    f"กรุณาใช้ Barcode อื่น"
+                )
+
         self.db.executeQuery(
             """
             INSERT INTO products
