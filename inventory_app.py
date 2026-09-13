@@ -5,6 +5,7 @@ from product import Product
 from product_repository import ProductRepository, LOW_STOCK_THRESHOLD
 from validator import Validator
 from logger import Logger
+from csv_report_exporter import CsvReportExporter
 
 class InventoryApp:
     def __init__(self):
@@ -26,11 +27,12 @@ class InventoryApp:
         print("4. รายงานสรุป (Report)")
         print("5. ค้นหาสินค้า (Search)")
         print("6. แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) [CR-01]")
-        print("7. ออกจากโปรแกรม (Exit)")
+        print("7. Export รายงานสินค้าใกล้หมดเป็น CSV (Export Low Stock CSV) [CR-02]")
+        print("8. ออกจากโปรแกรม (Exit)")
 
     def run(self):
         """ลูปหลักของโปรแกรม: แสดงเมนู รับคำสั่ง แล้ว dispatch ไปยังเมธอดที่เกี่ยวข้อง
-        วนซ้ำจนกว่าผู้ใช้จะเลือกออก (choice "6")
+        วนซ้ำจนกว่าผู้ใช้จะเลือกออก (choice "8")
         """
         while True:
             self.showMenu()
@@ -49,10 +51,12 @@ class InventoryApp:
             elif choice == "6":
                 self.showLowStockAlerts()
             elif choice == "7":
+                self.exportLowStockCsv()
+            elif choice == "8":
                 print("ขอบคุณที่ใช้บริการ")
                 break
             else:
-                print(">> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-7")
+                print(">> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-8")
 
     def addOrUpdateProduct(self):
         """เพิ่มสินค้าใหม่ หรือแก้ไขสินค้าที่มีอยู่แล้ว (upsert ผ่าน ProductRepository)
@@ -89,7 +93,12 @@ class InventoryApp:
                 print("ยกเลิกการบันทึก")
                 return
 
-        self.repo.upsertProduct(new_product)
+        try:
+            self.repo.upsertProduct(new_product)
+        except ValueError as e:
+            print(f"ข้อผิดพลาด: {e}")
+            return
+
         action = "UPDATE_PRODUCT" if existing is not None else "ADD_PRODUCT"
         self.logger.log(action, f"product_id={product_id}")
         print("บันทึกสำเร็จ")
@@ -122,8 +131,9 @@ class InventoryApp:
         print("ตัดสต็อกสำเร็จ")
 
         updated = self.repo.findById(product_id)
-        if updated.quantity < LOW_STOCK_THRESHOLD:
-            print(f"!!! คำเตือน: สินค้า '{updated.name}' เหลือสต็อกต่ำ ({updated.quantity} ชิ้น) !!!")
+        if updated.is_low_stock():
+            print(f"!!! คำเตือน: สินค้า '{updated.name}' เหลือสต็อกต่ำ "
+                  f"({updated.quantity} ชิ้น, จุดสั่งซื้อ {updated.reorder_point}) !!!")
 
     def showReport(self):
         """แสดงรายงานสรุปคลังสินค้าทั้งหมด (จำนวนชนิด, หน่วยรวม, มูลค่ารวม, สินค้าใกล้หมด)"""
@@ -150,6 +160,30 @@ class InventoryApp:
         print("-" * 75)
         print(f"รวม {len(alerts)} รายการที่ต้องสั่งซื้อเพิ่ม")
         self.logger.log("LOW_STOCK_ALERT_VIEWED", f"พบ {len(alerts)} รายการ")
+
+    def exportLowStockCsv(self):
+        """CR-02: ส่งออกรายการสินค้าใกล้หมดเป็นไฟล์ .csv
+
+        ดึงสินค้าทั้งหมดจาก Repository แล้วส่งต่อให้ CsvReportExporter กรองเฉพาะ
+        ที่ is_low_stock() เป็น True เอง (CsvReportExporter ไม่รู้จัก Repository
+        เลย ตาม Single Responsibility ที่ออกแบบไว้ใน Week 10 — InventoryApp
+        เป็นตัวเชื่อมสองฝั่งนี้เข้าด้วยกันแทน)
+        """
+        print("\n--- [7] Export รายงานสินค้าใกล้หมดเป็น CSV (CR-02) ---")
+        filename = input(
+            "ชื่อไฟล์ปลายทาง (เว้นว่าง = low_stock_report.csv): "
+        ).strip()
+        if not filename:
+            filename = "low_stock_report.csv"
+
+        all_products = self.repo.findAll()
+        rows_written = CsvReportExporter.export_low_stock_products(all_products, filename)
+
+        self.logger.log(
+            "EXPORT_LOW_STOCK_CSV",
+            f"ส่งออก {rows_written} รายการไปยังไฟล์ {filename}",
+        )
+        print(f"Export สำเร็จ: {rows_written} รายการ ถูกบันทึกไปยังไฟล์ '{filename}'")
 
     def displayPaginatedProducts(self, products: List[Product], title: str = "รายการสินค้า"):
         """ฟังก์ชันช่วยแสดงผลรายการสินค้าแบบแบ่งหน้า (Pagination) ไม่ให้ล้นหน้าจอ"""
