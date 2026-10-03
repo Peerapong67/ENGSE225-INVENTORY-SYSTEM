@@ -70,6 +70,9 @@ CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสร�
 # ติดตั้ง dependency
 pip install -r requirements.txt
 
+# (สำหรับนักพัฒนา) ติดตั้งเพิ่ม flake8 + bandit เวอร์ชันเดียวกับ CI
+pip install -r requirements-dev.txt
+
 # รันโปรแกรม (สร้างฐานข้อมูล inventory.db จาก schema.sql ให้อัตโนมัติในการรันครั้งแรก)
 python inventory_app.py
 ```

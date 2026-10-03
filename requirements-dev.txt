@@ -1,0 +1,6 @@
+# Developer tools: tests + coverage (from requirements.txt) + code quality and security scanners.
+# Install: pip install -r requirements-dev.txt
+# Linters are pinned exactly: new releases often add rules and would fail CI with no code change.
+-r requirements.txt
+flake8==7.4.1
+bandit[toml]==1.9.4

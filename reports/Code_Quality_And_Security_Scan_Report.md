@@ -27,7 +27,7 @@
 ## 1. วิธีรันซ้ำ
 
 ```
-pip install flake8 bandit pytest
+pip install -r requirements-dev.txt
 python -m flake8 --statistics --count .
 python -m bandit -c pyproject.toml -r .
 python -m pytest -v
@@ -93,6 +93,6 @@ python -m pytest -v
 
 ## 6. การป้องกันระยะยาว (CI)
 
-เพิ่ม job `lint` ใน [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) แล้ว job นี้รันคู่ขนานกับ `pytest` ทุกครั้งที่ push หรือเปิด PR เข้า `main`/`develop` ติดตั้ง `flake8==7.4.1` และ `bandit[toml]==1.9.4` (เวอร์ชันเดียวกับที่ใช้ในรายงานนี้) แล้วรัน `python -m flake8 --statistics --count .` และ `python -m bandit -c pyproject.toml -r .` ถ้าพบปัญหาแม้แต่จุดเดียว CI จะ fail
+เพิ่ม job `lint` ใน [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) แล้ว job นี้รันคู่ขนานกับ `pytest` ทุกครั้งที่ push หรือเปิด PR เข้า `main`/`develop` ติดตั้งจาก `requirements-dev.txt` ซึ่งล็อก `flake8==7.4.1` และ `bandit[toml]==1.9.4` (เวอร์ชันเดียวกับที่ใช้ในรายงานนี้) แล้วรัน `python -m flake8 --statistics --count .` และ `python -m bandit -c pyproject.toml -r .` ถ้าพบปัญหาแม้แต่จุดเดียว CI จะ fail
 
-**ข้อเสนอแนะ (ยังไม่ได้ดำเนินการ):** เพิ่ม `flake8` และ `bandit` ในไฟล์ dependency สำหรับ dev (เช่น `requirements-dev.txt`) ให้ทุกคนในทีมใช้เวอร์ชันเดียวกันตอนรันในเครื่องตัวเอง
+**เวอร์ชันเครื่องมือ:** ล็อกไว้ใน `requirements-dev.txt` ที่เดียว ทั้ง CI และเครื่องของทุกคนในทีมติดตั้งจากไฟล์นี้ จึงได้เวอร์ชันเดียวกันเสมอ

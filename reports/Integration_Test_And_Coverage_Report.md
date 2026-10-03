@@ -53,13 +53,13 @@ InventoryApp ─► Validator ─► Product ─► ProductRepository ─► Dat
 ## 2. วิธีรัน
 
 ```
-pip install pytest pytest-cov
+pip install -r requirements.txt
 python -m pytest -v --cov --cov-report=term-missing
 ```
 
 ถ้า coverage ต่ำกว่า 90% คำสั่งนี้จะ fail เอง เพราะตั้ง `fail_under = 90` ไว้ใน `pyproject.toml`
 
-**CI:** job `pytest` ใน [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) รันคำสั่งเดียวกันนี้บน Python 3.10, 3.11 และ 3.12 ทุกครั้งที่ push หรือเปิด PR เข้า `main`/`develop` และ `pytest-cov` อยู่ใน `requirements.txt` แล้ว ถ้ามีเทสต์ fail หรือ coverage ต่ำกว่า 90% CI จะ fail
+**CI:** job `pytest` ใน [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) รันคำสั่งเดียวกันนี้บน Python 3.10, 3.11 และ 3.12 ทุกครั้งที่ push หรือเปิด PR เข้า `main`/`develop` และ `pytest-cov` อยู่ใน `requirements.txt` แล้ว (จำกัดช่วงเวอร์ชันที่ทดสอบแล้ว: `pytest>=8.0,<10`, `pytest-cov>=7.0,<8`) ถ้ามีเทสต์ fail หรือ coverage ต่ำกว่า 90% CI จะ fail
 
 ---
 
