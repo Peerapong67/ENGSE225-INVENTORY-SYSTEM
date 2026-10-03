@@ -1,6 +1,8 @@
 import json
 import os
 
+from atomic_file_writer import AtomicFileWriter
+
 # global variables
 db = "data.json"
 x = {}
@@ -19,8 +21,8 @@ def load():
         }
 
 def save():
-    with open(db, 'w') as f:
-        json.dump(x, f)
+    # atomic write: data.json เดิมไม่เสียหายแม้โปรแกรมพังระหว่างบันทึก
+    AtomicFileWriter.write(db, lambda f: json.dump(x, f))
 
 def main():
     load()

@@ -7,6 +7,8 @@ import csv
 import os
 import tempfile
 
+import pytest
+
 from csv_report_exporter import CsvReportExporter
 from product import Product
 
@@ -52,6 +54,31 @@ def test_export_low_stock_excludes_products_above_reorder_point(tmp_path):
     product_ids_in_file = [row[0] for row in reader[1:]]
     assert "P01" in product_ids_in_file
     assert "P02" not in product_ids_in_file
+
+
+def test_export_failure_keeps_existing_report_intact(tmp_path):
+    """Atomic write: ถ้าเขียน CSV พังกลางทาง ไฟล์รายงานเดิมต้องไม่ถูกเขียนทับครึ่งๆ กลางๆ"""
+    output_path = tmp_path / "report.csv"
+    output_path.write_text("old report", encoding="utf-8")
+
+    class BrokenProduct:
+        """สินค้าจำลองที่พังตอนอ่าน price (เขียนแถวแรกไปแล้วค่อยพังที่แถวนี้)"""
+        product_id, name, barcode, quantity, reorder_point = "P02", "Broken", "", 1, 5
+
+        def is_low_stock(self):
+            return True
+
+        @property
+        def price(self):
+            raise RuntimeError("จำลองข้อผิดพลาดระหว่างเขียนแถว")
+
+    products = [Product("P01", "Sugar", 2, 20.0, reorder_point=5), BrokenProduct()]
+
+    with pytest.raises(RuntimeError):
+        CsvReportExporter.export_low_stock_products(products, str(output_path))
+
+    assert output_path.read_text(encoding="utf-8") == "old report"
+    assert [p.name for p in tmp_path.iterdir()] == ["report.csv"]  # ไม่มี .tmp ค้าง
 
 
 # ============================================================

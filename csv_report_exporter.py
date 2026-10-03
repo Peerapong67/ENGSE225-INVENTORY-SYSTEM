@@ -8,13 +8,14 @@ CR-02 (Emergency Change Request): Export รายการสินค้าส
 - แยกขาดจาก UI (ConsoleUI) และ InventoryRepository เดิม ไม่ import csv
   ปนเข้าไปในชั้นอื่นโดยตรง (กัน Tight Coupling ตาม Bad Practice ที่สไลด์เตือนไว้)
 - ออกแบบเป็น Static Method: ไร้ State ทดสอบแยกได้ง่าย ไม่ต้องสร้าง instance
-- ใช้ Context Manager (with open) จัดการปิดไฟล์อัตโนมัติ
+- เขียนไฟล์ผ่าน AtomicFileWriter: ถ้าพังกลางทาง ไฟล์รายงานเดิมไม่ถูกเขียนทับครึ่งๆ กลางๆ
 - กำหนด Encoding utf-8 รองรับภาษาไทยสมบูรณ์
 """
 
 import csv
 from typing import List
 
+from atomic_file_writer import AtomicFileWriter
 from product import Product
 
 
@@ -40,7 +41,7 @@ class CsvReportExporter:
         """
         low_stock_products = [p for p in products if p.is_low_stock()]
 
-        with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        def write_rows(f):
             writer = csv.writer(f)
             writer.writerow(CsvReportExporter.FIELDNAMES)
             for p in low_stock_products:
@@ -52,5 +53,7 @@ class CsvReportExporter:
                     p.reorder_point,
                     p.price,
                 ])
+
+        AtomicFileWriter.write(output_path, write_rows, newline='')
 
         return len(low_stock_products)
