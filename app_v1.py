@@ -1,3 +1,6 @@
+"""เวอร์ชันต้นแบบ (legacy) — เก็บไว้อ้างอิงเทียบกับ inventory_app.py เท่านั้น
+ห้าม import ไปใช้ในโค้ดใหม่ ความเสี่ยงที่ทราบแล้วดู risk_register_app_v1_emoji.md
+"""
 import json
 import os
 
