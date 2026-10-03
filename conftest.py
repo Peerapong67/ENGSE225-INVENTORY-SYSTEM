@@ -1,3 +1,6 @@
+import contextlib
+import sqlite3
+
 import pytest
 
 from database_connection import DatabaseConnection
@@ -15,10 +18,10 @@ def reset_singletons():
     Logger._instance = None
     yield
     if DatabaseConnection._instance is not None:
-        try:
+        # ปิด connection ของเทสต์ ถ้าปิดไปแล้ว/ปิดไม่ได้ก็ข้าม เพราะ instance จะถูกทิ้งอยู่ดี
+        # จับเฉพาะ sqlite3.Error เพื่อไม่กลืน error ประเภทอื่นที่บอกว่าเทสต์มีปัญหาจริง
+        with contextlib.suppress(sqlite3.Error):
             DatabaseConnection._instance.connection.close()
-        except Exception:
-            pass
     DatabaseConnection._instance = None
     Logger._instance = None
 

@@ -1,9 +1,15 @@
+"""เวอร์ชันต้นแบบ (legacy) — เก็บไว้อ้างอิงเทียบกับ inventory_app.py เท่านั้น
+ห้าม import ไปใช้ในโค้ดใหม่ ความเสี่ยงที่ทราบแล้วดู risk_register_app_v1_emoji.md
+"""
 import json
 import os
+
+from atomic_file_writer import AtomicFileWriter
 
 # global variables
 db = "data.json"
 x = {}
+
 
 def load():
     global x
@@ -18,9 +24,11 @@ def load():
             "103": {"n": "Singha Water", "q": 100, "p": 10.0, "c": "Drink"}
         }
 
+
 def save():
-    with open(db, 'w') as f:
-        json.dump(x, f)
+    # atomic write: data.json เดิมไม่เสียหายแม้โปรแกรมพังระหว่างบันทึก
+    AtomicFileWriter.write(db, lambda f: json.dump(x, f))
+
 
 def main():
     load()
@@ -32,21 +40,21 @@ def main():
         print("4. Check Check")
         print("5. Exit")
         choice = input("Select menu: ")
-        
+
         if choice == "1":
             print("-" * 50)
             # Print everything in x
             for k in x:
                 print(f"ID: {k} | Name: {x[k]['n']} | Stock: {x[k]['q']} | Price: {x[k]['p']} THB | Type: {x[k]['c']}")
             print("-" * 50)
-            
+
         elif choice == "2":
             a = input("Enter ID: ")
             b = input("Enter Name: ")
             c = int(input("Enter Qty: "))
             d = float(input("Enter Price: "))
             e = input("Enter Category: ")
-            
+
             # This logic updates or creates
             if a in x:
                 # if already have, just add qty? or overwrite? Let's overwrite!
@@ -55,7 +63,7 @@ def main():
                 x[a] = {"n": b, "q": c, "p": d, "c": e}
             save()
             print("Done.")
-            
+
         elif choice == "3":
             # Cut stock
             id_to_cut = input("Enter product ID to cut stock: ")
@@ -72,28 +80,29 @@ def main():
                     print("Error: Not enough stock!")
             else:
                 print("Product not found!")
-                
+
         elif choice == "4":
             # Calculate total value and show some alert
             total_items = 0
             total_val = 0.0
             low_stock_list = []
-            
+
             for k in x:
                 total_items += 1
                 total_val += x[k]['q'] * x[k]['p']
                 if x[k]['q'] < 10:
                     low_stock_list.append(x[k]['n'])
-                    
+
             print(f"Total product types: {total_items}")
             print(f"Total inventory value: {total_val} THB")
             print(f"Alert low stock (<10): {', '.join(low_stock_list)}")
-            
+
         elif choice == "5":
             print("Bye")
             break
         else:
             print("Invalid choice, try again.")
+
 
 if __name__ == "__main__":
     main()

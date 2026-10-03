@@ -1,0 +1,5 @@
+# ตั้งค่า Flake8 (Code Quality & Style) — รันด้วย: python -m flake8
+[flake8]
+# ข้อความ/docstring ภาษาไทยนับสระและวรรณยุกต์เป็นตัวอักษรด้วย ทีมจึงกำหนดความยาวบรรทัดที่ 120
+max-line-length = 120
+exclude = .git,__pycache__,reports,.venv,venv,env,.pytest_cache

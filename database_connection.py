@@ -1,6 +1,7 @@
 import sqlite3
 import os
 
+
 class DatabaseConnection:
     # 1. ตัวแปร static เก็บตัวตนเดียวของคลาส (Singleton Instance)
     _instance = None
@@ -16,7 +17,7 @@ class DatabaseConnection:
         """
         if DatabaseConnection._instance is not None:
             raise Exception("คลาสนี้เป็น Singleton! ห้ามสร้างใหม่ ให้เรียกใช้ผ่าน getInstance() เท่านั้น")
-        
+
         self.db_name = db_name
         self.connection = sqlite3.connect(self.db_name)
         # ตั้งค่าให้คืนผลลัพธ์เป็น row ที่เข้าถึงชื่อคอลัมน์ได้ง่าย
@@ -88,6 +89,13 @@ class DatabaseConnection:
         self.connection.rollback()
 
 
+def _verify(condition, message):
+    """ใช้แทน assert ในบล็อก self-test: assert ถูกตัดทิ้งเมื่อรันด้วย python -O
+    (Bandit B101) จึงตรวจด้วย if แล้ว raise AssertionError เองให้ทำงานทุกโหมด"""
+    if not condition:
+        raise AssertionError(message)
+
+
 # ============================================================
 # ส่วนทดสอบ Definition of Done (DoD) สำหรับ SCRUM-6
 # ============================================================
@@ -98,8 +106,8 @@ if __name__ == "__main__":
     db_instance_1 = DatabaseConnection.getInstance("inventory.db")
     db_instance_2 = DatabaseConnection.getInstance("inventory.db")
 
-    assert db_instance_1 is db_instance_2, "FAILED: Singleton ไม่ตรงกัน เกิด connection ซ้ำซ้อน"
-    assert db_instance_1.connection is db_instance_2.connection, "FAILED: SQLite connection ภายในเป็นคนละตัวกัน"
+    _verify(db_instance_1 is db_instance_2, "FAILED: Singleton ไม่ตรงกัน เกิด connection ซ้ำซ้อน")
+    _verify(db_instance_1.connection is db_instance_2.connection, "FAILED: SQLite connection ภายในเป็นคนละตัวกัน")
     print("✓ ผ่านเกณฑ์ 1: เรียกจากหลายจุดได้ Instance เดิม และใช้ SQLite Connection เดียวกันจริง")
 
     # 2. ทดสอบ: "เขียน" ข้อมูล (Insert)
@@ -117,9 +125,10 @@ if __name__ == "__main__":
     # 3. ทดสอบ: "อ่าน" ข้อมูล (Select)
     cursor = db_instance_2.executeQuery("SELECT name, quantity, price FROM products WHERE product_id = ?", (test_id,))
     row = cursor.fetchone()
-    assert row is not None, "FAILED: อ่านข้อมูลไม่พบ"
-    assert row["name"] == "Test Item", "FAILED: ข้อมูลที่อ่านได้ไม่ถูกต้อง"
-    print(f"✓ ผ่านเกณฑ์ 3 (อ่าน): อ่านข้อมูลสินค้า ID {test_id} ผ่าน Connection สำเร็จ (ชื่อ: {row['name']}, คงเหลือ: {row['quantity']})")
+    _verify(row is not None, "FAILED: อ่านข้อมูลไม่พบ")
+    _verify(row["name"] == "Test Item", "FAILED: ข้อมูลที่อ่านได้ไม่ถูกต้อง")
+    print(f"✓ ผ่านเกณฑ์ 3 (อ่าน): อ่านข้อมูลสินค้า ID {test_id} ผ่าน Connection สำเร็จ "
+          f"(ชื่อ: {row['name']}, คงเหลือ: {row['quantity']})")
 
     # 4. ทดสอบ: "แก้" ข้อมูล (Update)
     db_instance_1.executeQuery("UPDATE products SET quantity = ? WHERE product_id = ?", (25, test_id))
@@ -127,7 +136,7 @@ if __name__ == "__main__":
 
     cursor_after_update = db_instance_2.executeQuery("SELECT quantity FROM products WHERE product_id = ?", (test_id,))
     row_updated = cursor_after_update.fetchone()
-    assert row_updated["quantity"] == 25, "FAILED: การแก้ไขข้อมูลไม่สำเร็จ"
+    _verify(row_updated["quantity"] == 25, "FAILED: การแก้ไขข้อมูลไม่สำเร็จ")
     print(f"✓ ผ่านเกณฑ์ 4 (แก้ไข): อัปเดตจำนวนสต็อกเป็น {row_updated['quantity']} สำเร็จ")
 
     # ล้างข้อมูลทดสอบออกเพื่อความสะอาด

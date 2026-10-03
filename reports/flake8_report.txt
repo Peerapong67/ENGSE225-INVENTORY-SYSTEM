@@ -1,0 +1,7 @@
+$ python -m flake8 --version
+7.4.1 (mccabe: 0.7.0, pycodestyle: 2.15.0, pyflakes: 4.0.1) CPython 3.13.14 on
+Windows
+
+$ python -m flake8 --statistics --count .   # อ่านค่าจาก .flake8
+0
+[exit code: 0]

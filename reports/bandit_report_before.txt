@@ -1,0 +1,1997 @@
+Run started:2026-10-03 11:05:03.971254+00:00
+
+Test results:
+>> Issue: [B110:try_except_pass] Try, Except, Pass detected.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b110_try_except_pass.html
+   Location: .\conftest.py:20:8
+19	            DatabaseConnection._instance.connection.close()
+20	        except Exception:
+21	            pass
+22	    DatabaseConnection._instance = None
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\database_connection.py:101:4
+100	
+101	    assert db_instance_1 is db_instance_2, "FAILED: Singleton ไม่ตรงกัน เกิด connection ซ้ำซ้อน"
+102	    assert db_instance_1.connection is db_instance_2.connection, "FAILED: SQLite connection ภายในเป็นคนละตัวกัน"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\database_connection.py:102:4
+101	    assert db_instance_1 is db_instance_2, "FAILED: Singleton ไม่ตรงกัน เกิด connection ซ้ำซ้อน"
+102	    assert db_instance_1.connection is db_instance_2.connection, "FAILED: SQLite connection ภายในเป็นคนละตัวกัน"
+103	    print("✓ ผ่านเกณฑ์ 1: เรียกจากหลายจุดได้ Instance เดิม และใช้ SQLite Connection เดียวกันจริง")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\database_connection.py:120:4
+119	    row = cursor.fetchone()
+120	    assert row is not None, "FAILED: อ่านข้อมูลไม่พบ"
+121	    assert row["name"] == "Test Item", "FAILED: ข้อมูลที่อ่านได้ไม่ถูกต้อง"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\database_connection.py:121:4
+120	    assert row is not None, "FAILED: อ่านข้อมูลไม่พบ"
+121	    assert row["name"] == "Test Item", "FAILED: ข้อมูลที่อ่านได้ไม่ถูกต้อง"
+122	    print(f"✓ ผ่านเกณฑ์ 3 (อ่าน): อ่านข้อมูลสินค้า ID {test_id} ผ่าน Connection สำเร็จ (ชื่อ: {row['name']}, คงเหลือ: {row['quantity']})")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\database_connection.py:130:4
+129	    row_updated = cursor_after_update.fetchone()
+130	    assert row_updated["quantity"] == 25, "FAILED: การแก้ไขข้อมูลไม่สำเร็จ"
+131	    print(f"✓ ผ่านเกณฑ์ 4 (แก้ไข): อัปเดตจำนวนสต็อกเป็น {row_updated['quantity']} สำเร็จ")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\inventory_app.py:278:12
+277	            search_res = app.repo.search("BulkCategory")
+278	            assert len(search_res) == 15, f"FAILED: search ผลลัพธ์ไม่ครบ 15 รายการ (ได้ {len(search_res)})"
+279	            print(f"✓ ผ่านเกณฑ์ 1: ค้นหาด้วย category สำเร็จ พบ {len(search_res)} รายการ")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\inventory_app.py:284:12
+283	            expected_pages = math.ceil(total_items / app.page_size)
+284	            assert expected_pages == 2, f"FAILED: จำนวนหน้าคำนวณผิด (คาดหวัง 2 ได้ {expected_pages})"
+285	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\inventory_app.py:288:12
+287	            second_page = search_res[app.page_size:total_items]
+288	            assert len(first_page) == 10, "FAILED: หน้าแรกไม่มี 10 รายการ"
+289	            assert len(second_page) == 5, "FAILED: หน้าที่สองไม่มี 5 รายการ"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\inventory_app.py:289:12
+288	            assert len(first_page) == 10, "FAILED: หน้าแรกไม่มี 10 รายการ"
+289	            assert len(second_page) == 5, "FAILED: หน้าที่สองไม่มี 5 รายการ"
+290	            print(f"✓ ผ่านเกณฑ์ 2: แบ่งหน้าแสดงผลถูกต้อง (หน้า 1 มี {len(first_page)} ชิ้น, หน้า 2 มี {len(second_page)} ชิ้น)")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\inventory_app.py:294:12
+293	            name_res = app.repo.search("Bulk Item 05")
+294	            assert len(name_res) == 1 and name_res[0].product_id == "PAGE-05", "FAILED: ค้นหาด้วยชื่อไม่ตรง"
+295	            print("✓ ผ่านเกณฑ์ 3: ค้นหาด้วยชื่อสินค้าเฉพาะเจาะจงสำเร็จ")
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:45:4
+44	    app_v1.load()
+45	    assert set(app_v1.x.keys()) == {"101", "102", "103"}
+46	    assert app_v1.x["101"]["n"] == "Mama Noodles"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:46:4
+45	    assert set(app_v1.x.keys()) == {"101", "102", "103"}
+46	    assert app_v1.x["101"]["n"] == "Mama Noodles"
+47	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:52:4
+51	    app_v1.load()
+52	    assert app_v1.x == {"999": {"n": "Custom Item", "q": 3, "p": 15.0, "c": "Snack"}}
+53	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:61:4
+60	        saved = json.load(f)
+61	    assert saved == {"1": {"n": "Item A", "q": 5, "p": 9.0, "c": "Food"}}
+62	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:70:4
+69	        saved = json.load(f)
+70	    assert "101" in saved
+71	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:83:8
+82	    with open(app_v1.db, "r", encoding="utf-8") as f:
+83	        assert json.load(f) == original
+84	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:91:4
+90	    out = capsys.readouterr().out
+91	    assert "Coffee" in out
+92	    assert "45.0" in out
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:92:4
+91	    assert "Coffee" in out
+92	    assert "45.0" in out
+93	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:101:4
+100	        saved = json.load(f)
+101	    assert saved["P1"] == {"n": "New Item", "q": 10, "p": 20.0, "c": "Food"}
+102	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:110:4
+109	        saved = json.load(f)
+110	    assert saved["P1"] == {"n": "New Name", "q": 8, "p": 25.0, "c": "Drink"}
+111	    assert len(saved) == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:111:4
+110	    assert saved["P1"] == {"n": "New Name", "q": 8, "p": 25.0, "c": "Drink"}
+111	    assert len(saved) == 1
+112	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:120:4
+119	        saved = json.load(f)
+120	    assert saved["P1"]["q"] == 15
+121	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:128:4
+127	    out = capsys.readouterr().out
+128	    assert "Not enough stock" in out
+129	    with open(app_v1.db, "r", encoding="utf-8") as f:
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:131:4
+130	        saved = json.load(f)
+131	    assert saved["P1"]["q"] == 3
+132	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:139:4
+138	    out = capsys.readouterr().out
+139	    assert "Product not found" in out
+140	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:147:4
+146	    out = capsys.readouterr().out
+147	    assert "WARNING" in out
+148	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:155:4
+154	    out = capsys.readouterr().out
+155	    assert "WARNING" not in out
+156	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:166:4
+165	    out = capsys.readouterr().out
+166	    assert "Total product types: 2" in out
+167	    assert "Total inventory value: 120.0 THB" in out
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:167:4
+166	    assert "Total product types: 2" in out
+167	    assert "Total inventory value: 120.0 THB" in out
+168	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:178:4
+177	    out = capsys.readouterr().out
+178	    assert "Low Item" in out
+179	    assert "Plenty Item" not in out.split("Alert low stock")[-1]
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:179:4
+178	    assert "Low Item" in out
+179	    assert "Plenty Item" not in out.split("Alert low stock")[-1]
+180	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:186:4
+185	    out = capsys.readouterr().out
+186	    assert "Bye" in out
+187	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_app_v1.py:193:4
+192	    out = capsys.readouterr().out
+193	    assert "Invalid choice" in out
+194	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:37:4
+36	
+37	    assert path.read_text(encoding="utf-8") == "สวัสดี"
+38	    assert _leftover_tmp_files(tmp_path) == []
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:38:4
+37	    assert path.read_text(encoding="utf-8") == "สวัสดี"
+38	    assert _leftover_tmp_files(tmp_path) == []
+39	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:47:4
+46	
+47	    assert path.read_text(encoding="utf-8") == "new"
+48	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:57:4
+56	
+57	    assert path.read_text(encoding="utf-8") == "ข้อมูลเดิม"
+58	    assert _leftover_tmp_files(tmp_path) == []
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:58:4
+57	    assert path.read_text(encoding="utf-8") == "ข้อมูลเดิม"
+58	    assert _leftover_tmp_files(tmp_path) == []
+59	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:67:4
+66	
+67	    assert not path.exists()
+68	    assert _leftover_tmp_files(tmp_path) == []
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:68:4
+67	    assert not path.exists()
+68	    assert _leftover_tmp_files(tmp_path) == []
+69	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_atomic_file_writer.py:74:4
+73	
+74	    assert (isolated_cwd / "relative.txt").read_text(encoding="utf-8") == "ok"
+75	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:29:4
+28	    # 3. Assert: ยืนยันว่าไฟล์ถูกสร้างจริงและข้อมูลถูกต้อง
+29	    assert rows_written == 1
+30	    assert output_path.exists()
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:30:4
+29	    assert rows_written == 1
+30	    assert output_path.exists()
+31	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:35:4
+34	
+35	    assert reader[0] == ["ProductID", "ProductName", "Barcode", "Quantity", "ReorderPoint", "Price"]
+36	    assert reader[1] == ["P01", "Sugar", "111", "2", "5", "20.0"]
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:36:4
+35	    assert reader[0] == ["ProductID", "ProductName", "Barcode", "Quantity", "ReorderPoint", "Price"]
+36	    assert reader[1] == ["P01", "Sugar", "111", "2", "5", "20.0"]
+37	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:49:4
+48	
+49	    assert rows_written == 1  # เฉพาะ P01 เท่านั้นที่ is_low_stock() เป็น True
+50	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:55:4
+54	    product_ids_in_file = [row[0] for row in reader[1:]]
+55	    assert "P01" in product_ids_in_file
+56	    assert "P02" not in product_ids_in_file
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:56:4
+55	    assert "P01" in product_ids_in_file
+56	    assert "P02" not in product_ids_in_file
+57	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:80:4
+79	
+80	    assert output_path.read_text(encoding="utf-8") == "old report"
+81	    assert [p.name for p in tmp_path.iterdir()] == ["report.csv"]  # ไม่มี .tmp ค้าง
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_csv_report_exporter.py:81:4
+80	    assert output_path.read_text(encoding="utf-8") == "old report"
+81	    assert [p.name for p in tmp_path.iterdir()] == ["report.csv"]  # ไม่มี .tmp ค้าง
+82	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:33:4
+32	    db2 = DatabaseConnection.getInstance("test_inventory.db")
+33	    assert db is db2
+34	    assert db.connection is db2.connection
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:34:4
+33	    assert db is db2
+34	    assert db.connection is db2.connection
+35	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:43:4
+42	def test_get_instance_creates_db_file(db, isolated_cwd):
+43	    assert (isolated_cwd / "test_inventory.db").exists()
+44	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:54:4
+53	    )
+54	    assert cursor.fetchone() is not None
+55	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:61:4
+60	    )
+61	    assert cursor.fetchone() is not None
+62	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:68:4
+67	    )
+68	    assert cursor.fetchone() is not None
+69	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:81:4
+80	    row = cursor.fetchone()
+81	    assert row is not None
+82	    assert row["name"] == "Test Item"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:82:4
+81	    assert row is not None
+82	    assert row["name"] == "Test Item"
+83	    assert row["quantity"] == 10
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:83:4
+82	    assert row["name"] == "Test Item"
+83	    assert row["quantity"] == 10
+84	    assert row["price"] == 50.0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:84:4
+83	    assert row["quantity"] == 10
+84	    assert row["price"] == 50.0
+85	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:98:4
+97	    row = cursor.fetchone()
+98	    assert row["name"] == "Test Item"
+99	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:115:4
+114	    )
+115	    assert cursor.fetchone()["quantity"] == 25
+116	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:130:4
+129	    )
+130	    assert cursor.fetchone() is None
+131	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:148:4
+147	
+148	    assert row is not None
+149	    assert row["name"] == "Test Item"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:149:4
+148	    assert row is not None
+149	    assert row["name"] == "Test Item"
+150	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:167:4
+166	    )
+167	    assert cursor.fetchone()["quantity"] == 10
+168	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:221:4
+220	    rows = cursor.fetchall()
+221	    assert len(rows) == 1
+222	    assert rows[0]["name"] == "Updated Name"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:222:4
+221	    assert len(rows) == 1
+222	    assert rows[0]["name"] == "Updated Name"
+223	    assert rows[0]["quantity"] == 8
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:223:4
+222	    assert rows[0]["name"] == "Updated Name"
+223	    assert rows[0]["quantity"] == 8
+224	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:242:4
+241	    row = cursor.fetchone()
+242	    assert row is not None
+243	    assert row["change_qty"] == -3
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:243:4
+242	    assert row is not None
+243	    assert row["change_qty"] == -3
+244	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:269:4
+268	    row = cursor.fetchone()
+269	    assert row is not None
+270	    assert row["detail"] == "unit test detail"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_database_connection.py:270:4
+269	    assert row is not None
+270	    assert row["detail"] == "unit test detail"
+271	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:48:8
+47	    for expected in ["1.", "2.", "3.", "4.", "5.", "6."]:
+48	        assert expected in out
+49	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:61:4
+60	    saved = repo.findById("P1")
+61	    assert saved is not None
+62	    assert saved.name == "New Item"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:62:4
+61	    assert saved is not None
+62	    assert saved.name == "New Item"
+63	    assert saved.quantity == 10
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:63:4
+62	    assert saved.name == "New Item"
+63	    assert saved.quantity == 10
+64	    assert _count_logs(db, "ADD_PRODUCT") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:64:4
+63	    assert saved.quantity == 10
+64	    assert _count_logs(db, "ADD_PRODUCT") == 1
+65	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:74:4
+73	    saved = repo.findById("P1")
+74	    assert saved.barcode == "8850999327015"
+75	    assert saved.reorder_point == 3
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:75:4
+74	    assert saved.barcode == "8850999327015"
+75	    assert saved.reorder_point == 3
+76	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:85:4
+84	    saved = repo.findById("P1")
+85	    assert saved.name == "New Name"
+86	    assert saved.quantity == 8
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:86:4
+85	    assert saved.name == "New Name"
+86	    assert saved.quantity == 8
+87	    assert _count_logs(db, "UPDATE_PRODUCT") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:87:4
+86	    assert saved.quantity == 8
+87	    assert _count_logs(db, "UPDATE_PRODUCT") == 1
+88	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:97:4
+96	    saved = repo.findById("P1")
+97	    assert saved.name == "Old Name"
+98	    assert _count_logs(db) == 0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:98:4
+97	    assert saved.name == "Old Name"
+98	    assert _count_logs(db) == 0
+99	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:107:4
+106	    saved = repo.findById("P1")
+107	    assert saved.quantity == 10
+108	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:115:4
+114	    out = capsys.readouterr().out
+115	    assert "ห้ามเป็นค่าว่าง" in out or "ค่าว่าง" in out
+116	    assert repo.findAll() == []
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:116:4
+115	    assert "ห้ามเป็นค่าว่าง" in out or "ค่าว่าง" in out
+116	    assert repo.findAll() == []
+117	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:129:4
+128	
+129	    assert repo.findById("P1").quantity == 15
+130	    assert _count_logs(db, "CUT_STOCK") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:130:4
+129	    assert repo.findById("P1").quantity == 15
+130	    assert _count_logs(db, "CUT_STOCK") == 1
+131	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:140:4
+139	    out = capsys.readouterr().out
+140	    assert "ไม่พอ" in out
+141	    assert repo.findById("P1").quantity == 3
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:141:4
+140	    assert "ไม่พอ" in out
+141	    assert repo.findById("P1").quantity == 3
+142	    assert _count_logs(db) == 0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:142:4
+141	    assert repo.findById("P1").quantity == 3
+142	    assert _count_logs(db) == 0
+143	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:150:4
+149	    out = capsys.readouterr().out
+150	    assert "ไม่พบสินค้า" in out
+151	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:163:4
+162	    out = capsys.readouterr().out
+163	    assert "คำเตือน" in out
+164	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:175:4
+174	    out = capsys.readouterr().out
+175	    assert "คำเตือน" in out
+176	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:185:4
+184	    out = capsys.readouterr().out
+185	    assert "คำเตือน" not in out
+186	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:200:4
+199	    out = capsys.readouterr().out
+200	    assert "จำนวนชนิดสินค้าทั้งหมด: 2" in out
+201	    assert "120.00" in out
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:201:4
+200	    assert "จำนวนชนิดสินค้าทั้งหมด: 2" in out
+201	    assert "120.00" in out
+202	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:217:4
+216	    out = capsys.readouterr().out
+217	    assert "Mama Noodles" in out
+218	    assert _count_logs(db, "SEARCH_PRODUCT") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:218:4
+217	    assert "Mama Noodles" in out
+218	    assert _count_logs(db, "SEARCH_PRODUCT") == 1
+219	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:226:4
+225	    out = capsys.readouterr().out
+226	    assert "ค่าว่าง" in out
+227	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:240:4
+239	    out = capsys.readouterr().out
+240	    assert "Coffee" in out
+241	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:253:4
+252	    out = capsys.readouterr().out
+253	    assert "ขอบคุณที่ใช้บริการ" in out
+254	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:261:4
+260	    out = capsys.readouterr().out
+261	    assert "ตัวเลือกไม่ถูกต้อง" in out
+262	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:272:4
+271	    out = capsys.readouterr().out
+272	    assert "Almost Out" in out or "พบ" in out
+273	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:285:4
+284	    out = capsys.readouterr().out
+285	    assert "Export สำเร็จ" in out
+286	    assert os.path.exists(output_file)
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:286:4
+285	    assert "Export สำเร็จ" in out
+286	    assert os.path.exists(output_file)
+287	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:307:4
+306	    out = capsys.readouterr().out
+307	    assert "ขอบคุณที่ใช้บริการ" in out
+308	    assert _count_logs(db, "ADD_PRODUCT") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:308:4
+307	    assert "ขอบคุณที่ใช้บริการ" in out
+308	    assert _count_logs(db, "ADD_PRODUCT") == 1
+309	    assert _count_logs(db, "CUT_STOCK") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:309:4
+308	    assert _count_logs(db, "ADD_PRODUCT") == 1
+309	    assert _count_logs(db, "CUT_STOCK") == 1
+310	    assert _count_logs(db, "SEARCH_PRODUCT") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:310:4
+309	    assert _count_logs(db, "CUT_STOCK") == 1
+310	    assert _count_logs(db, "SEARCH_PRODUCT") == 1
+311	    assert _count_logs(db, "EXPORT_LOW_STOCK_CSV") == 1
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:311:4
+310	    assert _count_logs(db, "SEARCH_PRODUCT") == 1
+311	    assert _count_logs(db, "EXPORT_LOW_STOCK_CSV") == 1
+312	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:323:4
+322	    out = capsys.readouterr().out
+323	    assert "ข้อผิดพลาด" in out
+324	    assert repo.findById("102") is None  # ต้องไม่ถูกบันทึกลงฐานข้อมูล
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_inventory_app.py:324:4
+323	    assert "ข้อผิดพลาด" in out
+324	    assert repo.findById("102") is None  # ต้องไม่ถูกบันทึกลงฐานข้อมูล
+325	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:20:4
+19	    l2 = Logger.getInstance()
+20	    assert l1 is l2
+21	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:37:4
+36	    row = cursor.fetchone()
+37	    assert row is not None
+38	    assert row["detail"] == "product_id=P1"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:38:4
+37	    assert row is not None
+38	    assert row["detail"] == "product_id=P1"
+39	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:49:4
+48	    row = cursor.fetchone()
+49	    assert row["detail"] == ""
+50	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:59:4
+58	    cursor = db.executeQuery("SELECT COUNT(*) AS cnt FROM action_logs")
+59	    assert cursor.fetchone()["cnt"] == 3
+60	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:74:4
+73	
+74	    assert row is not None
+75	    assert row["detail"] == "detail-persist"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_logger.py:75:4
+74	    assert row is not None
+75	    assert row["detail"] == "detail-persist"
+76	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:15:4
+14	    p = Product(product_id="P1", name="Mama Noodles", quantity=50, price=6.0, category="Food")
+15	    assert p.product_id == "P1"
+16	    assert p.name == "Mama Noodles"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:16:4
+15	    assert p.product_id == "P1"
+16	    assert p.name == "Mama Noodles"
+17	    assert p.quantity == 50
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:17:4
+16	    assert p.name == "Mama Noodles"
+17	    assert p.quantity == 50
+18	    assert p.price == 6.0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:18:4
+17	    assert p.quantity == 50
+18	    assert p.price == 6.0
+19	    assert p.category == "Food"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:19:4
+18	    assert p.price == 6.0
+19	    assert p.category == "Food"
+20	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:24:4
+23	    p = Product(product_id="P2", name="No Category Item", quantity=1, price=1.0)
+24	    assert p.category == "Uncategorized"
+25	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:50:4
+49	    p = Product(product_id="P6", name="Free Sample", quantity=0, price=0.0)
+50	    assert p.quantity == 0
+51	    assert p.price == 0.0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:51:4
+50	    assert p.quantity == 0
+51	    assert p.price == 0.0
+52	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:56:4
+55	    p = Product(product_id="P7", name="Item", quantity=5, price=9.5, category="Drink")
+56	    assert p.to_dict() == {
+57	        "product_id": "P7",
+58	        "name": "Item",
+59	        "quantity": 5,
+60	        "price": 9.5,
+61	        "category": "Drink",
+62	        "barcode": "",
+63	        "reorder_point": 5,
+64	    }
+65	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:71:4
+70	    p = Product.from_row(row)
+71	    assert p == Product(product_id="P8", name="Row Item", quantity=3, price=4.5, category="Food")
+72	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:78:4
+77	    c = Product(product_id="P9", name="A", quantity=2, price=1.0, category="X")
+78	    assert a == b
+79	    assert a != c
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:79:4
+78	    assert a == b
+79	    assert a != c
+80	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:89:4
+88	                category="Food", barcode="8850999327015", reorder_point=8)
+89	    assert p.barcode == "8850999327015"
+90	    assert p.reorder_point == 8
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:90:4
+89	    assert p.barcode == "8850999327015"
+90	    assert p.reorder_point == 8
+91	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:97:4
+96	    p = Product(product_id="P11", name="Legacy Item", quantity=10, price=5.0)
+97	    assert p.barcode == ""
+98	    assert p.reorder_point == 5
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:98:4
+97	    assert p.barcode == ""
+98	    assert p.reorder_point == 5
+99	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:103:4
+102	    p = Product(product_id="P12", name="Low Item", quantity=3, price=1.0, reorder_point=5)
+103	    assert p.is_low_stock() is True
+104	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:109:4
+108	    p = Product(product_id="P13", name="Boundary Item", quantity=5, price=1.0, reorder_point=5)
+109	    assert p.is_low_stock() is True
+110	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:114:4
+113	    p = Product(product_id="P14", name="Normal Item", quantity=6, price=1.0, reorder_point=5)
+114	    assert p.is_low_stock() is False
+115	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:120:4
+119	                barcode="123456", reorder_point=3)
+120	    assert p.to_dict() == {
+121	        "product_id": "P15",
+122	        "name": "Item",
+123	        "quantity": 5,
+124	        "price": 9.5,
+125	        "category": "Drink",
+126	        "barcode": "123456",
+127	        "reorder_point": 3,
+128	    }
+129	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:135:4
+134	    p = Product.from_row(row)
+135	    assert p.barcode == "999888"
+136	    assert p.reorder_point == 4
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product.py:136:4
+135	    assert p.barcode == "999888"
+136	    assert p.reorder_point == 4
+137	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:27:4
+26	    found = repo.findById("P1")
+27	    assert found == p
+28	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:36:4
+35	    matching = [p for p in all_products if p.product_id == "P1"]
+36	    assert len(matching) == 1
+37	    assert matching[0].name == "New Name"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:37:4
+36	    assert len(matching) == 1
+37	    assert matching[0].name == "New Name"
+38	    assert matching[0].quantity == 8
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:38:4
+37	    assert matching[0].name == "New Name"
+38	    assert matching[0].quantity == 8
+39	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:46:4
+45	def test_find_by_id_returns_none_when_not_found(repo):
+46	    assert repo.findById("NO_SUCH_ID") is None
+47	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:52:4
+51	    found = repo.findById("P2")
+52	    assert found.name == "Lactasoy Milk"
+53	    assert found.quantity == 20
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:53:4
+52	    assert found.name == "Lactasoy Milk"
+53	    assert found.quantity == 20
+54	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:61:4
+60	def test_find_all_returns_empty_list_when_no_products(repo):
+61	    assert repo.findAll() == []
+62	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:69:4
+68	    names = [p.name for p in repo.findAll()]
+69	    assert names == ["Apple Juice", "Zebra Snack"]
+70	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:81:4
+80	    results = repo.search("Mama")
+81	    assert len(results) == 1
+82	    assert results[0].product_id == "P1"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:82:4
+81	    assert len(results) == 1
+82	    assert results[0].product_id == "P1"
+83	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:90:4
+89	    results = repo.search("Drink")
+90	    assert len(results) == 1
+91	    assert results[0].product_id == "P2"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:91:4
+90	    assert len(results) == 1
+91	    assert results[0].product_id == "P2"
+92	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:96:4
+95	    repo.upsertProduct(Product("P1", "Mama Noodles", 10, 6.0, "Food"))
+96	    assert repo.search("NotExist") == []
+97	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:106:4
+105	    repo.updateStock("P1", 5, reason="restock")
+106	    assert repo.findById("P1").quantity == 15
+107	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:112:4
+111	    repo.updateStock("P1", -4, reason="sale")
+112	    assert repo.findById("P1").quantity == 6
+113	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:123:4
+122	    row = cursor.fetchone()
+123	    assert row is not None
+124	    assert row["change_qty"] == -3
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:124:4
+123	    assert row is not None
+124	    assert row["change_qty"] == -3
+125	    assert row["reason"] == "cut stock test"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:125:4
+124	    assert row["change_qty"] == -3
+125	    assert row["reason"] == "cut stock test"
+126	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:132:4
+131	        repo.updateStock("P1", -10)
+132	    assert repo.findById("P1").quantity == 5
+133	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:146:4
+145	    summary = repo.getSummary()
+146	    assert summary["total_products"] == 0
+147	    assert summary["total_units"] == 0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:147:4
+146	    assert summary["total_products"] == 0
+147	    assert summary["total_units"] == 0
+148	    assert summary["total_value"] == 0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:148:4
+147	    assert summary["total_units"] == 0
+148	    assert summary["total_value"] == 0
+149	    assert summary["low_stock_items"] == 0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:149:4
+148	    assert summary["total_value"] == 0
+149	    assert summary["low_stock_items"] == 0
+150	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:157:4
+156	    summary = repo.getSummary()
+157	    assert summary["total_products"] == 2
+158	    assert summary["total_units"] == 30
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:158:4
+157	    assert summary["total_products"] == 2
+158	    assert summary["total_units"] == 30
+159	    assert summary["total_value"] == 10 * 6.0 + 20 * 12.0
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:159:4
+158	    assert summary["total_units"] == 30
+159	    assert summary["total_value"] == 10 * 6.0 + 20 * 12.0
+160	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:168:4
+167	    summary = repo.getSummary()
+168	    assert summary["low_stock_items"] == 2
+169	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:181:4
+180	    found = repo.findById("P1")
+181	    assert found.barcode == "8850999327015"
+182	    assert found.reorder_point == 8
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:182:4
+181	    assert found.barcode == "8850999327015"
+182	    assert found.reorder_point == 8
+183	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:193:4
+192	
+193	    assert "P1" in alert_ids
+194	    assert "P2" in alert_ids
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:194:4
+193	    assert "P1" in alert_ids
+194	    assert "P2" in alert_ids
+195	    assert "P3" not in alert_ids
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:195:4
+194	    assert "P2" in alert_ids
+195	    assert "P3" not in alert_ids
+196	    assert len(alerts) == 2
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:196:4
+195	    assert "P3" not in alert_ids
+196	    assert len(alerts) == 2
+197	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:202:4
+201	    alerts = repo.getLowStockAlerts()
+202	    assert alerts == []
+203	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:207:4
+206	    alerts = repo.getLowStockAlerts()
+207	    assert alerts == []
+208	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:389:4
+388	    updated = repo.findById("101")
+389	    assert updated.quantity == 20
+390	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:397:4
+396	
+397	    assert repo.findById("101") is not None
+398	    assert repo.findById("102") is not None
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_product_repository.py:398:4
+397	    assert repo.findById("101") is not None
+398	    assert repo.findById("102") is not None
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:27:4
+26	    _mock_inputs(monkeypatch, ["10"])
+27	    assert Validator.inputNonNegativeInt("qty: ") == 10
+28	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:32:4
+31	    _mock_inputs(monkeypatch, ["-5", "3"])
+32	    assert Validator.inputNonNegativeInt("qty: ") == 3
+33	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:37:4
+36	    _mock_inputs(monkeypatch, ["abc", "7"])
+37	    assert Validator.inputNonNegativeInt("qty: ") == 7
+38	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:42:4
+41	    _mock_inputs(monkeypatch, ["0"])
+42	    assert Validator.inputNonNegativeInt("qty: ") == 0
+43	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:51:4
+50	    _mock_inputs(monkeypatch, ["12.5"])
+51	    assert Validator.inputNonNegativeFloat("price: ") == 12.5
+52	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:56:4
+55	    _mock_inputs(monkeypatch, ["-1.5", "2.5"])
+56	    assert Validator.inputNonNegativeFloat("price: ") == 2.5
+57	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:61:4
+60	    _mock_inputs(monkeypatch, ["xyz", "9.9"])
+61	    assert Validator.inputNonNegativeFloat("price: ") == 9.9
+62	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:67:4
+66	    _mock_inputs(monkeypatch, ["10"])
+67	    assert Validator.inputNonNegativeFloat("price: ") == 10.0
+68	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:77:4
+76	    result = Validator.confirm({"name": "Old"}, {"name": "New"})
+77	    assert result is True
+78	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:83:4
+82	    result = Validator.confirm({"name": "Old"}, {"name": "New"})
+83	    assert result is False
+84	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:88:4
+87	    _mock_inputs(monkeypatch, ["Y"])
+88	    assert Validator.confirm({}, {}) is True
+89	
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b101_assert_used.html
+   Location: .\test_validator.py:93:4
+92	    _mock_inputs(monkeypatch, ["maybe", "n"])
+93	    assert Validator.confirm({}, {}) is False
+94	
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 2912
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 196
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 196
+Files skipped (0):

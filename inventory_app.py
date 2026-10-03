@@ -7,6 +7,7 @@ from validator import Validator
 from logger import Logger
 from csv_report_exporter import CsvReportExporter
 
+
 class InventoryApp:
     def __init__(self):
         """สร้าง InventoryApp พร้อมเชื่อม ProductRepository และ Logger (singleton)
@@ -82,7 +83,7 @@ class InventoryApp:
 
         try:
             new_product = Product(product_id, name, quantity, price, category,
-                                   barcode=barcode, reorder_point=reorder_point)
+                                  barcode=barcode, reorder_point=reorder_point)
         except ValueError as e:
             print(f"ข้อผิดพลาด: {e}")
             return
@@ -248,6 +249,13 @@ class InventoryApp:
         self.displayPaginatedProducts(products, title="รายการสินค้าทั้งหมดในระบบ")
 
 
+def _verify(condition, message):
+    """ใช้แทน assert ในบล็อก self-test: assert ถูกตัดทิ้งเมื่อรันด้วย python -O
+    (Bandit B101) จึงตรวจด้วย if แล้ว raise AssertionError เองให้ทำงานทุกโหมด"""
+    if not condition:
+        raise AssertionError(message)
+
+
 # ============================================================
 # Entry point:
 #   python inventory_app.py              -> เข้าเมนูจริง (interactive) ทันที — ค่า default
@@ -269,34 +277,35 @@ if __name__ == "__main__":
             app.repo.upsertProduct(p)
 
         # ใช้ try/finally ครอบตั้งแต่ตรงนี้ เพื่อรับประกันว่าข้อมูลจำลองจะถูกลบออก
-        # จาก inventory.db เสมอ ไม่ว่า assert ด้านล่างจะผ่านหรือ fail กลางทางก็ตาม
-        # (ก่อนแก้ ถ้า assert ไหน fail กลางทาง โค้ด cleanup ท้ายไฟล์จะไม่ถูกรันเลย
+        # จาก inventory.db เสมอ ไม่ว่าการตรวจ _verify ด้านล่างจะผ่านหรือ fail กลางทางก็ตาม
+        # (ก่อนแก้ ถ้าการตรวจไหน fail กลางทาง โค้ด cleanup ท้ายไฟล์จะไม่ถูกรันเลย
         # ทำให้สินค้าจำลอง PAGE-01..15 ค้างอยู่ใน DB จริงถาวร)
         try:
             # 2. ทดสอบ search(keyword) ด้วย category
             search_res = app.repo.search("BulkCategory")
-            assert len(search_res) == 15, f"FAILED: search ผลลัพธ์ไม่ครบ 15 รายการ (ได้ {len(search_res)})"
+            _verify(len(search_res) == 15, f"FAILED: search ผลลัพธ์ไม่ครบ 15 รายการ (ได้ {len(search_res)})")
             print(f"✓ ผ่านเกณฑ์ 1: ค้นหาด้วย category สำเร็จ พบ {len(search_res)} รายการ")
 
             # 3. ตรวจสอบการคำนวณแบ่งหน้า (Pagination Calculation)
             total_items = len(search_res)
             expected_pages = math.ceil(total_items / app.page_size)
-            assert expected_pages == 2, f"FAILED: จำนวนหน้าคำนวณผิด (คาดหวัง 2 ได้ {expected_pages})"
+            _verify(expected_pages == 2, f"FAILED: จำนวนหน้าคำนวณผิด (คาดหวัง 2 ได้ {expected_pages})")
 
             first_page = search_res[0:app.page_size]
             second_page = search_res[app.page_size:total_items]
-            assert len(first_page) == 10, "FAILED: หน้าแรกไม่มี 10 รายการ"
-            assert len(second_page) == 5, "FAILED: หน้าที่สองไม่มี 5 รายการ"
-            print(f"✓ ผ่านเกณฑ์ 2: แบ่งหน้าแสดงผลถูกต้อง (หน้า 1 มี {len(first_page)} ชิ้น, หน้า 2 มี {len(second_page)} ชิ้น)")
+            _verify(len(first_page) == 10, "FAILED: หน้าแรกไม่มี 10 รายการ")
+            _verify(len(second_page) == 5, "FAILED: หน้าที่สองไม่มี 5 รายการ")
+            print(f"✓ ผ่านเกณฑ์ 2: แบ่งหน้าแสดงผลถูกต้อง "
+                  f"(หน้า 1 มี {len(first_page)} ชิ้น, หน้า 2 มี {len(second_page)} ชิ้น)")
 
             # 4. ทดสอบ search ด้วยชื่อสินค้าบางส่วน (Partial Match)
             name_res = app.repo.search("Bulk Item 05")
-            assert len(name_res) == 1 and name_res[0].product_id == "PAGE-05", "FAILED: ค้นหาด้วยชื่อไม่ตรง"
+            _verify(len(name_res) == 1 and name_res[0].product_id == "PAGE-05", "FAILED: ค้นหาด้วยชื่อไม่ตรง")
             print("✓ ผ่านเกณฑ์ 3: ค้นหาด้วยชื่อสินค้าเฉพาะเจาะจงสำเร็จ")
 
             print("\nสรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-12 ครบถ้วน 100%")
         finally:
-            # เคลียร์ข้อมูลทดสอบ — รันเสมอไม่ว่า assert ด้านบนจะผ่านหรือไม่ก็ตาม
+            # เคลียร์ข้อมูลทดสอบ — รันเสมอไม่ว่าการตรวจ _verify ด้านบนจะผ่านหรือไม่ก็ตาม
             for p in mock_products:
                 app.repo.db.executeQuery("DELETE FROM products WHERE product_id = ?", (p.product_id,))
             app.repo.db.commit()
