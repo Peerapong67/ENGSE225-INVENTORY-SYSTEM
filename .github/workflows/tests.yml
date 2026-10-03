@@ -35,8 +35,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run pytest
-        run: python -m pytest -v
+      # วัด Coverage พร้อมรันเทสต์ ขอบเขตและเกณฑ์อ่านจาก [tool.coverage] ใน pyproject.toml
+      # (วัดเฉพาะโค้ดโปรแกรม, fail_under = 90 -> job fail ถ้า coverage ต่ำกว่า 90%)
+      - name: Run pytest with coverage
+        run: python -m pytest -v --cov --cov-report=term-missing
 
   # สแกนคุณภาพโค้ด (Flake8) และช่องโหว่ความปลอดภัย (Bandit) แยกเป็นอีก job ให้รันคู่ขนานกับ pytest
   # เกณฑ์อ่านจาก .flake8 และ pyproject.toml ตามรายงาน reports/Code_Quality_And_Security_Scan_Report.md
