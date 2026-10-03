@@ -187,11 +187,11 @@ def _check_constructor_exception():
 
 
 def _insert_and_fetch(db, action, detail):
-    l = Logger.getInstance()
+    logger = Logger.getInstance()
     if detail:
-        l.log(action, detail)
+        logger.log(action, detail)
     else:
-        l.log(action)
+        logger.log(action)
     cur = db.executeQuery(
         "SELECT * FROM action_logs WHERE action = ? ORDER BY log_id DESC LIMIT 1",
         (action,)
@@ -200,17 +200,17 @@ def _insert_and_fetch(db, action, detail):
 
 
 def _log_multiple_and_count(db):
-    l = Logger.getInstance()
-    l.log("BATCH_ADD", "item 1")
-    l.log("BATCH_CUT", "item 1 -2")
-    l.log("BATCH_UPDATE", "item 1 edit")
+    logger = Logger.getInstance()
+    logger.log("BATCH_ADD", "item 1")
+    logger.log("BATCH_CUT", "item 1 -2")
+    logger.log("BATCH_UPDATE", "item 1 edit")
     cur = db.executeQuery("SELECT COUNT(*) AS cnt FROM action_logs WHERE action LIKE 'BATCH_%'")
     return cur.fetchone()["cnt"]
 
 
 def _check_persistence(db_path):
-    l = Logger.getInstance()
-    l.log("PERSIST_TEST", "verify-disk-write")
+    logger = Logger.getInstance()
+    logger.log("PERSIST_TEST", "verify-disk-write")
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     row = conn.execute(

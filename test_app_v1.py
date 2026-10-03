@@ -70,6 +70,19 @@ def test_save_after_load_persists_default_data():
     assert "101" in saved
 
 
+def test_save_failure_keeps_existing_data_file_intact():
+    """Atomic write: ถ้า json.dump พังกลางทาง data.json เดิมต้องไม่เสียหาย"""
+    original = {"101": {"n": "Mama Noodles", "q": 50, "p": 6.0, "c": "Food"}}
+    write_data_file(original)
+    app_v1.x = {"bad": object()}  # serialize ไม่ได้ -> TypeError ระหว่างเขียน
+
+    with pytest.raises(TypeError):
+        app_v1.save()
+
+    with open(app_v1.db, "r", encoding="utf-8") as f:
+        assert json.load(f) == original
+
+
 def test_menu_show_all_prints_every_product(monkeypatch, capsys):
     write_data_file({"1": {"n": "Coffee", "q": 10, "p": 45.0, "c": "Drink"}})
     run_menu(monkeypatch, ["1", "5"])

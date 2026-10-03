@@ -11,7 +11,7 @@ from database_connection import DatabaseConnection
 
 
 def _insert_sample_product(conn, product_id="P1", name="Test Item",
-                            category="TestCat", quantity=10, price=50.0):
+                           category="TestCat", quantity=10, price=50.0):
     conn.executeQuery(
         """INSERT INTO products (product_id, name, category, quantity, price)
            VALUES (?, ?, ?, ?, ?)""",
@@ -310,7 +310,8 @@ def _run_terminal_demo():
             "id": "TC-DBC-03",
             "method": "Automated Schema Bootstrap Verification",
             "data": "ตรวจสอบตาราง products, stock_movements, action_logs",
-            "action": lambda: [r["name"] for r in db.executeQuery("SELECT name FROM sqlite_master WHERE type='table'").fetchall()],
+            "action": lambda: [r["name"] for r in db.executeQuery(
+                "SELECT name FROM sqlite_master WHERE type='table'").fetchall()],
             "verify": lambda res: all(t in res for t in ["products", "stock_movements", "action_logs"]),
             "expected": "อ่านและประมวลผล schema.sql สร้างตารางครบถ้วนทั้ง 3 ตารางอัตโนมัติ"
         },

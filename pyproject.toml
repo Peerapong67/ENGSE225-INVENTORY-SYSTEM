@@ -1,0 +1,18 @@
+# ตั้งค่า Bandit (Security Scan) — รันด้วย: python -m bandit -c pyproject.toml -r .
+[tool.bandit]
+exclude_dirs = [".git", "__pycache__", "reports", ".venv", "venv", "env", ".pytest_cache"]
+
+# pytest ใช้ assert เป็นกลไกหลักในการตรวจผล จึงข้าม B101 (assert_used) เฉพาะไฟล์เทสต์
+# โค้ดโปรแกรมจริงยังถูกตรวจ B101 ตามปกติ
+[tool.bandit.assert_used]
+skips = ["*/test_*.py", "*/conftest.py"]
+
+# ตั้งค่า Coverage — รันด้วย: python -m pytest --cov --cov-report=term-missing
+# วัดเฉพาะโค้ดโปรแกรม ไม่นับไฟล์เทสต์ (เทสต์ไม่ใช่สิ่งที่ถูกทดสอบ)
+[tool.coverage.run]
+source = ["."]
+omit = ["test_*.py", "conftest.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
