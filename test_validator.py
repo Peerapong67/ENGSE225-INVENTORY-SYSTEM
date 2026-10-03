@@ -4,7 +4,6 @@
 """
 import io
 import sys
-import pytest
 from validator import Validator
 
 

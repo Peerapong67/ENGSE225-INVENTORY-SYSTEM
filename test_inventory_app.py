@@ -7,7 +7,6 @@ import io
 import os
 import sys
 import builtins
-import pytest
 
 from inventory_app import InventoryApp
 from product import Product
@@ -398,7 +397,8 @@ def _run_terminal_demo():
             "method": "Interactive Add Product & Audit Trail",
             "data": "Input: ID='P101', Name='Green Tea', Qty=15, Price=25.0, Cat='Drink', Barcode='', Reorder=5",
             # ส่ง input ครบ 7 ช่อง: ID, Name, Qty, Price, Category, Barcode, Reorder Point
-            "action": lambda: _run_with_mock_inputs(app.addOrUpdateProduct, ["P101", "Green Tea", "15", "25.0", "Drink", "", "5"]),
+            "action": lambda: _run_with_mock_inputs(
+                app.addOrUpdateProduct, ["P101", "Green Tea", "15", "25.0", "Drink", "", "5"]),
             "verify": lambda out: repo.findById("P101") is not None and repo.findById("P101").name == "Green Tea",
             "expected": "บันทึกสินค้าใหม่สำเร็จ และบันทึก Log 'ADD_PRODUCT' ลงฐานข้อมูล"
         },
@@ -407,7 +407,8 @@ def _run_terminal_demo():
             "method": "DoD Safety: Upsert Confirmation Dialog (User Declined)",
             "data": "แก้ไข ID='P101' แต่กด 'n' ตอนยืนยันบันทึกทับ",
             # ส่ง input ครบ 7 ช่อง แล้วตามด้วย 'n' ตอน confirm
-            "action": lambda: _run_with_mock_inputs(app.addOrUpdateProduct, ["P101", "Green Tea Extra", "20", "30.0", "Drink", "", "5", "n"]),
+            "action": lambda: _run_with_mock_inputs(
+                app.addOrUpdateProduct, ["P101", "Green Tea Extra", "20", "30.0", "Drink", "", "5", "n"]),
             "verify": lambda out: "ยกเลิกการบันทึก" in out and repo.findById("P101").name == "Green Tea",
             "expected": "ระบบตรวจพบ ID ซ้ำ แสดง Diff และยกเลิกการบันทึกตามคำสั่ง 'n' ข้อมูลเดิมไม่สูญหาย"
         },
@@ -501,9 +502,9 @@ def _run_terminal_demo():
 def _test_duplicate_barcode_ui(app, repo):
     """เพิ่มสินค้า P201 ก่อน แล้วลองเพิ่ม P202 ด้วย barcode ซ้ำกัน คืนค่าข้อความ output ของครั้งที่สอง"""
     _run_with_mock_inputs(app.addOrUpdateProduct,
-                           ["P201", "Original", "5", "10.0", "Food", "8850099", "5"])
+                          ["P201", "Original", "5", "10.0", "Food", "8850099", "5"])
     out_duplicate = _run_with_mock_inputs(app.addOrUpdateProduct,
-                                           ["P202", "Duplicate", "5", "10.0", "Food", "8850099", "5"])
+                                          ["P202", "Duplicate", "5", "10.0", "Food", "8850099", "5"])
     return out_duplicate
 
 

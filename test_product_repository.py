@@ -3,7 +3,6 @@
 รันแบบ Demo ใน Terminal: python test_product_repository.py
 """
 import os
-import sqlite3
 import pytest
 
 from product import Product
@@ -240,7 +239,8 @@ def _run_terminal_demo():
             "id": "TC-REPO-02",
             "method": "CRUD: Update Existing Key Idempotency",
             "data": "อัปเดต 'P1' เป็น name='Coffee Extra', qty=15, price=50.0",
-            "action": lambda: (repo.upsertProduct(Product("P1", "Coffee Extra", 15, 50.0, "Drink")), repo.findById("P1"), repo.findAll()),
+            "action": lambda: (repo.upsertProduct(Product("P1", "Coffee Extra", 15, 50.0, "Drink")),
+                               repo.findById("P1"), repo.findAll()),
             "verify": lambda res: res[1].name == "Coffee Extra" and res[1].quantity == 15 and len(res[2]) == 1,
             "expected": "อัปเดตทับเรคคอร์ดเดิมสำเร็จด้วย ON CONFLICT ไม่สร้างแถวข้อมูลซ้ำซ้อน"
         },
@@ -248,7 +248,9 @@ def _run_terminal_demo():
             "id": "TC-REPO-03",
             "method": "CR-01: Persistence of Barcode & Reorder Point",
             "data": "Product(id='P2', barcode='8850999327015', reorder_point=8)",
-            "action": lambda: (repo.upsertProduct(Product("P2", "Sugar", 20, 15.0, barcode="8850999327015", reorder_point=8)), repo.findById("P2")),
+            "action": lambda: (repo.upsertProduct(Product("P2", "Sugar", 20, 15.0,
+                                                          barcode="8850999327015", reorder_point=8)),
+                               repo.findById("P2")),
             "verify": lambda res: res[1].barcode == "8850999327015" and res[1].reorder_point == 8,
             "expected": "บันทึกและดึงค่า barcode/reorder_point ผ่าน SQLite ได้ครบถ้วนสมบูรณ์"
         },
@@ -335,7 +337,8 @@ def _run_terminal_demo():
 def _test_cut_stock(repo, db):
     repo.updateStock("P1", -3, reason="sale demo")
     p = repo.findById("P1")
-    cur = db.executeQuery("SELECT change_qty FROM stock_movements WHERE product_id = 'P1' ORDER BY movement_id DESC LIMIT 1")
+    cur = db.executeQuery(
+        "SELECT change_qty FROM stock_movements WHERE product_id = 'P1' ORDER BY movement_id DESC LIMIT 1")
     mov = cur.fetchone()
     return {"qty": p.quantity, "mov_qty": mov["change_qty"] if mov else None}
 
@@ -370,6 +373,7 @@ if __name__ == "__main__":
 # BUG-102: Duplicate Barcode Fix (Bug Fix ของ CR-01)
 # พบระหว่าง Bug Bashing Case A — ระบบเคยยอมให้สินค้า 2 ชิ้นมี Barcode ซ้ำกันได้
 # ============================================================
+
 
 def test_upsert_product_rejects_duplicate_barcode_from_different_product(repo):
     """Barcode ต้อง Unique ข้ามสินค้า — ถ้าซ้ำกับสินค้าอื่นต้อง raise ValueError"""

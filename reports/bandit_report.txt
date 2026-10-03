@@ -1,0 +1,135 @@
+$ python -m bandit --version
+__main__.py 1.9.4
+
+$ python -m bandit -c pyproject.toml -r . -v
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	using config: pyproject.toml
+[main]	INFO	running on Python 3.13.14
+Run started:2026-10-03 11:13:57.690243+00:00
+Files in scope (19):
+	.\app_v1.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\atomic_file_writer.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\conftest.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\csv_report_exporter.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\database_connection.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\inventory_app.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\logger.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\product.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\product_repository.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_app_v1.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_atomic_file_writer.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_csv_report_exporter.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_database_connection.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_inventory_app.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_logger.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_product.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_product_repository.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\test_validator.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+	.\validator.py (score: {SEVERITY: 0, CONFIDENCE: 0})
+Files excluded (81):
+	.\.flake8
+	.\.git\AUTO_MERGE
+	.\.git\FETCH_HEAD
+	.\.git\HEAD
+	.\.git\ORIG_HEAD
+	.\.git\config
+	.\.git\description
+	.\.git\hooks\applypatch-msg.sample
+	.\.git\hooks\commit-msg.sample
+	.\.git\hooks\fsmonitor-watchman.sample
+	.\.git\hooks\post-update.sample
+	.\.git\hooks\pre-applypatch.sample
+	.\.git\hooks\pre-commit.sample
+	.\.git\hooks\pre-merge-commit.sample
+	.\.git\hooks\pre-push.sample
+	.\.git\hooks\pre-rebase.sample
+	.\.git\hooks\pre-receive.sample
+	.\.git\hooks\prepare-commit-msg.sample
+	.\.git\hooks\push-to-checkout.sample
+	.\.git\hooks\sendemail-validate.sample
+	.\.git\hooks\update.sample
+	.\.git\index
+	.\.git\info\exclude
+	.\.git\logs\HEAD
+	.\.git\logs\refs\heads\develop
+	.\.git\logs\refs\heads\feature\atomic-file-writing
+	.\.git\logs\refs\heads\main
+	.\.git\logs\refs\remotes\origin\HEAD
+	.\.git\objects\2f\5a396c66d2d51116949707635c7a597051044d
+	.\.git\objects\51\25b9d8a4cb1df63794d93beaf420550f1841e6
+	.\.git\objects\8b\6c403b6982b0e69b7f0bf946d5697a0b4f05dc
+	.\.git\objects\9c\64e08a9d87ed3f4b796eca21929557edce79db
+	.\.git\objects\b5\44737fad2af77f5b2d91d183df8ad972d5d16f
+	.\.git\objects\pack\pack-9472ead89268fc24cf4b96a71de146e040904b4b.idx
+	.\.git\objects\pack\pack-9472ead89268fc24cf4b96a71de146e040904b4b.pack
+	.\.git\objects\pack\pack-9472ead89268fc24cf4b96a71de146e040904b4b.rev
+	.\.git\packed-refs
+	.\.git\refs\heads\develop
+	.\.git\refs\heads\feature\atomic-file-writing
+	.\.git\refs\heads\main
+	.\.git\refs\remotes\origin\HEAD
+	.\.github\workflows\tests.yml
+	.\.gitignore
+	.\.pytest_cache\.gitignore
+	.\.pytest_cache\CACHEDIR.TAG
+	.\.pytest_cache\README.md
+	.\.pytest_cache\v\cache\nodeids
+	.\Change_Request_And_Impact_Analysis_Report.md
+	.\Change_Request_And_Impact_Analysis_Report_CR02.md
+	.\README.md
+	.\__pycache__\app_v1.cpython-313.pyc
+	.\__pycache__\atomic_file_writer.cpython-313.pyc
+	.\__pycache__\conftest.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\csv_report_exporter.cpython-313.pyc
+	.\__pycache__\database_connection.cpython-313.pyc
+	.\__pycache__\inventory_app.cpython-313.pyc
+	.\__pycache__\logger.cpython-313.pyc
+	.\__pycache__\product.cpython-313.pyc
+	.\__pycache__\product_repository.cpython-313.pyc
+	.\__pycache__\test_app_v1.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_atomic_file_writer.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_csv_report_exporter.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_database_connection.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_inventory_app.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_logger.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_product.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_product_repository.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\test_validator.cpython-313-pytest-9.1.1.pyc
+	.\__pycache__\validator.cpython-313.pyc
+	.\definition_of_done.md
+	.\dod_per_feature.md
+	.\pyproject.toml
+	.\reports\Code_Quality_And_Security_Scan_Report.md
+	.\reports\bandit_report.txt
+	.\reports\bandit_report_before.txt
+	.\reports\flake8_report.txt
+	.\reports\flake8_report_before.txt
+	.\requirements.txt
+	.\risk_register_app_v1_emoji.md
+	.\schema.sql
+	.\seed_data.sql
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 2928
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+[exit code: 0]
