@@ -73,7 +73,10 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 │   ├── Scope_Freeze_Sign_off_Agreement.md # เอกสารจำลองสัญญาล็อกขอบเขต Version 2.0 (สัปดาห์ที่ 12) + Future Backlog v3.0
 │   ├── User_Acceptance_Testing_Report.md # ผล UAT 17 สถานการณ์ธุรกิจ + แยก Defect กับ New Scope + Re-test รอบ 2
 │   ├── Clean_Environment_Installation_Test.md # คู่มือสคริปต์ติดตั้งอัตโนมัติ + ผลทดสอบติดตั้งบนเครื่องสะอาด
-│   └── Project_Completion_Certificate.md # หนังสือรับรองการปิดเฟสพัฒนา Version 2.0.1 (ลงนามจำลองโดย Sponsor)
+│   ├── Project_Completion_Certificate.md # หนังสือรับรองการปิดเฟสพัฒนา Version 2.0.1 (ลงนามจำลองโดย Sponsor)
+│   ├── Smoke_And_Regression_Test_Report.md # ผล Smoke Test ครบ 8 เมนู + Full Regression บนสภาพแวดล้อมใหม่
+│   ├── System_Operations_and_Maintenance_Manual.md # คู่มือปฏิบัติการและบำรุงรักษาระบบตาม ISO/IEC 14764
+│   └── Technical_KPI_Report.md # ตัวชี้วัดทางเทคนิค (Coverage, Defects, Quality Gates) สำหรับ PM
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```

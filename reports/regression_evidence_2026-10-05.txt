@@ -1,0 +1,356 @@
+SMOKE TEST & FULL REGRESSION EVIDENCE - 2026-10-05
+ดู documents/Smoke_And_Regression_Test_Report.md
+สภาพแวดล้อม: git clone ใหม่จาก github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM (main @ 80c6d22) ลงโฟลเดอร์ว่าง
+Windows 11, CPython 3.13.14, Windows PowerShell 5.1, Git Bash
+<FRESH_ENV> = โฟลเดอร์ clone ใหม่, <DEMO_DIR> = โฟลเดอร์ชั่วคราวของ Terminal Demo, <USER_HOME> = โฟลเดอร์ผู้ใช้ในเครื่อง
+
+====================================================================================================
+1) CLEAN INSTALL: scripts\setup.cmd -Clean -Seed (Windows PowerShell 5.1)
+====================================================================================================
+Inventory Management System - Automated Setup (Windows)
+โฟลเดอร์โปรเจกต์: <FRESH_ENV>
+ตัวเลือก: Clean=True Seed=True SkipTests=False
+
+[1] ตรวจสอบ Python 3.10 ขึ้นไป
+    PASS (py -3 -> Python 3.13.14)
+
+[2] ล้างสภาพแวดล้อมเดิม (-Clean)
+    คำเตือน: กำลังลบ .venv และ inventory.db (ข้อมูลในฐานข้อมูลจะหายถาวร)
+    PASS ลบ .venv และ inventory.db แล้ว
+
+[3] สร้าง virtual environment (.venv)
+    PASS สร้าง .venv ใหม่
+
+[4] ติดตั้ง dependency จาก requirements-dev.txt
+    PASS pytest, pytest-cov, flake8, bandit
+
+[5] สร้างฐานข้อมูล inventory.db จาก schema.sql
+    PASS schema.sql
+
+[6] ใส่ข้อมูลตัวอย่างจาก seed_data.sql
+    PASS seed_data.sql
+
+[7] ตรวจสอบโครงสร้างฐานข้อมูล
+    ตาราง/ดัชนี/trigger ที่ขาด: ไม่มี | จำนวนสินค้า: 3
+    PASS ต้องมีตารางครบ และสินค้าอย่างน้อย 3 รายการ
+
+[8] Smoke test: เปิดโปรแกรมแล้วเลือกเมนู 8 (ออก)
+    exit code ของโปรแกรม: 0
+    PASS เมนูหลักแสดงผลและออกจากโปรแกรมได้
+
+[9] Self-test: python inventory_app.py --selftest
+    PASS exit code 0
+
+[10] PyTest + Coverage (เกณฑ์ >= 90%)
+........................................................................ [ 45%]
+........................................................................ [ 91%]
+..............                                                           [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.13.14-final-0 _______________
+
+Name                     Stmts   Miss  Cover   Missing
+------------------------------------------------------
+app_v1.py                   68      0   100%
+atomic_file_writer.py       20      2    90%   55-56
+csv_report_exporter.py      16      0   100%
+database_connection.py      66      1    98%   96
+inventory_app.py           212      4    98%   134-136, 273
+logger.py                   15      0   100%
+product.py                  42      3    93%   53, 131, 136
+product_repository.py       49      0   100%
+validator.py                44      0   100%
+------------------------------------------------------
+TOTAL                      532     10    98%
+Required test coverage of 90.0% reached. Total coverage: 98.12%
+158 passed in 3.81s
+    PASS exit code 0
+
+[11] Flake8
+0
+    PASS exit code 0
+
+[12] Bandit
+    PASS exit code 0
+
+==================== สรุปผลการติดตั้ง ====================
+
+Step                 Result Detail                                    
+----                 ------ ------                                    
+Python >= 3.10       PASS   (py -3 -> Python 3.13.14)                 
+Clean environment    PASS   ลบ .venv และ inventory.db แล้ว            
+Virtual environment  PASS   สร้าง .venv ใหม่                          
+Install dependencies PASS   pytest, pytest-cov, flake8, bandit        
+Create database      PASS   schema.sql                                
+Seed data            PASS   seed_data.sql                             
+Verify database      PASS   ต้องมีตารางครบ และสินค้าอย่างน้อย 3 รายการ
+Smoke test           PASS   เมนูหลักแสดงผลและออกจากโปรแกรมได้         
+Self-test            PASS   exit code 0                               
+PyTest + Coverage    PASS   exit code 0                               
+Flake8               PASS   exit code 0                               
+Bandit               PASS   exit code 0                               
+
+
+
+ติดตั้งและตรวจสอบสำเร็จทุกขั้น เริ่มใช้งานด้วย: .venv\Scripts\python.exe inventory_app.py
+
+====================================================================================================
+2) SMOKE TEST: ทุกเมนู 1-8 ในการเปิดโปรแกรมครั้งเดียว (ฐานข้อมูลจาก seed)
+====================================================================================================
+INPUT: ['1', '', '2', 'S1', 'สินค้าทดสอบ smoke', '6', '15', 'ทดสอบ', '', '', '3', 'S1', '2', '4', '5', 'Drink', '', '6', '7', 'smoke_report.csv', '8']
+EXIT CODE: 0
+STDERR: (ว่าง)
+PASS  เมนู 1 แสดงสินค้าทั้งหมด — พบข้อความ 'จากทั้งหมด 3 รายการ' = True
+PASS  เมนู 2 เพิ่มสินค้าใหม่ (Reorder Point กด Enter ใช้ค่าเริ่มต้น) — พบข้อความ 'บันทึกสำเร็จ' = True
+PASS  เมนู 3 ตัดสต็อกจนถึงจุดสั่งซื้อ — พบข้อความ 'คำเตือน' = True
+PASS  เมนู 4 รายงานสรุป — พบข้อความ 'มูลค่าสินค้ารวม' = True
+PASS  เมนู 5 ค้นหาสินค้า — พบข้อความ 'จากทั้งหมด 2 รายการ' = True
+PASS  เมนู 6 แจ้งเตือนสินค้าใกล้หมด — พบข้อความ 'รวม 1 รายการที่ต้องสั่งซื้อเพิ่ม' = True
+PASS  เมนู 7 Export CSV — พบข้อความ 'Export สำเร็จ: 1 รายการ' = True
+PASS  เมนู 8 ออกจากโปรแกรม — พบข้อความ 'ขอบคุณที่ใช้บริการ' = True
+DB: S1 (quantity, reorder_point) = (4, 5), stock_movements = [(-2,)]
+ACTION LOGS: [('ADD_PRODUCT', 1), ('CUT_STOCK', 1), ('EXPORT_LOW_STOCK_CSV', 1), ('LOW_STOCK_ALERT_VIEWED', 1), ('SEARCH_PRODUCT', 1)]
+CSV: BOM=True, rows=[['ProductID', 'ProductName', 'Barcode', 'Quantity', 'ReorderPoint', 'Price'], ['S1', 'สินค้าทดสอบ smoke', '', '4', '5', '15.0']]
+PASS  ข้อมูลในฐานข้อมูลและไฟล์ CSV ถูกต้อง
+
+SMOKE TEST: PASS (แอปพลิเคชันแครช = False)
+
+====================================================================================================
+3) FULL REGRESSION: pytest -v --cov, Flake8, Bandit, --selftest, Terminal Demo
+====================================================================================================
+=== ENV
+Python 3.13.14
+bandit==1.9.4
+coverage==7.16.2
+flake8==7.4.1
+pycodestyle==2.15.0
+pyflakes==4.0.2
+pytest==9.1.1
+pytest-cov==7.1.0
+80c6d22 docs: add Project Completion Certificate for Version 2.0.1
+=== PYTEST
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0 -- <FRESH_ENV>\.venv\Scripts\python.exe
+rootdir: <FRESH_ENV>
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 158 items
+
+test_app_v1.py::test_load_creates_default_data_when_file_missing PASSED  [  0%]
+test_app_v1.py::test_load_reads_existing_json_file PASSED                [  1%]
+test_app_v1.py::test_save_writes_current_state_to_file PASSED            [  1%]
+test_app_v1.py::test_save_after_load_persists_default_data PASSED        [  2%]
+test_app_v1.py::test_save_failure_keeps_existing_data_file_intact PASSED [  3%]
+test_app_v1.py::test_menu_show_all_prints_every_product PASSED           [  3%]
+test_app_v1.py::test_menu_add_new_product_saves_to_file PASSED           [  4%]
+test_app_v1.py::test_menu_add_or_update_overwrites_existing_id PASSED    [  5%]
+test_app_v1.py::test_menu_cut_stock_reduces_quantity PASSED              [  5%]
+test_app_v1.py::test_menu_cut_stock_insufficient_stock_shows_error_and_does_not_change PASSED [  6%]
+test_app_v1.py::test_menu_cut_stock_product_not_found_shows_error PASSED [  6%]
+test_app_v1.py::test_menu_cut_stock_triggers_low_stock_warning_below_5 PASSED [  7%]
+test_app_v1.py::test_menu_cut_stock_no_warning_when_stock_stays_at_or_above_5 PASSED [  8%]
+test_app_v1.py::test_menu_summary_calculates_total_items_and_value PASSED [  8%]
+test_app_v1.py::test_menu_summary_lists_low_stock_items_below_10 PASSED  [  9%]
+test_app_v1.py::test_menu_exit_stops_the_loop PASSED                     [ 10%]
+test_app_v1.py::test_menu_invalid_choice_shows_message_then_can_still_exit PASSED [ 10%]
+test_atomic_file_writer.py::test_write_creates_new_file PASSED           [ 11%]
+test_atomic_file_writer.py::test_write_replaces_existing_file_completely PASSED [ 12%]
+test_atomic_file_writer.py::test_failure_keeps_original_file_intact PASSED [ 12%]
+test_atomic_file_writer.py::test_failure_on_new_path_creates_no_file PASSED [ 13%]
+test_atomic_file_writer.py::test_relative_path_writes_into_cwd PASSED    [ 13%]
+test_csv_report_exporter.py::test_export_low_stock_to_csv_creates_valid_file PASSED [ 14%]
+test_csv_report_exporter.py::test_export_low_stock_excludes_products_above_reorder_point PASSED [ 15%]
+test_csv_report_exporter.py::test_export_writes_utf8_bom_so_excel_reads_thai PASSED [ 15%]
+test_csv_report_exporter.py::test_export_failure_keeps_existing_report_intact PASSED [ 16%]
+test_database_connection.py::test_get_instance_returns_same_object PASSED [ 17%]
+test_database_connection.py::test_direct_constructor_raises_when_instance_exists PASSED [ 17%]
+test_database_connection.py::test_get_instance_creates_db_file PASSED    [ 18%]
+test_database_connection.py::test_init_tables_creates_products_table PASSED [ 18%]
+test_database_connection.py::test_init_tables_creates_stock_movements_table PASSED [ 19%]
+test_database_connection.py::test_init_tables_creates_action_logs_table PASSED [ 20%]
+test_database_connection.py::test_execute_query_insert PASSED            [ 20%]
+test_database_connection.py::test_execute_query_select_via_second_reference PASSED [ 21%]
+test_database_connection.py::test_execute_query_update PASSED            [ 22%]
+test_database_connection.py::test_execute_query_delete PASSED            [ 22%]
+test_database_connection.py::test_commit_persists_data_across_new_connection PASSED [ 23%]
+test_database_connection.py::test_rollback_reverts_uncommitted_changes PASSED [ 24%]
+test_database_connection.py::test_begin_transaction_does_not_raise PASSED [ 24%]
+test_database_connection.py::test_insert_negative_quantity_violates_check_constraint PASSED [ 25%]
+test_database_connection.py::test_insert_negative_price_violates_check_constraint PASSED [ 25%]
+test_database_connection.py::test_upsert_same_id_updates_instead_of_duplicating PASSED [ 26%]
+test_database_connection.py::test_stock_movement_insert_linked_to_product PASSED [ 27%]
+test_database_connection.py::test_stock_movement_foreign_key_enforced PASSED [ 27%]
+test_database_connection.py::test_action_log_insert PASSED               [ 28%]
+test_integration.py::test_it01_full_user_journey_through_main_menu PASSED [ 29%]
+test_integration.py::test_it02_update_existing_product_confirm_and_decline PASSED [ 29%]
+test_integration.py::test_it03_invalid_operations_never_corrupt_data PASSED [ 30%]
+test_integration.py::test_it04_pagination_navigation_across_pages PASSED [ 31%]
+test_integration.py::test_it05_empty_inventory_screens PASSED            [ 31%]
+test_integration.py::test_it06_data_persists_after_restart PASSED        [ 32%]
+test_integration.py::test_it07_database_constraints_back_up_application_checks PASSED [ 32%]
+test_integration.py::test_it08_reexport_replaces_report_atomically PASSED [ 33%]
+test_integration.py::test_it09_inventory_app_entry_point_opens_menu PASSED [ 34%]
+test_integration.py::test_it10_inventory_app_selftest_cleans_up PASSED   [ 34%]
+test_integration.py::test_it11_database_connection_selftest PASSED       [ 35%]
+test_integration.py::test_it12_legacy_app_v1_entry_point PASSED          [ 36%]
+test_inventory_app.py::test_show_menu_prints_all_eight_options PASSED    [ 36%]
+test_inventory_app.py::test_add_new_product_saves_and_logs PASSED        [ 37%]
+test_inventory_app.py::test_add_new_product_with_barcode_and_reorder_point PASSED [ 37%]
+test_inventory_app.py::test_add_or_update_existing_id_confirmed_updates PASSED [ 38%]
+test_inventory_app.py::test_add_or_update_existing_id_declined_does_not_change PASSED [ 39%]
+test_inventory_app.py::test_add_product_with_negative_quantity_input_shows_error_no_save PASSED [ 39%]
+test_inventory_app.py::test_add_product_empty_id_shows_error PASSED      [ 40%]
+test_inventory_app.py::test_cut_stock_reduces_quantity_and_logs PASSED   [ 41%]
+test_inventory_app.py::test_cut_stock_insufficient_shows_error_and_does_not_change PASSED [ 41%]
+test_inventory_app.py::test_cut_stock_product_not_found_shows_error PASSED [ 42%]
+test_inventory_app.py::test_cut_stock_triggers_low_stock_warning_using_products_own_reorder_point PASSED [ 43%]
+test_inventory_app.py::test_cut_stock_triggers_low_stock_warning_at_boundary_equal_to_reorder_point PASSED [ 43%]
+test_inventory_app.py::test_cut_stock_no_warning_when_stock_stays_above_reorder_point PASSED [ 44%]
+test_inventory_app.py::test_show_report_prints_correct_summary PASSED    [ 44%]
+test_inventory_app.py::test_search_product_finds_match_and_logs PASSED   [ 45%]
+test_inventory_app.py::test_search_product_header_matches_menu_number PASSED [ 46%]
+test_inventory_app.py::test_search_product_empty_keyword_shows_error PASSED [ 46%]
+test_inventory_app.py::test_show_all_products_prints_every_item PASSED   [ 47%]
+test_inventory_app.py::test_run_exits_cleanly_on_choice_8 PASSED         [ 48%]
+test_inventory_app.py::test_run_invalid_choice_then_exit PASSED          [ 48%]
+test_inventory_app.py::test_run_shows_low_stock_alerts_on_choice_6 PASSED [ 49%]
+test_inventory_app.py::test_run_exports_low_stock_csv_on_choice_7 PASSED [ 50%]
+test_inventory_app.py::test_run_full_menu_flow_all_options_no_error PASSED [ 50%]
+test_inventory_app.py::test_add_product_with_duplicate_barcode_shows_error_no_crash PASSED [ 51%]
+test_inventory_app.py::test_add_product_with_huge_quantity_reprompts_no_crash PASSED [ 51%]
+test_inventory_app.py::test_add_product_blank_reorder_point_uses_default_5 PASSED [ 52%]
+test_inventory_app.py::test_cut_stock_zero_shows_error_and_records_nothing PASSED [ 53%]
+test_inventory_app.py::test_export_csv_to_unwritable_path_shows_error_no_crash[no_such_folder\\low.csv] PASSED [ 53%]
+test_inventory_app.py::test_export_csv_to_unwritable_path_shows_error_no_crash[a_file.txt\\low.csv] PASSED [ 54%]
+test_inventory_app.py::test_add_product_with_nan_or_inf_price_reprompts_no_crash PASSED [ 55%]
+test_logger.py::test_get_instance_returns_same_object PASSED             [ 55%]
+test_logger.py::test_direct_constructor_raises_when_instance_exists PASSED [ 56%]
+test_logger.py::test_log_inserts_row_into_action_logs PASSED             [ 56%]
+test_logger.py::test_log_without_detail_defaults_to_empty_string PASSED  [ 57%]
+test_logger.py::test_multiple_logs_are_all_recorded PASSED               [ 58%]
+test_logger.py::test_log_persists_after_commit PASSED                    [ 58%]
+test_product.py::test_create_product_with_valid_data PASSED              [ 59%]
+test_product.py::test_create_product_uses_default_category_when_omitted PASSED [ 60%]
+test_product.py::test_create_product_with_negative_quantity_raises PASSED [ 60%]
+test_product.py::test_create_product_with_negative_price_raises PASSED   [ 61%]
+test_product.py::test_create_product_with_integer_beyond_sqlite_range_raises[quantity] PASSED [ 62%]
+test_product.py::test_create_product_with_integer_beyond_sqlite_range_raises[reorder_point] PASSED [ 62%]
+test_product.py::test_create_product_with_non_finite_price_raises[nan] PASSED [ 63%]
+test_product.py::test_create_product_with_non_finite_price_raises[inf] PASSED [ 63%]
+test_product.py::test_create_product_with_empty_id_raises PASSED         [ 64%]
+test_product.py::test_create_product_with_empty_name_raises PASSED       [ 65%]
+test_product.py::test_create_product_allows_zero_quantity_and_price PASSED [ 65%]
+test_product.py::test_to_dict_returns_all_fields PASSED                  [ 66%]
+test_product.py::test_from_row_builds_equivalent_product PASSED          [ 67%]
+test_product.py::test_equality_compares_by_value PASSED                  [ 67%]
+test_product.py::test_create_product_with_barcode_and_reorder_point PASSED [ 68%]
+test_product.py::test_create_product_uses_default_barcode_and_reorder_point_when_omitted PASSED [ 68%]
+test_product.py::test_is_low_stock_true_when_quantity_below_reorder_point PASSED [ 69%]
+test_product.py::test_is_low_stock_true_when_quantity_equals_reorder_point PASSED [ 70%]
+test_product.py::test_is_low_stock_false_when_quantity_above_reorder_point PASSED [ 70%]
+test_product.py::test_to_dict_includes_barcode_and_reorder_point PASSED  [ 71%]
+test_product.py::test_from_row_builds_product_with_barcode_and_reorder_point PASSED [ 72%]
+test_product_repository.py::test_upsert_product_inserts_new_record PASSED [ 72%]
+test_product_repository.py::test_upsert_product_with_existing_id_updates_not_duplicates PASSED [ 73%]
+test_product_repository.py::test_find_by_id_returns_none_when_not_found PASSED [ 74%]
+test_product_repository.py::test_find_by_id_returns_correct_product PASSED [ 74%]
+test_product_repository.py::test_find_all_returns_empty_list_when_no_products PASSED [ 75%]
+test_product_repository.py::test_find_all_returns_every_product_sorted_by_name PASSED [ 75%]
+test_product_repository.py::test_search_matches_by_name PASSED           [ 76%]
+test_product_repository.py::test_search_matches_by_category PASSED       [ 77%]
+test_product_repository.py::test_search_returns_empty_list_when_no_match PASSED [ 77%]
+test_product_repository.py::test_update_stock_increases_quantity PASSED  [ 78%]
+test_product_repository.py::test_update_stock_decreases_quantity PASSED  [ 79%]
+test_product_repository.py::test_update_stock_records_stock_movement_history PASSED [ 79%]
+test_product_repository.py::test_update_stock_below_zero_raises_and_does_not_change_quantity PASSED [ 80%]
+test_product_repository.py::test_update_stock_on_missing_product_raises PASSED [ 81%]
+test_product_repository.py::test_update_stock_with_zero_raises_and_records_no_movement PASSED [ 81%]
+test_product_repository.py::test_update_stock_rolls_back_quantity_when_movement_insert_fails PASSED [ 82%]
+test_product_repository.py::test_get_summary_on_empty_repository PASSED  [ 82%]
+test_product_repository.py::test_get_summary_calculates_totals_correctly PASSED [ 83%]
+test_product_repository.py::test_get_summary_counts_low_stock_items PASSED [ 84%]
+test_product_repository.py::test_upsert_product_persists_barcode_and_reorder_point PASSED [ 84%]
+test_product_repository.py::test_get_low_stock_alerts_returns_products_at_or_below_reorder_point PASSED [ 85%]
+test_product_repository.py::test_get_low_stock_alerts_returns_empty_when_no_products_low PASSED [ 86%]
+test_product_repository.py::test_get_low_stock_alerts_returns_empty_when_no_products_at_all PASSED [ 86%]
+test_product_repository.py::test_upsert_product_rejects_duplicate_barcode_from_different_product PASSED [ 87%]
+test_product_repository.py::test_upsert_product_allows_updating_same_product_with_same_barcode PASSED [ 87%]
+test_product_repository.py::test_upsert_product_allows_multiple_empty_barcodes PASSED [ 88%]
+test_validator.py::test_input_non_negative_int_accepts_valid_value PASSED [ 89%]
+test_validator.py::test_input_non_negative_int_rejects_negative_then_accepts PASSED [ 89%]
+test_validator.py::test_input_non_negative_int_rejects_non_numeric_then_accepts PASSED [ 90%]
+test_validator.py::test_input_non_negative_int_accepts_zero PASSED       [ 91%]
+test_validator.py::test_input_non_negative_int_rejects_value_beyond_sqlite_integer_then_accepts PASSED [ 91%]
+test_validator.py::test_input_non_negative_int_accepts_sqlite_integer_upper_bound PASSED [ 92%]
+test_validator.py::test_input_non_negative_int_blank_returns_default_when_given PASSED [ 93%]
+test_validator.py::test_input_non_negative_int_blank_without_default_reprompts PASSED [ 93%]
+test_validator.py::test_input_non_negative_float_accepts_valid_value PASSED [ 94%]
+test_validator.py::test_input_non_negative_float_rejects_negative_then_accepts PASSED [ 94%]
+test_validator.py::test_input_non_negative_float_rejects_non_numeric_then_accepts PASSED [ 95%]
+test_validator.py::test_input_non_negative_float_accepts_integer_looking_input PASSED [ 96%]
+test_validator.py::test_input_non_negative_float_rejects_nan_then_accepts PASSED [ 96%]
+test_validator.py::test_input_non_negative_float_rejects_infinity_then_accepts PASSED [ 97%]
+test_validator.py::test_confirm_returns_true_on_yes PASSED               [ 98%]
+test_validator.py::test_confirm_returns_false_on_no PASSED               [ 98%]
+test_validator.py::test_confirm_is_case_insensitive PASSED               [ 99%]
+test_validator.py::test_confirm_rejects_anything_other_than_y PASSED     [100%]
+
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.13.14-final-0 _______________
+
+Name                     Stmts   Miss  Cover   Missing
+------------------------------------------------------
+app_v1.py                   68      0   100%
+atomic_file_writer.py       20      2    90%   55-56
+csv_report_exporter.py      16      0   100%
+database_connection.py      66      1    98%   96
+inventory_app.py           212      4    98%   134-136, 273
+logger.py                   15      0   100%
+product.py                  42      3    93%   53, 131, 136
+product_repository.py       49      0   100%
+validator.py                44      0   100%
+------------------------------------------------------
+TOTAL                      532     10    98%
+Required test coverage of 90.0% reached. Total coverage: 98.12%
+============================= 158 passed in 2.55s =============================
+pytest exit=0
+=== FLAKE8
+0
+flake8 exit=0
+=== BANDIT
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 3351
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+bandit exit=0
+=== SELFTEST
+
+สรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-12 ครบถ้วน 100%
+✓ เคลียร์ข้อมูลทดสอบเรียบร้อย
+selftest exit=0
+=== TERMINAL DEMOS
+test_app_v1.py               exit=0 สรุปภาพรวม: ผ่านการทดสอบ 9/9 เคส (Pass Rate: 100.0%)
+test_atomic_file_writer.py   exit=0 สรุปภาพรวม: ผ่านการทดสอบ 3/3 เคส (Pass Rate: 100.0%)
+test_csv_report_exporter.py  exit=0 สรุปภาพรวม: ผ่านการทดสอบ 4/4 เคส (Pass Rate: 100.0%)
+test_database_connection.py  exit=0 สรุปภาพรวม: ผ่านการทดสอบ 8/8 เคส (Pass Rate: 100.0%)
+test_integration.py          exit=0 
+test_inventory_app.py        exit=0 สรุปภาพรวม: ผ่านการทดสอบ 8/8 เคส (Pass Rate: 100.0%)
+test_logger.py               exit=0 สรุปภาพรวม: ผ่านการทดสอบ 6/6 เคส (Pass Rate: 100.0%)
+test_product.py              exit=0 สรุปภาพรวม: ผ่านการทดสอบ 9/9 เคส (Pass Rate: 100.0%)
+test_product_repository.py   exit=0 สรุปภาพรวม: ผ่านการทดสอบ 9/9 เคส (Pass Rate: 100.0%)
+test_validator.py            exit=0 สรุปภาพรวม: ผ่านการทดสอบ 8/8 เคส (Pass Rate: 100.0%)

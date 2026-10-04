@@ -7,6 +7,9 @@
 ## [Unreleased]
 
 ### Added
+- รายงาน [`documents/Smoke_And_Regression_Test_Report.md`](./documents/Smoke_And_Regression_Test_Report.md) Smoke Test ครบ 8 เมนูและ Full Regression บน clone ใหม่จาก GitHub (`80c6d22`): 158 passed, Coverage 98.12%, Flake8 0, Bandit 0 พร้อมหลักฐาน [`reports/regression_evidence_2026-10-05.txt`](./reports/regression_evidence_2026-10-05.txt)
+- คู่มือปฏิบัติการและบำรุงรักษาระบบ [`documents/System_Operations_and_Maintenance_Manual.md`](./documents/System_Operations_and_Maintenance_Manual.md) (OMM-V2.0-01): ติดตั้ง, ปฏิบัติการประจำวัน, สำรอง/กู้คืนข้อมูล, แก้ไขปัญหา และกระบวนการบำรุงรักษาตาม ISO/IEC 14764
+- รายงาน [`documents/Technical_KPI_Report.md`](./documents/Technical_KPI_Report.md) (KPI-V2.0-01) สำหรับ Project Manager: Coverage 98.12%, Open Defects 0 (แก้แล้ว 7/7), Test Pass Rate 100%, Flake8/Bandit 0, UAT 16/16
 - หนังสือรับรองการปิดเฟสพัฒนา [`documents/Project_Completion_Certificate.md`](./documents/Project_Completion_Certificate.md) (PCC-V2.0-01) สรุปขอบเขตที่ส่งมอบ เกณฑ์การปิดเฟสพร้อมหลักฐาน และรายการที่ส่งต่อไป Version 3.0 ลงนามจำลองโดย Sponsor, PM, Tech Lead และ QA
 - ชุดสคริปต์ติดตั้งอัตโนมัติ `scripts/setup.cmd`, `scripts/setup.ps1` (Windows) และ `scripts/setup.sh` (Linux/macOS/Git Bash) ตรวจ Python ≥ 3.10, สร้าง `.venv`, ติดตั้ง dependency, สร้างฐานข้อมูลและ seed แล้วตรวจด้วย smoke test, self-test, pytest, Flake8, Bandit คืน exit code 0/1 ตามผล มีตัวเลือก `--clean`, `--seed`, `--skip-tests` — *Adaptive*
 - `.gitattributes` บังคับ `*.sh` เป็น LF และ `*.ps1`/`*.cmd` เป็น CRLF ไม่ให้ `core.autocrlf` ทำให้สคริปต์ bash รันไม่ได้
