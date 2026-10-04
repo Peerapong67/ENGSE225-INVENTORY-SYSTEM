@@ -6,6 +6,11 @@
 
 ## [Unreleased]
 
+### Changed
+- สัญญา Scope Freeze SFA-01 ลงนามจำลองครบ 5 บทบาท (ฉบับ 1.0) Baseline ที่ลงนามคือ `f6d7e77` (Version 2.0.1) พร้อมอัปเดตสถานะคุณภาพเป็น 158 เทสต์, Coverage 98.12% และผล UAT รอบ 2
+
+## [2.0.1] - 2026-10-04 — UAT Fixes (Baseline ที่ลงนามใน SFA-01)
+
 แก้ UAT Defects ทั้ง 5 รายการจาก UAT รอบแรก (`3a5a207`) และ Re-test รอบ 2 ผ่านทุกสถานการณ์ที่อยู่ในขอบเขต (16/16) ดูรายละเอียดใน [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) ส่วนที่ 6
 
 ### Added
@@ -30,7 +35,7 @@
 
 ## [2.0.0] - 2026-10-04 — Version 2.0 Baseline (Scope Freeze SFA-01)
 
-ช่วง Hardening & Maintenance ก่อนล็อกขอบเขต (PR #32, #33 และ commit บน `main`) โค้ดโปรแกรมของ Baseline คือ commit `c76c7b7`
+ช่วง Hardening & Maintenance ก่อนล็อกขอบเขต (PR #32, #33 และ commit บน `main`) โค้ดโปรแกรม ณ จุดนี้คือ commit `c76c7b7` ซึ่งเป็น Baseline ในร่างแรกของ SFA-01 ส่วน Baseline ที่ลงนามจริงคือ 2.0.1
 
 ### Added
 - `AtomicFileWriter` (`atomic_file_writer.py`) เขียนไฟล์ชั่วคราวในโฟลเดอร์เดียวกัน, fsync แล้ว `os.replace` เมื่อเขียนพังกลางทางไฟล์เดิมจะไม่เสียหาย — *Preventive* ลดความเสี่ยง "data.json เสียหาย" ใน Risk Register (`4e0a5b7`, PR #32)
@@ -134,7 +139,8 @@
 ### Added
 - `app_v1.py` ระบบสต็อกสินค้าแบบ Console เก็บข้อมูลใน `data.json` ผ่าน global dict (`69a9ad4`)
 
-[Unreleased]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/7e42f17...main
+[Unreleased]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/f6d7e77...main
+[2.0.1]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/c76c7b7...f6d7e77
 [2.0.0]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/90b6569...c76c7b7
 [2.0.0-sprint.2]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/71af63b...90b6569
 [2.0.0-sprint.1]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/4c80866...71af63b
