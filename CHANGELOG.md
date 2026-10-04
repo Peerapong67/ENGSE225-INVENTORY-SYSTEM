@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+### Added
+- README: ขั้นตอนสร้างฐานข้อมูลและใส่ seed data แบบละเอียด ใช้คำสั่ง Python ที่รันได้ทุก shell และแทนคำสั่ง `sqlite3 inventory.db < seed_data.sql` ซึ่งใช้ใน PowerShell ไม่ได้
+
 ### Changed
 - สัญญา Scope Freeze SFA-01 ลงนามจำลองครบ 5 บทบาท (ฉบับ 1.0) Baseline ที่ลงนามคือ `f6d7e77` (Version 2.0.1) พร้อมอัปเดตสถานะคุณภาพเป็น 158 เทสต์, Coverage 98.12% และผล UAT รอบ 2
 - รายงาน UAT ลงนามรับรองผลจำลองครบ 4 บทบาท (ฉบับ 1.0) ผลการรับรอง: ยอมรับ บน build `f6d7e77` (Version 2.0.1)

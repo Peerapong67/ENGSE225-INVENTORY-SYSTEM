@@ -76,24 +76,91 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 
 ## การติดตั้งและเริ่มใช้งาน
 
-ต้องมี Python 3.10 ขึ้นไป
+### 1. สิ่งที่ต้องมี
+
+- Python 3.10 ขึ้นไป
+- ตัวโปรแกรมใช้แค่ standard library ของ Python (รวมโมดูล `sqlite3`) **ไม่ต้องติดตั้ง package เพิ่มเพื่อรันโปรแกรม**
+- ไม่จำเป็นต้องมีโปรแกรม `sqlite3` (command-line) ในเครื่อง ทุกขั้นตอนด้านล่างทำผ่าน Python ได้
+
+ถ้าจะรันเทสต์หรือสแกนโค้ด ให้ติดตั้งเครื่องมือก่อน:
 
 ```bash
-# ติดตั้ง dependency
-pip install -r requirements.txt
+pip install -r requirements.txt       # pytest, pytest-cov (สำหรับรันเทสต์)
+pip install -r requirements-dev.txt   # requirements.txt + flake8, bandit เวอร์ชันเดียวกับ CI
+```
 
-# (สำหรับนักพัฒนา) ติดตั้งเพิ่ม flake8 + bandit เวอร์ชันเดียวกับ CI
-pip install -r requirements-dev.txt
+### 2. สร้างฐานข้อมูล (`schema.sql`)
 
-# รันโปรแกรม (สร้างฐานข้อมูล inventory.db จาก schema.sql ให้อัตโนมัติในการรันครั้งแรก)
+> **สำคัญ:** รันทุกคำสั่งจาก **โฟลเดอร์ root ของโปรเจกต์** (โฟลเดอร์ที่มี `inventory_app.py`) เพราะโปรแกรมเปิดไฟล์ `inventory.db` ในโฟลเดอร์ที่สั่งรัน (current working directory) ถ้ารันจากโฟลเดอร์อื่นจะได้ฐานข้อมูลคนละไฟล์
+
+**วิธี A — ให้โปรแกรมสร้างให้อัตโนมัติ (แนะนำ)**
+
+```bash
 python inventory_app.py
 ```
 
-หากต้องการข้อมูลสินค้าตัวอย่างไว้ทดสอบ ให้รัน seed data เพิ่มหลังจากมีไฟล์ `inventory.db` แล้ว:
+ทุกครั้งที่โปรแกรมเชื่อมต่อฐานข้อมูล จะรัน `schema.sql` ให้เอง ถ้ายังไม่มี `inventory.db` จะสร้างไฟล์ใหม่พร้อมตาราง `products`, `stock_movements`, `action_logs` และ index/trigger ครบ จากนั้นเลือกเมนู `8` เพื่อออกได้เลย
+
+**วิธี B — สร้างเองโดยไม่ต้องเปิดเมนู**
 
 ```bash
-sqlite3 inventory.db < seed_data.sql
+python -c "import sqlite3; c=sqlite3.connect('inventory.db'); c.executescript(open('schema.sql', encoding='utf-8').read()); c.commit(); c.close()"
 ```
+
+คำสั่งนี้ใช้ได้ทั้ง PowerShell, Command Prompt และ bash ต้องมี `encoding='utf-8'` เสมอ เพราะ `schema.sql` มีคอมเมนต์ภาษาไทย ถ้าไม่ระบุ Windows ภาษาไทยจะอ่านไฟล์ผิดและเกิด `UnicodeDecodeError`
+
+`schema.sql` ใช้ `CREATE ... IF NOT EXISTS` ทั้งหมด จึงรันซ้ำได้โดยข้อมูลเดิมไม่หาย
+
+### 3. ใส่ข้อมูลตัวอย่าง (`seed_data.sql`) — ไม่บังคับ
+
+ต้องสร้างฐานข้อมูลในขั้นที่ 2 ก่อน (seed ต้องมีตาราง `products` อยู่แล้ว)
+
+```bash
+python -c "import sqlite3; c=sqlite3.connect('inventory.db'); c.executescript(open('seed_data.sql', encoding='utf-8').read()); c.commit(); c.close()"
+```
+
+ถ้าในเครื่องมีโปรแกรม `sqlite3` อยู่แล้ว ใช้คำสั่งนี้แทนได้ (ใช้ได้ทุก shell รวม PowerShell ซึ่งไม่รองรับ `<` แบบ `sqlite3 inventory.db < seed_data.sql`):
+
+```bash
+sqlite3 inventory.db ".read seed_data.sql"
+```
+
+ผลลัพธ์คือสินค้าตัวอย่าง 3 รายการ:
+
+| รหัส | ชื่อ | หมวดหมู่ | คงเหลือ | ราคา |
+|---|---|---|---|---|
+| 101 | Mama Noodles | Food | 50 | 6.00 |
+| 102 | Lactasoy Milk | Drink | 20 | 12.00 |
+| 103 | Singha Water | Drink | 100 | 10.00 |
+
+- seed ไม่ได้กำหนดบาร์โค้ดและ Reorder Point จึงได้ค่า default จาก schema (บาร์โค้ดว่าง, Reorder Point = 5)
+- seed ใช้ `ON CONFLICT DO UPDATE` รันซ้ำแล้วไม่เกิดแถวซ้ำ แต่ชื่อ, หมวดหมู่, จำนวน และราคาของสินค้า 101–103 จะถูกเขียนกลับเป็นค่าตั้งต้น
+
+### 4. ตรวจสอบและเริ่มใช้งาน
+
+```bash
+# นับจำนวนสินค้าในฐานข้อมูล (ควรได้ 3 หลังรัน seed)
+python -c "import sqlite3; print(sqlite3.connect('inventory.db').execute('SELECT COUNT(*) FROM products').fetchone()[0])"
+
+# เปิดโปรแกรม แล้วเลือกเมนู 1 เพื่อดูสินค้าทั้งหมด
+python inventory_app.py
+```
+
+ถ้าคำสั่งนับจำนวนขึ้น `sqlite3.OperationalError: no such table: products` แปลว่ายังไม่ได้สร้างตาราง (ข้ามขั้นที่ 2) หรือรันจากโฟลเดอร์อื่น ให้กลับไปทำขั้นที่ 2 จากโฟลเดอร์ root ของโปรเจกต์
+
+### 5. ล้างฐานข้อมูลแล้วเริ่มใหม่
+
+ลบไฟล์ `inventory.db` (ข้อมูลทั้งหมดจะหายถาวร) แล้วทำขั้นที่ 2–3 ใหม่
+
+```bash
+# PowerShell
+Remove-Item inventory.db
+
+# bash / macOS / Linux
+rm inventory.db
+```
+
+`inventory.db` อยู่ใน `.gitignore` จึงไม่ถูก commit ขึ้น repo แต่ละเครื่องมีฐานข้อมูลของตัวเอง
 
 ## การรันเทสต์
 
