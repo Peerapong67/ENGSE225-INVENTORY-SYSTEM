@@ -1,3 +1,4 @@
+import sqlite3
 from typing import List, Optional
 
 from database_connection import DatabaseConnection
@@ -118,6 +119,7 @@ class ProductRepository:
 
         Raises:
             ValueError: ถ้าไม่พบสินค้า product_id นี้ หรือถ้าสต็อกหลังคำนวณจะติดลบ
+            sqlite3.Error: ถ้าเขียนฐานข้อมูลล้มเหลว (rollback ทั้งสองตารางก่อน raise ต่อ)
         """
         existing = self.findById(product_id)
         if existing is None:
@@ -127,15 +129,20 @@ class ProductRepository:
         if new_quantity < 0:
             raise ValueError("สต็อกคงเหลือจะติดลบ ไม่สามารถตัดสต็อกได้")
 
-        self.db.executeQuery(
-            "UPDATE products SET quantity = ? WHERE product_id = ?",
-            (new_quantity, product_id),
-        )
-        self.db.executeQuery(
-            "INSERT INTO stock_movements (product_id, change_qty, reason) VALUES (?, ?, ?)",
-            (product_id, qty, reason),
-        )
-        self.db.commit()
+        try:
+            self.db.executeQuery(
+                "UPDATE products SET quantity = ? WHERE product_id = ?",
+                (new_quantity, product_id),
+            )
+            self.db.executeQuery(
+                "INSERT INTO stock_movements (product_id, change_qty, reason) VALUES (?, ?, ?)",
+                (product_id, qty, reason),
+            )
+            self.db.commit()
+        except sqlite3.Error:
+            # ไม่ให้ยอดคงเหลือเปลี่ยนโดยไม่มีประวัติใน stock_movements
+            self.db.rollback()
+            raise
 
     def getSummary(self) -> dict:
         """สรุปภาพรวมคลังสินค้าทั้งหมด (ใช้แสดงในเมนู "Check Check"/รายงาน)

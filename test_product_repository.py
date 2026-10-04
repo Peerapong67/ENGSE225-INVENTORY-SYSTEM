@@ -3,6 +3,7 @@
 รันแบบ Demo ใน Terminal: python test_product_repository.py
 """
 import os
+import sqlite3
 import pytest
 
 from product import Product
@@ -136,6 +137,25 @@ def test_update_stock_on_missing_product_raises(repo):
         repo.updateStock("NO_SUCH_ID", 5)
 
 
+def test_update_stock_rolls_back_quantity_when_movement_insert_fails(repo, db, monkeypatch):
+    """ถ้า INSERT ลง stock_movements ล้มเหลว UPDATE quantity ที่ทำไปแล้วต้องถูก rollback
+    ไม่ให้ยอดคงเหลือเปลี่ยนโดยไม่มีประวัติการเคลื่อนไหว"""
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0))
+    original_execute = db.executeQuery
+
+    def failing_execute(sql, params=()):
+        if sql.startswith("INSERT INTO stock_movements"):
+            raise sqlite3.OperationalError("simulated failure")
+        return original_execute(sql, params)
+
+    monkeypatch.setattr(db, "executeQuery", failing_execute)
+    with pytest.raises(sqlite3.OperationalError):
+        repo.updateStock("P1", -3, reason="sale")
+    monkeypatch.undo()
+
+    assert repo.findById("P1").quantity == 10
+
+
 # ------------------------------------------------------------
 # getSummary
 # ------------------------------------------------------------
@@ -204,6 +224,38 @@ def test_get_low_stock_alerts_returns_empty_when_no_products_low(repo):
 def test_get_low_stock_alerts_returns_empty_when_no_products_at_all(repo):
     alerts = repo.getLowStockAlerts()
     assert alerts == []
+
+
+# ============================================================
+# BUG-102: Duplicate Barcode Fix (Bug Fix ของ CR-01)
+# พบระหว่าง Bug Bashing Case A — ระบบเคยยอมให้สินค้า 2 ชิ้นมี Barcode ซ้ำกันได้
+# ============================================================
+
+def test_upsert_product_rejects_duplicate_barcode_from_different_product(repo):
+    """Barcode ต้อง Unique ข้ามสินค้า — ถ้าซ้ำกับสินค้าอื่นต้อง raise ValueError"""
+    repo.upsertProduct(Product("101", "Sugar", 10, 20.0, barcode="8850001", reorder_point=5))
+
+    with pytest.raises(ValueError, match="Barcode"):
+        repo.upsertProduct(Product("102", "Salt", 10, 15.0, barcode="8850001", reorder_point=5))
+
+
+def test_upsert_product_allows_updating_same_product_with_same_barcode(repo):
+    """แก้ไขสินค้าตัวเดิมด้วย Barcode เดิมของตัวเอง ต้องไม่ถูกมองว่าซ้ำ"""
+    repo.upsertProduct(Product("101", "Sugar", 10, 20.0, barcode="8850001", reorder_point=5))
+    # อัปเดตสินค้า 101 ตัวเดิม เปลี่ยนแค่ quantity แต่ barcode เดิม
+    repo.upsertProduct(Product("101", "Sugar", 20, 20.0, barcode="8850001", reorder_point=5))
+
+    updated = repo.findById("101")
+    assert updated.quantity == 20
+
+
+def test_upsert_product_allows_multiple_empty_barcodes(repo):
+    """สินค้าที่ยังไม่มี Barcode (ค่าว่าง) ต้องเพิ่มได้หลายชิ้น ไม่ถือว่าซ้ำกัน"""
+    repo.upsertProduct(Product("101", "Item A", 10, 20.0, barcode=""))
+    repo.upsertProduct(Product("102", "Item B", 10, 15.0, barcode=""))  # ไม่ error
+
+    assert repo.findById("101") is not None
+    assert repo.findById("102") is not None
 
 
 # ============================================================
@@ -368,35 +420,3 @@ def _test_duplicate_barcode_rejected(repo):
 
 if __name__ == "__main__":
     _run_terminal_demo()
-
-# ============================================================
-# BUG-102: Duplicate Barcode Fix (Bug Fix ของ CR-01)
-# พบระหว่าง Bug Bashing Case A — ระบบเคยยอมให้สินค้า 2 ชิ้นมี Barcode ซ้ำกันได้
-# ============================================================
-
-
-def test_upsert_product_rejects_duplicate_barcode_from_different_product(repo):
-    """Barcode ต้อง Unique ข้ามสินค้า — ถ้าซ้ำกับสินค้าอื่นต้อง raise ValueError"""
-    repo.upsertProduct(Product("101", "Sugar", 10, 20.0, barcode="8850001", reorder_point=5))
-
-    with pytest.raises(ValueError, match="Barcode"):
-        repo.upsertProduct(Product("102", "Salt", 10, 15.0, barcode="8850001", reorder_point=5))
-
-
-def test_upsert_product_allows_updating_same_product_with_same_barcode(repo):
-    """แก้ไขสินค้าตัวเดิมด้วย Barcode เดิมของตัวเอง ต้องไม่ถูกมองว่าซ้ำ"""
-    repo.upsertProduct(Product("101", "Sugar", 10, 20.0, barcode="8850001", reorder_point=5))
-    # อัปเดตสินค้า 101 ตัวเดิม เปลี่ยนแค่ quantity แต่ barcode เดิม
-    repo.upsertProduct(Product("101", "Sugar", 20, 20.0, barcode="8850001", reorder_point=5))
-
-    updated = repo.findById("101")
-    assert updated.quantity == 20
-
-
-def test_upsert_product_allows_multiple_empty_barcodes(repo):
-    """สินค้าที่ยังไม่มี Barcode (ค่าว่าง) ต้องเพิ่มได้หลายชิ้น ไม่ถือว่าซ้ำกัน"""
-    repo.upsertProduct(Product("101", "Item A", 10, 20.0, barcode=""))
-    repo.upsertProduct(Product("102", "Item B", 10, 15.0, barcode=""))  # ไม่ error
-
-    assert repo.findById("101") is not None
-    assert repo.findById("102") is not None
