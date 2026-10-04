@@ -7,6 +7,7 @@
 ## [Unreleased]
 
 ### Added
+- หนังสือรับรองการปิดเฟสพัฒนา [`documents/Project_Completion_Certificate.md`](./documents/Project_Completion_Certificate.md) (PCC-V2.0-01) สรุปขอบเขตที่ส่งมอบ เกณฑ์การปิดเฟสพร้อมหลักฐาน และรายการที่ส่งต่อไป Version 3.0 ลงนามจำลองโดย Sponsor, PM, Tech Lead และ QA
 - ชุดสคริปต์ติดตั้งอัตโนมัติ `scripts/setup.cmd`, `scripts/setup.ps1` (Windows) และ `scripts/setup.sh` (Linux/macOS/Git Bash) ตรวจ Python ≥ 3.10, สร้าง `.venv`, ติดตั้ง dependency, สร้างฐานข้อมูลและ seed แล้วตรวจด้วย smoke test, self-test, pytest, Flake8, Bandit คืน exit code 0/1 ตามผล มีตัวเลือก `--clean`, `--seed`, `--skip-tests` — *Adaptive*
 - `.gitattributes` บังคับ `*.sh` เป็น LF และ `*.ps1`/`*.cmd` เป็น CRLF ไม่ให้ `core.autocrlf` ทำให้สคริปต์ bash รันไม่ได้
 - เอกสาร [`documents/Clean_Environment_Installation_Test.md`](./documents/Clean_Environment_Installation_Test.md) ขั้นตอนและผลทดสอบติดตั้งบนเครื่องสะอาด (Windows และ Git Bash ผ่าน 12/12 ขั้น)

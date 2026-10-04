@@ -72,7 +72,8 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 │   ├── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
 │   ├── Scope_Freeze_Sign_off_Agreement.md # เอกสารจำลองสัญญาล็อกขอบเขต Version 2.0 (สัปดาห์ที่ 12) + Future Backlog v3.0
 │   ├── User_Acceptance_Testing_Report.md # ผล UAT 17 สถานการณ์ธุรกิจ + แยก Defect กับ New Scope + Re-test รอบ 2
-│   └── Clean_Environment_Installation_Test.md # คู่มือสคริปต์ติดตั้งอัตโนมัติ + ผลทดสอบติดตั้งบนเครื่องสะอาด
+│   ├── Clean_Environment_Installation_Test.md # คู่มือสคริปต์ติดตั้งอัตโนมัติ + ผลทดสอบติดตั้งบนเครื่องสะอาด
+│   └── Project_Completion_Certificate.md # หนังสือรับรองการปิดเฟสพัฒนา Version 2.0.1 (ลงนามจำลองโดย Sponsor)
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```
