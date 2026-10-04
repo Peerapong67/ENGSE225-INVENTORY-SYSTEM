@@ -3,7 +3,7 @@
 | หัวข้อ | รายละเอียด |
 |---|---|
 | วันที่สแกน | 2026-10-03 |
-| Branch | `feature/atomic-file-writing` (ฐาน `45f6e36` + การเปลี่ยนแปลง Atomic Write และการแก้ไขตามรายงานนี้ ที่ยังไม่ commit) |
+| Branch | `feature/atomic-file-writing` (ฐาน `45f6e36`) — Atomic Write commit ใน `4e0a5b7` และการแก้ไขตามรายงานนี้ commit ใน `6358919` แล้ว merge เข้า `main` ผ่าน PR #32 และ #33 |
 | ขอบเขต | ไฟล์ `.py` ทั้งหมด 19 ไฟล์ใน root ของ repo (Bandit นับได้ 2,928 บรรทัดโค้ด) ไม่รวม `.git/`, `__pycache__/`, `reports/` |
 | เครื่องมือ | Flake8 7.4.1 (pycodestyle 2.15.0, pyflakes 4.0.1, mccabe 0.7.0), Bandit 1.9.4, pytest 9.1.1, CPython 3.13.14 |
 | Config | [`.flake8`](../.flake8), [`pyproject.toml`](../pyproject.toml) (`[tool.bandit]`) |

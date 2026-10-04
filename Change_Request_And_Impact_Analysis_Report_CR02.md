@@ -24,7 +24,7 @@
 * **ขอบเขตการเปลี่ยนแปลง (Scope of Requirements):**
   1. **CSV Export Function:** ส่งออกรายชื่อสินค้าที่ `is_low_stock() == True` เป็นไฟล์ `.csv` พร้อม Header ครบ 6 คอลัมน์: `ProductID, ProductName, Barcode, Quantity, ReorderPoint, Price`
   2. **Single Responsibility Design:** แยกคลาส `CsvReportExporter` เป็นอิสระจาก UI (`ConsoleUI`) และ `InventoryRepository` เดิมโดยสิ้นเชิง ออกแบบเป็น Static Method ไร้ State เพื่อทดสอบแยกส่วนได้ง่าย ไม่ผูกติด Tight Coupling กับชั้นอื่น
-  3. **UTF-8 Encoding & Safe File Handling:** ใช้ Context Manager (`with open`) จัดการปิดไฟล์อัตโนมัติ กำหนด Encoding `utf-8` รองรับข้อมูลภาษาไทยสมบูรณ์
+  3. **UTF-8 Encoding & Safe File Handling:** เดิมใช้ Context Manager (`with open`) จัดการปิดไฟล์อัตโนมัติ กำหนด Encoding `utf-8` รองรับข้อมูลภาษาไทยสมบูรณ์ ภายหลังเปลี่ยนไปเขียนผ่าน `AtomicFileWriter` (`atomic_file_writer.py`) ซึ่งเขียนลงไฟล์ชั่วคราวในโฟลเดอร์เดียวกัน, fsync แล้วจึง `os.replace` ทับไฟล์ปลายทาง ถ้าเขียนพังกลางทาง ไฟล์รายงานเดิมจะไม่ถูกเขียนทับครึ่งๆ กลางๆ (ยังใช้ Encoding `utf-8` เหมือนเดิม)
 
 ---
 

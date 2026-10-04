@@ -18,7 +18,8 @@ InventoryApp   ─┬─ uses ─▶ Validator          (ตรวจสอบ i
 ProductRepository ─┬─ creates and manages ─▶ Product            (entity)
                     └─ uses (Singleton)     ─▶ DatabaseConnection (เชื่อมต่อ SQLite เดียวทั้งระบบ)
 
-CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสระจาก UI/Repository — Static Method, ไม่มี State)
+CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสระจาก UI/Repository — Static Method, ไม่มี State)
+                   └─ uses ─▶ AtomicFileWriter (เขียนไฟล์ชั่วคราว → fsync → os.replace)
 ```
 
 - **Repository Pattern** — `ProductRepository` เป็นจุดเดียวที่คุยกับฐานข้อมูล ทำให้ `InventoryApp` ไม่ผูกติดกับวิธีเก็บข้อมูล และทดสอบแยกส่วนได้ง่าย
@@ -37,7 +38,7 @@ CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสร�
 | แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts) | **[CR-01]** ดึงรายชื่อสินค้าที่ `quantity <= reorder_point` เพื่อแจ้งเตือนให้สั่งซื้อเพิ่มโดยอัตโนมัติ |
 | **Export รายงานสินค้าใกล้หมดเป็น CSV** | **[CR-02]** ส่งออกรายชื่อสินค้าใกล้หมดเป็นไฟล์ `.csv` (Header: ProductID, ProductName, Barcode, Quantity, ReorderPoint, Price) สำหรับใช้สั่งซื้อ/ส่งต่อทีมจัดซื้อ |
 
-ทุก action ที่แก้ไขข้อมูล (เพิ่ม/แก้/ตัดสต็อก/ค้นหา) จะถูกบันทึกลงตาราง `action_logs` โดยอัตโนมัติผ่าน `Logger`
+ทุก action ที่แก้ไขข้อมูลหรือดึงรายงาน (เพิ่ม/แก้/ตัดสต็อก/ค้นหา/ดู Low Stock Alerts/Export CSV) จะถูกบันทึกลงตาราง `action_logs` โดยอัตโนมัติผ่าน `Logger`
 
 ## โครงสร้างโปรเจกต์
 
@@ -47,6 +48,7 @@ CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสร�
 ├── product.py                 # Entity: Product (มี barcode, reorder_point, is_low_stock())
 ├── product_repository.py      # Repository: เข้าถึงข้อมูลสินค้า (มี getLowStockAlerts())
 ├── csv_report_exporter.py     # [CR-02] Export สินค้าสต็อกต่ำเป็นไฟล์ CSV (Static Method, แยกอิสระ)
+├── atomic_file_writer.py      # เขียนไฟล์แบบ atomic (temp file → fsync → os.replace) ใช้กับ CSV และ data.json
 ├── database_connection.py     # Singleton: เชื่อมต่อ SQLite
 ├── logger.py                  # Singleton: บันทึก action log
 ├── validator.py                # ตรวจสอบ input จากผู้ใช้
@@ -55,11 +57,17 @@ CsvReportExporter ─── uses ─▶ Product (List)   (แยกอิสร�
 ├── app_v1.py                   # เวอร์ชันต้นแบบเดิม (เก็บไว้อ้างอิง ไม่ใช้งานจริงแล้ว)
 ├── conftest.py                  # pytest fixtures ส่วนกลาง (reset singleton, isolated db)
 ├── test_*.py                    # unit test แยกตามคลาส (แต่ละไฟล์รันเป็น Terminal Demo ได้ด้วย python test_*.py)
+├── test_integration.py          # integration test แบบ end-to-end ผ่าน InventoryApp.run() และ entry point จริง
+├── requirements.txt             # dependency สำหรับรันเทสต์ (pytest, pytest-cov)
+├── requirements-dev.txt         # requirements.txt + flake8, bandit (เวอร์ชันเดียวกับ CI)
+├── pyproject.toml / .flake8     # config ของ pytest, coverage (gate 90%), bandit และ flake8
 ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
 ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
 ├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
 ├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
-└── .github/workflows/tests.yml   # CI: รัน pytest อัตโนมัติทุก push/PR เข้า main และ develop
+├── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
+├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
+└── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```
 
 ## การติดตั้งและเริ่มใช้งาน
@@ -85,10 +93,17 @@ sqlite3 inventory.db < seed_data.sql
 
 ## การรันเทสต์
 
-โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส (119 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน)
+โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส และ integration test แบบ end-to-end (รวม 145 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน coverage 98%)
 
 ```bash
 python -m pytest -v
+
+# วัด coverage (ล้มเหลวถ้าต่ำกว่า 90% ตามที่ตั้งไว้ใน pyproject.toml)
+python -m pytest --cov --cov-report=term-missing
+
+# ตรวจคุณภาพโค้ดและความปลอดภัย (ต้องติดตั้ง requirements-dev.txt ก่อน)
+python -m flake8 .
+python -m bandit -c pyproject.toml -r .
 ```
 
 แต่ละไฟล์ `test_*.py` ยังรันแบบ Terminal Demo ได้โดยตรง (แสดงผลตรวจสอบ Definition of Done แบบอ่านง่ายเป็นภาษาไทย) เช่น
@@ -97,11 +112,14 @@ python -m pytest -v
 python test_csv_report_exporter.py
 ```
 
-CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติทุกครั้งที่ push หรือเปิด/อัปเดต Pull Request เข้า branch `main` และ `develop` บน Python 3.10, 3.11 และ 3.12
+CI (`.github/workflows/tests.yml`) รันอัตโนมัติทุกครั้งที่ push หรือเปิด/อัปเดต Pull Request เข้า branch `main` และ `develop` โดยมี 2 job:
+
+- **pytest** — รัน pytest พร้อมวัด coverage บน Python 3.10, 3.11 และ 3.12 ถ้า coverage ต่ำกว่า 90% ถือว่าไม่ผ่าน
+- **lint** — รัน Flake8 และ Bandit ต้องไม่พบปัญหาเลย
 
 ## Merge & Release Policy
 
-- Merge เข้า `develop`: ต้องผ่าน pytest บน CI/CD และ QA approve Pull Request
+- Merge เข้า `develop`: ต้องผ่าน CI ครบทั้ง job pytest และ lint และ QA approve Pull Request
 - Merge เข้า `main`: ต้องผ่าน CI/CD บน `develop` ล่าสุด และ Tech Lead ตรวจสอบ/approve Pull Request
 
 รายละเอียดเกณฑ์คุณภาพทั้งหมดดูที่ [`definition_of_done.md`](./definition_of_done.md) และเกณฑ์เฉพาะแต่ละ feature ที่ [`dod_per_feature.md`](./dod_per_feature.md)
@@ -119,5 +137,6 @@ CI (`.github/workflows/tests.yml`) รัน pytest อัตโนมัติ�
 | CR ID | ชื่อ | สถานะ | เอกสารประกอบ |
 |---|---|---|---|
 | CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./Change_Request_And_Impact_Analysis_Report.md) |
-| CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | 🟡 พัฒนาเสร็จ รอ Merge เข้า develop | `csv_report_exporter.py`, `test_csv_report_exporter.py` |
-| BUG-102 | Barcode ซ้ำ + Low Stock Alert อิง threshold ผิด + เมนู CSV Export ยังไม่ถูกเชื่อมเข้า UI | ✅ แก้ไขแล้วบน branch นี้ | `schema.sql`, `inventory_app.py`, `test_inventory_app.py` |
+| CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | ✅ Merged เข้า develop (PR #25) | [`Change_Request_And_Impact_Analysis_Report_CR02.md`](./Change_Request_And_Impact_Analysis_Report_CR02.md), `csv_report_exporter.py`, `test_csv_report_exporter.py` |
+| BUG-102 | Barcode ซ้ำ + Low Stock Alert อิง threshold ผิด + เมนู CSV Export ยังไม่ถูกเชื่อมเข้า UI | ✅ Merged เข้า develop (PR #27, #29) | `schema.sql`, `inventory_app.py`, `test_inventory_app.py` |
+| BUG-103 | กรอกราคา `nan` แล้วโปรแกรมพัง (IntegrityError) และราคา `inf` ถูกบันทึกลงฐานข้อมูลได้ (Corrective) | 🟡 แก้ไขแล้ว รอ QA ตรวจสอบ | `validator.py`, `product.py`, `test_validator.py`, `test_product.py`, `test_inventory_app.py` |

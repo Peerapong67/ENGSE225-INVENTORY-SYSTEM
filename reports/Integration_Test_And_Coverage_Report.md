@@ -3,7 +3,7 @@
 | หัวข้อ | รายละเอียด |
 |---|---|
 | วันที่รัน | 2026-10-03 18:24 (+07:00) |
-| Branch | `feature/atomic-file-writing` (ยังไม่ commit) |
+| Branch | `feature/atomic-file-writing` — commit ใน `a7b0c73` แล้ว merge เข้า `main` ผ่าน PR #32 และ #33 |
 | ไฟล์เทสต์ใหม่ | [`test_integration.py`](../test_integration.py) — Full Integration Test 12 เคส |
 | เครื่องมือ | pytest 9.1.1, pytest-cov 7.1.0 (coverage.py 7.16.2), CPython 3.13.14 |
 | Config | [`pyproject.toml`](../pyproject.toml) → `[tool.coverage.run]`, `[tool.coverage.report]` |
