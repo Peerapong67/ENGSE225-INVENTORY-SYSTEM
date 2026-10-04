@@ -1,3 +1,6 @@
+import math
+
+
 class Product:
     """
     ตรงกับ class Product ใน UML diagram
@@ -25,7 +28,8 @@ class Product:
                 ค่า default = 5 เพื่อ Backward Compatibility
 
         Raises:
-            ValueError: เมื่อ product_id/name ว่าง หรือ quantity/price/reorder_point ติดลบ
+            ValueError: เมื่อ product_id/name ว่าง, quantity/price/reorder_point ติดลบ
+                หรือ price เป็น nan/inf
         """
         if not product_id:
             raise ValueError("product_id ห้ามว่าง")
@@ -35,6 +39,9 @@ class Product:
             raise ValueError("quantity ต้องไม่ติดลบ")
         if price < 0:
             raise ValueError("price ต้องไม่ติดลบ")
+        # BUG-103: nan < 0 และ inf < 0 เป็น False จึงต้องเช็คแยก
+        if not math.isfinite(price):
+            raise ValueError("price ต้องเป็นตัวเลขที่จำกัด (ไม่ใช่ nan/inf)")
         if reorder_point < 0:
             raise ValueError("reorder_point ต้องไม่ติดลบ")
 

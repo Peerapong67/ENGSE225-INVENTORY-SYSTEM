@@ -1,3 +1,6 @@
+import math
+
+
 class Validator:
     """
     ตรงกับ class Validator ใน UML diagram — เมธอด static ทั้งหมด
@@ -34,13 +37,18 @@ class Validator:
             prompt: ข้อความที่แสดงตอนถาม input (ส่งต่อให้ input())
 
         Returns:
-            เลขทศนิยมที่ผู้ใช้กรอก ซึ่งรับประกันว่า >= 0 เสมอ
+            เลขทศนิยมที่ผู้ใช้กรอก ซึ่งรับประกันว่า >= 0 และเป็นค่าจำกัด
+            (ไม่ใช่ nan/inf) เสมอ
         """
         while True:
             raw = input(prompt)
             try:
                 value = float(raw)
             except ValueError:
+                print("กรุณากรอกตัวเลขเท่านั้น")
+                continue
+            # BUG-103: float() รับ "nan"/"inf" ได้ และ nan < 0 เป็น False จึงต้องเช็คแยก
+            if not math.isfinite(value):
                 print("กรุณากรอกตัวเลขเท่านั้น")
                 continue
             if value < 0:

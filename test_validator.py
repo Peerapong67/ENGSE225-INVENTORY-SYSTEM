@@ -66,6 +66,18 @@ def test_input_non_negative_float_accepts_integer_looking_input(monkeypatch):
     assert Validator.inputNonNegativeFloat("price: ") == 10.0
 
 
+def test_input_non_negative_float_rejects_nan_then_accepts(monkeypatch):
+    """BUG-103: float("nan") แปลงได้และ nan < 0 เป็น False จึงเคยหลุดผ่านไปถึงฐานข้อมูล"""
+    _mock_inputs(monkeypatch, ["nan", "NaN", "3.5"])
+    assert Validator.inputNonNegativeFloat("price: ") == 3.5
+
+
+def test_input_non_negative_float_rejects_infinity_then_accepts(monkeypatch):
+    """BUG-103: inf/infinity ต้องถูกปฏิเสธ ไม่ใช่ถูกบันทึกเป็นราคา"""
+    _mock_inputs(monkeypatch, ["inf", "Infinity", "1e999", "4.0"])
+    assert Validator.inputNonNegativeFloat("price: ") == 4.0
+
+
 # ------------------------------------------------------------
 # confirm
 # ------------------------------------------------------------

@@ -323,6 +323,18 @@ def test_add_product_with_duplicate_barcode_shows_error_no_crash(monkeypatch, db
     assert repo.findById("102") is None  # ต้องไม่ถูกบันทึกลงฐานข้อมูล
 
 
+def test_add_product_with_nan_or_inf_price_reprompts_no_crash(monkeypatch, db, repo, capsys):
+    """BUG-103: กรอกราคา nan/inf ต้องถามใหม่ ไม่ทำให้โปรแกรมพังด้วย IntegrityError"""
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["P1", "Item", "10", "nan", "inf", "20.0", "Food", "", "5"])
+    app.addOrUpdateProduct()
+
+    saved = repo.findById("P1")
+    assert saved is not None
+    assert saved.price == 20.0
+    assert "บันทึกสำเร็จ" in capsys.readouterr().out
+
+
 # ============================================================
 # ส่วนแสดงผล Terminal รายละเอียดเชิงลึกเมื่อรัน python test_inventory_app.py
 # ============================================================

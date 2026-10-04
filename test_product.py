@@ -34,6 +34,13 @@ def test_create_product_with_negative_price_raises():
         Product(product_id="P4", name="Bad Price", quantity=1, price=-5.0)
 
 
+@pytest.mark.parametrize("bad_price", [float("nan"), float("inf")])
+def test_create_product_with_non_finite_price_raises(bad_price):
+    """BUG-103: nan < 0 และ inf < 0 เป็น False จึงต้องเช็ค isfinite แยกต่างหาก"""
+    with pytest.raises(ValueError):
+        Product(product_id="P4", name="Bad Price", quantity=1, price=bad_price)
+
+
 def test_create_product_with_empty_id_raises():
     with pytest.raises(ValueError):
         Product(product_id="", name="No Id", quantity=1, price=1.0)
