@@ -83,15 +83,18 @@
 
 ### 3.3 ตาราง Future Backlog (Version 3.0)
 
+> FB-01 ถึง FB-05 มาจาก New Scope ที่พบใน [`User_Acceptance_Testing_Report.md`](./User_Acceptance_Testing_Report.md) ส่วนที่ 3.3 (Effort: S = ไม่เกินครึ่งวัน, M = 1–2 วัน)
+>
 > กรอกระหว่างหรือหลังการนำเสนอ ID ใช้รูปแบบ `FB-xx` เมื่อเริ่มพัฒนาใน Version 3.0 แต่ละรายการจะถูกยกระดับเป็น `CR-xx` หรือ `BUG-xxx` ตามกระบวนการ ISO/IEC 14764
 
 | FB ID | คำขอ (Request) | ผู้ขอ / วันที่ | ประเภทตาม ISO/IEC 14764 | ชั้นที่กระทบ (UI / Validator / Product / Repository / schema.sql / Logger / CSV) | Effort ประมาณการ | Priority (MoSCoW) | สถานะ |
 | :---: | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
-| FB-01 | | | | | | | Deferred → v3.0 |
-| FB-02 | | | | | | | Deferred → v3.0 |
-| FB-03 | | | | | | | Deferred → v3.0 |
-| FB-04 | | | | | | | Deferred → v3.0 |
-| FB-05 | | | | | | | Deferred → v3.0 |
+| FB-01 | เมนูรับสินค้าเข้าคลัง (Restock) เพิ่มยอดตามจำนวนรับเข้า และบันทึก `stock_movements` | UAT-15 / 2026-10-04 | Perfective | UI, Repository (`updateStock` มีอยู่แล้ว), Logger (Action ใหม่) | M | Must | Deferred → v3.0 |
+| FB-02 | หน้าจอยืนยันการแก้ไขแบบตารางเทียบข้อมูลเดิม/ใหม่ และกด Enter เพื่อคงค่าเดิม | UAT-03 / 2026-10-04 | Perfective | UI, Validator | M | Should | Deferred → v3.0 |
+| FB-03 | รายงานสรุป (เมนู 4) ใช้เกณฑ์ใกล้หมดเดียวกับ Reorder Point หรือแสดงทั้งสองเกณฑ์ | UAT-11 / 2026-10-04 | Perfective | UI, Repository (`getSummary`) | S | Should (รอ Sponsor ตัดสินเกณฑ์) | Deferred → v3.0 |
+| FB-04 | Barcode แสดงครบทุกหลักเมื่อเปิดใน Excel (Export `.xlsx` หรือคอลัมน์ข้อความ) | UAT-08 / 2026-10-04 | Perfective | CSV | M | Could | Deferred → v3.0 |
+| FB-05 | จัดคอลัมน์ตารางให้ตรงเมื่อชื่อสินค้าเป็นภาษาไทย | UAT-17 / 2026-10-04 | Perfective | UI | S | Could | Deferred → v3.0 |
+| FB-06 | | | | | | | |
 
 ---
 
@@ -172,3 +175,4 @@
 | ฉบับ | วันที่ | รายละเอียด |
 | :---: | :--- | :--- |
 | 0.1 | 2026-10-04 | ร่างแรก จัดทำก่อนการนำเสนอเพื่อยื่นให้ Sponsor ลงนาม |
+| 0.2 | 2026-10-04 | บันทึก FB-01 ถึง FB-05 จากผล UAT รอบแรก (UAT-V2.0-01) ลงตาราง Future Backlog |

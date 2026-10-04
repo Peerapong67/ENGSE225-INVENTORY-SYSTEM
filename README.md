@@ -61,13 +61,15 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 ├── requirements.txt             # dependency สำหรับรันเทสต์ (pytest, pytest-cov)
 ├── requirements-dev.txt         # requirements.txt + flake8, bandit (เวอร์ชันเดียวกับ CI)
 ├── pyproject.toml / .flake8     # config ของ pytest, coverage (gate 90%), bandit และ flake8
+├── CHANGELOG.md                 # Maintenance History Log (Added / Changed / Removed / Fixed)
 ├── documents/                   # เอกสารโครงการ
 │   ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
 │   ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
 │   ├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
 │   ├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
 │   ├── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
-│   └── Scope_Freeze_Sign_off_Agreement.md # เอกสารจำลองสัญญาล็อกขอบเขต Version 2.0 (สัปดาห์ที่ 12) + Future Backlog v3.0
+│   ├── Scope_Freeze_Sign_off_Agreement.md # เอกสารจำลองสัญญาล็อกขอบเขต Version 2.0 (สัปดาห์ที่ 12) + Future Backlog v3.0
+│   └── User_Acceptance_Testing_Report.md # ผล UAT 17 สถานการณ์ธุรกิจ + แยก Defect กับ New Scope + Re-test รอบ 2
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```
@@ -95,7 +97,7 @@ sqlite3 inventory.db < seed_data.sql
 
 ## การรันเทสต์
 
-โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส และ integration test แบบ end-to-end (รวม 145 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน coverage 98%)
+โปรเจกต์นี้มี unit test ครอบคลุมทุกคลาส และ integration test แบบ end-to-end (รวม 158 เทสต์ ผ่านทั้งหมด ณ ปัจจุบัน coverage 98%)
 
 ```bash
 python -m pytest -v
@@ -142,3 +144,8 @@ CI (`.github/workflows/tests.yml`) รันอัตโนมัติทุก
 | CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | ✅ Merged เข้า develop (PR #25) | [`Change_Request_And_Impact_Analysis_Report_CR02.md`](./documents/Change_Request_And_Impact_Analysis_Report_CR02.md), `csv_report_exporter.py`, `test_csv_report_exporter.py` |
 | BUG-102 | Barcode ซ้ำ + Low Stock Alert อิง threshold ผิด + เมนู CSV Export ยังไม่ถูกเชื่อมเข้า UI | ✅ Merged เข้า develop (PR #27, #29) | `schema.sql`, `inventory_app.py`, `test_inventory_app.py` |
 | BUG-103 | กรอกราคา `nan` แล้วโปรแกรมพัง (IntegrityError) และราคา `inf` ถูกบันทึกลงฐานข้อมูลได้ (Corrective) | ✅ แก้ไขแล้ว ผ่านการทดสอบ (Merged เข้า main และ develop) | `validator.py`, `product.py`, `test_validator.py`, `test_product.py`, `test_inventory_app.py` |
+| BUG-104 | Export CSV ไปยังโฟลเดอร์ที่ไม่มีอยู่/ชื่อไฟล์มีอักขระต้องห้าม ทำให้โปรแกรมพัง (UAT-09, Critical) | ✅ แก้ไขแล้ว ผ่าน UAT Re-test รอบ 2 | [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) |
+| BUG-105 | กรอกจำนวน/Reorder Point เกินช่วง INTEGER ของ SQLite ทำให้โปรแกรมพัง (UAT-14, Critical) | ✅ แก้ไขแล้ว ผ่าน UAT Re-test รอบ 2 | [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) |
+| BUG-106 | CSV ไม่มี UTF-8 BOM ชื่อภาษาไทยอ่านไม่ได้ใน Excel (UAT-08, Major) | ✅ แก้ไขแล้ว ผ่าน UAT Re-test รอบ 2 | [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) |
+| BUG-107 | กด Enter ที่ Reorder Point ไม่ใช้ค่าเริ่มต้น 5 ตามข้อความบนหน้าจอ (UAT-02, Minor) | ✅ แก้ไขแล้ว ผ่าน UAT Re-test รอบ 2 | [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) |
+| BUG-108 | ตัดสต็อก 0 ชิ้นแล้วแจ้งสำเร็จและบันทึก movement ว่าง (UAT-06, Minor) | ✅ แก้ไขแล้ว ผ่าน UAT Re-test รอบ 2 | [`documents/User_Acceptance_Testing_Report.md`](./documents/User_Acceptance_Testing_Report.md) |

@@ -117,5 +117,6 @@ The repo's CR reports cite **ISO/IEC 14764:2006**. Keep citations consistent wit
 - Source files use CRLF line endings, and the repo has `core.autocrlf=true`.
 - Keep `requirements*.txt` ASCII-only. Older pip on Thai-locale Windows (cp874) can't decode UTF-8 Thai comments.
 - Linter versions are pinned exactly in `requirements-dev.txt`. Test tools use bounded ranges in `requirements.txt`.
+- The low-stock CSV is written as `utf-8-sig` (with a BOM) so Excel on Thai Windows reads Thai names (BUG-106). Read it back with `encoding="utf-8-sig"` in tests, or the first header cell becomes `\ufeffProductID`.
 - `reports/` holds the generated scan and coverage reports and evidence. Flake8 and Bandit exclude it. `htmlcov/` is gitignored.
 - Commit messages follow conventional prefixes: `feat:`, `fix:`, `test:`, `style:`, `docs:` and `build:`. They map to 14764 categories as listed above. Put the CR/BUG ID in the message when there is one.
