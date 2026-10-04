@@ -7,6 +7,9 @@
 ## [Unreleased]
 
 ### Added
+- ชุดสคริปต์ติดตั้งอัตโนมัติ `scripts/setup.cmd`, `scripts/setup.ps1` (Windows) และ `scripts/setup.sh` (Linux/macOS/Git Bash) ตรวจ Python ≥ 3.10, สร้าง `.venv`, ติดตั้ง dependency, สร้างฐานข้อมูลและ seed แล้วตรวจด้วย smoke test, self-test, pytest, Flake8, Bandit คืน exit code 0/1 ตามผล มีตัวเลือก `--clean`, `--seed`, `--skip-tests` — *Adaptive*
+- `.gitattributes` บังคับ `*.sh` เป็น LF และ `*.ps1`/`*.cmd` เป็น CRLF ไม่ให้ `core.autocrlf` ทำให้สคริปต์ bash รันไม่ได้
+- เอกสาร [`documents/Clean_Environment_Installation_Test.md`](./documents/Clean_Environment_Installation_Test.md) ขั้นตอนและผลทดสอบติดตั้งบนเครื่องสะอาด (Windows และ Git Bash ผ่าน 12/12 ขั้น)
 - README: ขั้นตอนสร้างฐานข้อมูลและใส่ seed data แบบละเอียด ใช้คำสั่ง Python ที่รันได้ทุก shell และแทนคำสั่ง `sqlite3 inventory.db < seed_data.sql` ซึ่งใช้ใน PowerShell ไม่ได้
 
 ### Changed

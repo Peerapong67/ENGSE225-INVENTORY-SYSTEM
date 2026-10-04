@@ -1,0 +1,5 @@
+# สคริปต์ shell ต้องเป็น LF เสมอ (core.autocrlf=true จะแปลงเป็น CRLF แล้ว bash รันไม่ได้)
+*.sh  text eol=lf
+# สคริปต์ Windows ใช้ CRLF
+*.ps1 text eol=crlf
+*.cmd text eol=crlf

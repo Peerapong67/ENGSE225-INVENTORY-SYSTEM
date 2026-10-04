@@ -62,6 +62,8 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 ├── requirements-dev.txt         # requirements.txt + flake8, bandit (เวอร์ชันเดียวกับ CI)
 ├── pyproject.toml / .flake8     # config ของ pytest, coverage (gate 90%), bandit และ flake8
 ├── CHANGELOG.md                 # Maintenance History Log (Added / Changed / Removed / Fixed)
+├── scripts/                     # สคริปต์ติดตั้งอัตโนมัติ setup.cmd / setup.ps1 (Windows), setup.sh (Linux/macOS/Git Bash)
+├── .gitattributes               # บังคับ line ending ของสคริปต์ (*.sh = LF, *.ps1/*.cmd = CRLF)
 ├── documents/                   # เอกสารโครงการ
 │   ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
 │   ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
@@ -69,12 +71,35 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 │   ├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
 │   ├── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
 │   ├── Scope_Freeze_Sign_off_Agreement.md # เอกสารจำลองสัญญาล็อกขอบเขต Version 2.0 (สัปดาห์ที่ 12) + Future Backlog v3.0
-│   └── User_Acceptance_Testing_Report.md # ผล UAT 17 สถานการณ์ธุรกิจ + แยก Defect กับ New Scope + Re-test รอบ 2
+│   ├── User_Acceptance_Testing_Report.md # ผล UAT 17 สถานการณ์ธุรกิจ + แยก Defect กับ New Scope + Re-test รอบ 2
+│   └── Clean_Environment_Installation_Test.md # คู่มือสคริปต์ติดตั้งอัตโนมัติ + ผลทดสอบติดตั้งบนเครื่องสะอาด
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```
 
 ## การติดตั้งและเริ่มใช้งาน
+
+### ติดตั้งอัตโนมัติด้วยสคริปต์ (แนะนำ)
+
+สคริปต์ชุดนี้ทำทุกขั้นด้านล่างให้ในคำสั่งเดียว: ตรวจ Python, สร้าง `.venv`, ติดตั้ง dependency, สร้างฐานข้อมูล, ใส่ seed data แล้วตรวจด้วย smoke test, self-test, pytest, Flake8 และ Bandit พร้อมสรุปผล PASS/FAIL ทีละขั้น
+
+```bash
+# Windows (Command Prompt หรือ PowerShell)
+scripts\setup.cmd -Seed
+
+# Linux / macOS / Git Bash
+bash scripts/setup.sh --seed
+```
+
+| ตัวเลือก (Windows / bash) | ผล |
+|---|---|
+| `-Seed` / `--seed` | ใส่สินค้าตัวอย่าง 3 รายการ |
+| `-Clean` / `--clean` | ลบ `.venv` และ `inventory.db` เดิมก่อนติดตั้ง (ข้อมูลหายถาวร) ใช้ทดสอบ Clean Environment Installation |
+| `-SkipTests` / `--skip-tests` | ติดตั้งเร็วขึ้น ไม่ติดตั้งและไม่รัน pytest / Flake8 / Bandit |
+
+หลังติดตั้ง เปิดโปรแกรมด้วย `.venv\Scripts\python.exe inventory_app.py` (Windows) หรือ `.venv/bin/python inventory_app.py` (Linux/macOS) รายละเอียดสคริปต์และผลทดสอบอยู่ที่ [`documents/Clean_Environment_Installation_Test.md`](./documents/Clean_Environment_Installation_Test.md)
+
+ถ้าต้องการทำทีละขั้นเอง ดูหัวข้อย่อยต่อไปนี้
 
 ### 1. สิ่งที่ต้องมี
 

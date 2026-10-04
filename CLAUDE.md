@@ -14,6 +14,9 @@ pip install -r requirements-dev.txt          # pytest, pytest-cov, flake8, bandi
 python inventory_app.py                      # interactive menu (creates inventory.db in cwd on first run)
 python inventory_app.py --selftest           # DoD self-test against inventory.db, cleans up after itself
 
+scripts\setup.cmd -Clean -Seed              # Windows: clean install into .venv + DB + seed + all checks (exit 0/1)
+bash scripts/setup.sh --clean --seed        # same for Linux/macOS/Git Bash; --skip-tests for a quick install
+
 python -m pytest -v                                          # all tests
 python -m pytest test_inventory_app.py -v                    # one file
 python -m pytest test_inventory_app.py::test_add_new_product_saves_and_logs -v   # one test
@@ -114,7 +117,7 @@ The repo's CR reports cite **ISO/IEC 14764:2006**. Keep citations consistent wit
 
 - The `__main__` self-test blocks use `_verify(cond, msg)` instead of `assert`, because Bandit B101 flags `assert` in non-test code. `assert` is fine only in `test_*.py` and `conftest.py`.
 - Bandit skips B101 only in test files, and coverage omits test files. Both are configured in `pyproject.toml`. Don't add `# noqa`, `# nosec` or `# pragma: no cover`. The scan reports in `reports/` state that none are used.
-- Source files use CRLF line endings, and the repo has `core.autocrlf=true`.
+- Source files use CRLF line endings, and the repo has `core.autocrlf=true`. `.gitattributes` forces `*.sh` to LF (bash fails on CRLF) and `*.ps1`/`*.cmd` to CRLF. Keep `scripts/setup.ps1` saved as UTF-8 with BOM (PowerShell 5.1 misreads Thai otherwise) and `scripts/setup.cmd` ASCII-only. Setup scripts are `.ps1`/`.sh` on purpose: a new `.py` file at any depth counts toward coverage (`source = ["."]`).
 - Keep `requirements*.txt` ASCII-only. Older pip on Thai-locale Windows (cp874) can't decode UTF-8 Thai comments.
 - Linter versions are pinned exactly in `requirements-dev.txt`. Test tools use bounded ranges in `requirements.txt`.
 - The low-stock CSV is written as `utf-8-sig` (with a BOM) so Excel on Thai Windows reads Thai names (BUG-106). Read it back with `encoding="utf-8-sig"` in tests, or the first header cell becomes `\ufeffProductID`.
