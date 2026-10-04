@@ -1,7 +1,7 @@
 name: Tests
 
 # รันอัตโนมัติทุกครั้งที่ push หรือเปิด/อัปเดต Pull Request เข้า branch main/develop
-# ตาม Merge & Release Policy ใน definition_of_done.md ข้อ 3
+# ตาม Merge & Release Policy ใน documents/definition_of_done.md ข้อ 3
 on:
   push:
     branches: [ "main", "develop" ]

@@ -4,7 +4,7 @@
 
 ## ทำไมต้อง Refactor
 
-เวอร์ชันแรก (`app_v1.py`) เก็บข้อมูลในไฟล์ `data.json` ตรงๆ ผ่าน global dict ไม่มีการตรวจสอบข้อมูลนำเข้า และไม่มี unit test เลย ซึ่งเสี่ยงต่อข้อมูลเสียหายและแก้ไขยาก รายละเอียดความเสี่ยงทั้งหมดที่พบและแผนรับมือ ดูได้ที่ [`risk_register_app_v1_emoji.md`](./risk_register_app_v1_emoji.md)
+เวอร์ชันแรก (`app_v1.py`) เก็บข้อมูลในไฟล์ `data.json` ตรงๆ ผ่าน global dict ไม่มีการตรวจสอบข้อมูลนำเข้า และไม่มี unit test เลย ซึ่งเสี่ยงต่อข้อมูลเสียหายและแก้ไขยาก รายละเอียดความเสี่ยงทั้งหมดที่พบและแผนรับมือ ดูได้ที่ [`documents/risk_register_app_v1_emoji.md`](./documents/risk_register_app_v1_emoji.md)
 
 เวอร์ชันปัจจุบัน (`inventory_app.py` และคลาสสนับสนุน) แก้ไขปัญหาเหล่านั้นด้วยการย้ายไปใช้ฐานข้อมูล SQLite, แยก logic การเข้าถึงข้อมูลออกจาก business logic (Repository Pattern), บังคับให้มี database connection เดียวทั้งระบบ (Singleton Pattern), และเพิ่ม validation ทุกจุดที่รับ input จากผู้ใช้
 
@@ -61,11 +61,12 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 ├── requirements.txt             # dependency สำหรับรันเทสต์ (pytest, pytest-cov)
 ├── requirements-dev.txt         # requirements.txt + flake8, bandit (เวอร์ชันเดียวกับ CI)
 ├── pyproject.toml / .flake8     # config ของ pytest, coverage (gate 90%), bandit และ flake8
-├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
-├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
-├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
-├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
-├── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
+├── documents/                   # เอกสารโครงการ
+│   ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
+│   ├── dod_per_feature.md           # เกณฑ์ Definition of Done เฉพาะแต่ละ feature/ticket
+│   ├── risk_register_app_v1_emoji.md # บันทึกความเสี่ยงของเวอร์ชันต้นแบบและแผนรับมือ
+│   ├── Change_Request_And_Impact_Analysis_Report.md # เอกสารวิเคราะห์ผลกระทบ CR-01 ตาม ISO/IEC 14764
+│   └── Change_Request_And_Impact_Analysis_Report_CR02.md # เอกสารวิเคราะห์ผลกระทบ CR-02 ตาม ISO/IEC 14764
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```
@@ -122,7 +123,7 @@ CI (`.github/workflows/tests.yml`) รันอัตโนมัติทุก
 - Merge เข้า `develop`: ต้องผ่าน CI ครบทั้ง job pytest และ lint และ QA approve Pull Request
 - Merge เข้า `main`: ต้องผ่าน CI/CD บน `develop` ล่าสุด และ Tech Lead ตรวจสอบ/approve Pull Request
 
-รายละเอียดเกณฑ์คุณภาพทั้งหมดดูที่ [`definition_of_done.md`](./definition_of_done.md) และเกณฑ์เฉพาะแต่ละ feature ที่ [`dod_per_feature.md`](./dod_per_feature.md)
+รายละเอียดเกณฑ์คุณภาพทั้งหมดดูที่ [`documents/definition_of_done.md`](./documents/definition_of_done.md) และเกณฑ์เฉพาะแต่ละ feature ที่ [`documents/dod_per_feature.md`](./documents/dod_per_feature.md)
 
 ## ฐานข้อมูล
 
@@ -136,7 +137,7 @@ CI (`.github/workflows/tests.yml`) รันอัตโนมัติทุก
 
 | CR ID | ชื่อ | สถานะ | เอกสารประกอบ |
 |---|---|---|---|
-| CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./Change_Request_And_Impact_Analysis_Report.md) |
-| CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | ✅ Merged เข้า develop (PR #25) | [`Change_Request_And_Impact_Analysis_Report_CR02.md`](./Change_Request_And_Impact_Analysis_Report_CR02.md), `csv_report_exporter.py`, `test_csv_report_exporter.py` |
+| CR-01 | Barcode & Reorder Point Alert | ✅ Merged เข้า develop | [`Change_Request_And_Impact_Analysis_Report.md`](./documents/Change_Request_And_Impact_Analysis_Report.md) |
+| CR-02 | Export Low Stock Report เป็น CSV (Emergency Change Request) | ✅ Merged เข้า develop (PR #25) | [`Change_Request_And_Impact_Analysis_Report_CR02.md`](./documents/Change_Request_And_Impact_Analysis_Report_CR02.md), `csv_report_exporter.py`, `test_csv_report_exporter.py` |
 | BUG-102 | Barcode ซ้ำ + Low Stock Alert อิง threshold ผิด + เมนู CSV Export ยังไม่ถูกเชื่อมเข้า UI | ✅ Merged เข้า develop (PR #27, #29) | `schema.sql`, `inventory_app.py`, `test_inventory_app.py` |
 | BUG-103 | กรอกราคา `nan` แล้วโปรแกรมพัง (IntegrityError) และราคา `inf` ถูกบันทึกลงฐานข้อมูลได้ (Corrective) | ✅ แก้ไขแล้ว ผ่านการทดสอบ (Merged เข้า main และ develop) | `validator.py`, `product.py`, `test_validator.py`, `test_product.py`, `test_inventory_app.py` |

@@ -1,7 +1,7 @@
 """
 AtomicFileWriter
 =================
-ลดความเสี่ยงตาม Risk Register (risk_register_app_v1_emoji.md):
+ลดความเสี่ยงตาม Risk Register (documents/risk_register_app_v1_emoji.md):
 "ข้อมูลใน data.json อาจเสียหายหรือหายทั้งหมด เมื่อเกิดข้อผิดพลาดระหว่างบันทึกไฟล์"
 
 ปัญหาของ open(path, 'w') ตรงๆ คือไฟล์เดิมถูกล้างทิ้งทันทีที่เปิด ถ้าโปรแกรมพัง/

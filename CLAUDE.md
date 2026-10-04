@@ -29,7 +29,7 @@ CI (`.github/workflows/tests.yml`) runs on PRs and pushes to `main`/`develop`. I
 - `pytest --cov` on Python 3.10, 3.11 and 3.12, with a 90% coverage gate
 - a `lint` job that runs flake8 + bandit
 
-PRs need all of these green. Branch flow: feature branch → PR into `develop` (CI green + QA approve) → `develop` into `main` (Tech Lead approve). See `definition_of_done.md`.
+PRs need all of these green. Branch flow: feature branch → PR into `develop` (CI green + QA approve) → `develop` into `main` (Tech Lead approve). See `documents/definition_of_done.md`.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ There are two different meanings of "low stock". Don't merge them:
 - `getSummary()` and the report screen count `quantity <= LOW_STOCK_THRESHOLD`, a fixed 5.
 - Alerts (menu 6) and the CSV export use each product's own `reorder_point` (CR-01 / BUG-102).
 
-`app_v1.py` is the **legacy prototype**: a JSON file plus a global dict `x`. It is kept on purpose as the "before refactor" reference for `risk_register_app_v1_emoji.md`. Don't refactor it. `test_app_v1.py` reads and writes `app_v1.x` directly.
+`app_v1.py` is the **legacy prototype**: a JSON file plus a global dict `x`. It is kept on purpose as the "before refactor" reference for `documents/risk_register_app_v1_emoji.md`. Don't refactor it. `test_app_v1.py` reads and writes `app_v1.x` directly.
 
 ## Process standards: ISO/IEC 12207 and ISO/IEC 14764
 
@@ -71,12 +71,12 @@ The repo's CR reports cite **ISO/IEC 14764:2006**. Keep citations consistent wit
 | 12207 process | Artifact in this repo |
 |---|---|
 | Configuration management | Git branches `feature/*` / `bugfix/*` → `develop` → `main`, PRs, conventional commits |
-| Risk management | `risk_register_app_v1_emoji.md` (risk → mitigation → residual level) |
-| Quality assurance | `definition_of_done.md`, `dod_per_feature.md`, the Flake8/Bandit gates, `reports/` |
+| Risk management | `documents/risk_register_app_v1_emoji.md` (risk → mitigation → residual level) |
+| Quality assurance | `documents/definition_of_done.md`, `documents/dod_per_feature.md`, the Flake8/Bandit gates, `reports/` |
 | Verification | pytest unit + `test_integration.py`, coverage ≥ 90%, the CI matrix for Python 3.10–3.12 |
 | Validation | Acceptance criteria and per-feature DoD; DoD §2 also requires one manual smoke test |
 | Information management | Docstrings on every public method (DoD §4), README Change Request Log, `reports/*.md` |
-| Maintenance | ISO/IEC 14764 workflow (below) and `Change_Request_And_Impact_Analysis_Report*.md` |
+| Maintenance | ISO/IEC 14764 workflow (below) and `documents/Change_Request_And_Impact_Analysis_Report*.md` |
 
 ### ISO/IEC 14764: workflow for any change to existing behavior
 
@@ -86,7 +86,7 @@ The repo's CR reports cite **ISO/IEC 14764:2006**. Keep citations consistent wit
    - **Perfective:** a new feature or enhancement (e.g. CR-01 barcode/reorder point, CR-02 CSV export). Commit prefix `feat:`.
    - **Preventive:** fixes latent faults before they occur, such as the atomic write from the risk register, or lint/security hardening. Commit prefix `fix:`, `style:` or `test:`, depending on the change.
    - Urgent requests are marked **Emergency Change Request** and keep their base category, e.g. CR-02 is "Perfective (Expedited)".
-2. **Impact analysis before coding.** For a CR, add `Change_Request_And_Impact_Analysis_Report_CRxx.md` and copy the structure of the CR-01 and CR-02 reports:
+2. **Impact analysis before coding.** For a CR, add `documents/Change_Request_And_Impact_Analysis_Report_CRxx.md` and copy the structure of the CR-01 and CR-02 reports:
    - Part 1: Identification & Logging, including business justification and scope
    - Part 2: Impact Analysis, with a traceability matrix (component → affected code → test impact) and an effort estimate
    - Part 3: Test-Driven Refinement plan, with a table of edge-case test cases
