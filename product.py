@@ -1,5 +1,12 @@
 import math
 
+# BUG-105: ค่าสูงสุดที่คอลัมน์ INTEGER ของ SQLite เก็บได้ (signed 64-bit)
+# เกินกว่านี้ sqlite3 จะ raise OverflowError ตอนบันทึก
+SQLITE_MAX_INTEGER = 2 ** 63 - 1
+
+# ค่าเริ่มต้นของ reorder_point ตรงกับ DEFAULT 5 ใน schema.sql (CR-01)
+DEFAULT_REORDER_POINT = 5
+
 
 class Product:
     """
@@ -12,7 +19,7 @@ class Product:
 
     def __init__(self, product_id: str, name: str, quantity: int, price: float,
                  category: str = "Uncategorized", barcode: str = "",
-                 reorder_point: int = 5):
+                 reorder_point: int = DEFAULT_REORDER_POINT):
         """สร้าง Product object พร้อม validate ค่าเบื้องต้น (ชั้นป้องกันเสริม
         ไม่ใช่แทนที่ Validator หรือ CHECK constraint ระดับฐานข้อมูล)
 
@@ -28,8 +35,8 @@ class Product:
                 ค่า default = 5 เพื่อ Backward Compatibility
 
         Raises:
-            ValueError: เมื่อ product_id/name ว่าง, quantity/price/reorder_point ติดลบ
-                หรือ price เป็น nan/inf
+            ValueError: เมื่อ product_id/name ว่าง, quantity/price/reorder_point ติดลบ,
+                price เป็น nan/inf หรือ quantity/reorder_point เกิน SQLITE_MAX_INTEGER
         """
         if not product_id:
             raise ValueError("product_id ห้ามว่าง")
@@ -44,6 +51,8 @@ class Product:
             raise ValueError("price ต้องเป็นตัวเลขที่จำกัด (ไม่ใช่ nan/inf)")
         if reorder_point < 0:
             raise ValueError("reorder_point ต้องไม่ติดลบ")
+        if quantity > SQLITE_MAX_INTEGER or reorder_point > SQLITE_MAX_INTEGER:
+            raise ValueError("quantity/reorder_point มากเกินกว่าที่ระบบเก็บได้")
 
         self.product_id = product_id
         self.name = name

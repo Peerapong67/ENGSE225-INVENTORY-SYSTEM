@@ -9,7 +9,7 @@ CR-02 (Emergency Change Request): Export รายการสินค้าส
   ปนเข้าไปในชั้นอื่นโดยตรง (กัน Tight Coupling ตาม Bad Practice ที่สไลด์เตือนไว้)
 - ออกแบบเป็น Static Method: ไร้ State ทดสอบแยกได้ง่าย ไม่ต้องสร้าง instance
 - เขียนไฟล์ผ่าน AtomicFileWriter: ถ้าพังกลางทาง ไฟล์รายงานเดิมไม่ถูกเขียนทับครึ่งๆ กลางๆ
-- กำหนด Encoding utf-8 รองรับภาษาไทยสมบูรณ์
+- กำหนด Encoding utf-8 พร้อม BOM (utf-8-sig) รองรับภาษาไทยสมบูรณ์ทั้งในโปรแกรมทั่วไปและ Excel (BUG-106)
 """
 
 import csv
@@ -54,6 +54,8 @@ class CsvReportExporter:
                     p.price,
                 ])
 
-        AtomicFileWriter.write(output_path, write_rows, newline='')
+        # BUG-106: utf-8-sig เขียน BOM นำหน้าไฟล์ ให้ Excel บน Windows รู้ว่าเป็น UTF-8
+        # (ไม่มี BOM จะอ่านด้วย code page ของเครื่อง เช่น cp874 แล้วชื่อภาษาไทยเพี้ยน)
+        AtomicFileWriter.write(output_path, write_rows, encoding="utf-8-sig", newline='')
 
         return len(low_stock_products)

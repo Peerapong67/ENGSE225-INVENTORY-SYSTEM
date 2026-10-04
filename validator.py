@@ -1,4 +1,7 @@
 import math
+from typing import Optional
+
+from product import SQLITE_MAX_INTEGER
 
 
 class Validator:
@@ -8,17 +11,21 @@ class Validator:
     """
 
     @staticmethod
-    def inputNonNegativeInt(prompt: str) -> int:
+    def inputNonNegativeInt(prompt: str, default: Optional[int] = None) -> int:
         """รับ input จาก console วนซ้ำจนกว่าจะได้เลขจำนวนเต็มที่ไม่ติดลบ
 
         Args:
             prompt: ข้อความที่แสดงตอนถาม input (ส่งต่อให้ input())
+            default: ค่าที่คืนเมื่อผู้ใช้กด Enter โดยไม่กรอกอะไร (BUG-107)
+                ถ้าเป็น None ค่าว่างจะถูกปฏิเสธและถามใหม่
 
         Returns:
-            จำนวนเต็มที่ผู้ใช้กรอก ซึ่งรับประกันว่า >= 0 เสมอ
+            จำนวนเต็มที่ผู้ใช้กรอก ซึ่งรับประกันว่าอยู่ในช่วง 0 ถึง SQLITE_MAX_INTEGER เสมอ
         """
         while True:
             raw = input(prompt)
+            if default is not None and not raw.strip():
+                return default
             try:
                 value = int(raw)
             except ValueError:
@@ -26,6 +33,10 @@ class Validator:
                 continue
             if value < 0:
                 print("ค่าต้องไม่ติดลบ กรุณากรอกใหม่")
+                continue
+            # BUG-105: เลขที่เกินช่วง INTEGER ของ SQLite ทำให้ sqlite3 raise OverflowError ตอนบันทึก
+            if value > SQLITE_MAX_INTEGER:
+                print("ค่ามากเกินไป กรุณากรอกใหม่")
                 continue
             return value
 

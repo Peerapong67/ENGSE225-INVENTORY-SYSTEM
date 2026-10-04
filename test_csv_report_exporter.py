@@ -29,7 +29,7 @@ def test_export_low_stock_to_csv_creates_valid_file(tmp_path):
     assert rows_written == 1
     assert output_path.exists()
 
-    with open(output_path, newline="", encoding="utf-8") as f:
+    with open(output_path, newline="", encoding="utf-8-sig") as f:
         reader = list(csv.reader(f))
 
     assert reader[0] == ["ProductID", "ProductName", "Barcode", "Quantity", "ReorderPoint", "Price"]
@@ -48,12 +48,27 @@ def test_export_low_stock_excludes_products_above_reorder_point(tmp_path):
 
     assert rows_written == 1  # เฉพาะ P01 เท่านั้นที่ is_low_stock() เป็น True
 
-    with open(output_path, newline="", encoding="utf-8") as f:
+    with open(output_path, newline="", encoding="utf-8-sig") as f:
         reader = list(csv.reader(f))
 
     product_ids_in_file = [row[0] for row in reader[1:]]
     assert "P01" in product_ids_in_file
     assert "P02" not in product_ids_in_file
+
+
+def test_export_writes_utf8_bom_so_excel_reads_thai(tmp_path):
+    """BUG-106: Excel บน Windows ต้องเห็น UTF-8 BOM จึงจะอ่านชื่อภาษาไทยถูก
+    (ไม่มี BOM จะอ่านด้วย code page ของเครื่อง เช่น cp874 แล้วตัวอักษรเพี้ยน)"""
+    products = [Product("P01", "น้ำดื่มสิงห์ 600ml", 2, 7.0, reorder_point=5)]
+    output_path = tmp_path / "thai.csv"
+
+    CsvReportExporter.export_low_stock_products(products, str(output_path))
+
+    raw = output_path.read_bytes()
+    assert raw.startswith(b"\xef\xbb\xbf")
+    rows = list(csv.reader(raw.decode("utf-8-sig").splitlines()))
+    assert rows[0][0] == "ProductID"
+    assert rows[1][1] == "น้ำดื่มสิงห์ 600ml"
 
 
 def test_export_failure_keeps_existing_report_intact(tmp_path):
@@ -90,7 +105,7 @@ def _export_and_read(products):
     with tempfile.TemporaryDirectory() as tmp_dir:
         output_path = os.path.join(tmp_dir, "report.csv")
         count = CsvReportExporter.export_low_stock_products(products, output_path)
-        with open(output_path, newline="", encoding="utf-8") as f:
+        with open(output_path, newline="", encoding="utf-8-sig") as f:
             rows = list(csv.reader(f))
         return count, rows
 

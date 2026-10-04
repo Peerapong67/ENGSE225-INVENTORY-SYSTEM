@@ -118,9 +118,13 @@ class ProductRepository:
             reason: เหตุผล/หมายเหตุของการเปลี่ยนสต็อกครั้งนี้ (ค่าเริ่มต้นว่าง)
 
         Raises:
-            ValueError: ถ้าไม่พบสินค้า product_id นี้ หรือถ้าสต็อกหลังคำนวณจะติดลบ
+            ValueError: ถ้า qty เป็น 0, ไม่พบสินค้า product_id นี้ หรือถ้าสต็อกหลังคำนวณจะติดลบ
             sqlite3.Error: ถ้าเขียนฐานข้อมูลล้มเหลว (rollback ทั้งสองตารางก่อน raise ต่อ)
         """
+        # BUG-108: 0 ไม่ใช่การเคลื่อนไหวของสต็อก ไม่ควรมีแถวใน stock_movements
+        if qty == 0:
+            raise ValueError("จำนวนที่เปลี่ยนแปลงต้องไม่เป็น 0")
+
         existing = self.findById(product_id)
         if existing is None:
             raise ValueError(f"ไม่พบสินค้า product_id={product_id}")

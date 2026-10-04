@@ -41,6 +41,29 @@ def test_input_non_negative_int_accepts_zero(monkeypatch):
     assert Validator.inputNonNegativeInt("qty: ") == 0
 
 
+def test_input_non_negative_int_rejects_value_beyond_sqlite_integer_then_accepts(monkeypatch):
+    """BUG-105: เลขเกิน 2**63 - 1 เก็บลง SQLite INTEGER ไม่ได้ (OverflowError) ต้องถามใหม่"""
+    _mock_inputs(monkeypatch, ["99999999999999999999", str(2 ** 63), "7"])
+    assert Validator.inputNonNegativeInt("qty: ") == 7
+
+
+def test_input_non_negative_int_accepts_sqlite_integer_upper_bound(monkeypatch):
+    _mock_inputs(monkeypatch, [str(2 ** 63 - 1)])
+    assert Validator.inputNonNegativeInt("qty: ") == 2 ** 63 - 1
+
+
+def test_input_non_negative_int_blank_returns_default_when_given(monkeypatch):
+    """BUG-107: กด Enter (ค่าว่าง) ต้องได้ค่าเริ่มต้นที่ส่งมา"""
+    _mock_inputs(monkeypatch, [""])
+    assert Validator.inputNonNegativeInt("reorder point: ", default=5) == 5
+
+
+def test_input_non_negative_int_blank_without_default_reprompts(monkeypatch):
+    """ไม่มีค่าเริ่มต้น ค่าว่างยังต้องถูกปฏิเสธเหมือนเดิม"""
+    _mock_inputs(monkeypatch, ["", "3"])
+    assert Validator.inputNonNegativeInt("qty: ") == 3
+
+
 # ------------------------------------------------------------
 # inputNonNegativeFloat
 # ------------------------------------------------------------

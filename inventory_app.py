@@ -1,7 +1,7 @@
 import sys
 import math
 from typing import List
-from product import Product
+from product import Product, DEFAULT_REORDER_POINT
 from product_repository import ProductRepository, LOW_STOCK_THRESHOLD
 from validator import Validator
 from logger import Logger
@@ -79,7 +79,10 @@ class InventoryApp:
         price = Validator.inputNonNegativeFloat("ราคาต่อหน่วย: ")
         category = input("หมวดหมู่: ").strip() or "Uncategorized"
         barcode = input("บาร์โค้ด (เว้นว่างได้): ").strip()
-        reorder_point = Validator.inputNonNegativeInt("จุดสั่งซื้อขั้นต่ำ (Reorder Point) [ค่าเริ่มต้น 5]: ")
+        reorder_point = Validator.inputNonNegativeInt(
+            f"จุดสั่งซื้อขั้นต่ำ (Reorder Point) [ค่าเริ่มต้น {DEFAULT_REORDER_POINT}]: ",
+            default=DEFAULT_REORDER_POINT,
+        )
 
         try:
             new_product = Product(product_id, name, quantity, price, category,
@@ -107,8 +110,9 @@ class InventoryApp:
     def cutStock(self):
         """ตัดสต็อกสินค้าออกตามจำนวนที่ผู้ใช้ระบุ พร้อมเตือนถ้าสต็อกเหลือน้อย
 
-        เช็คว่าสต็อกพอก่อนตัดจริง (ไม่ปล่อยให้ ProductRepository.updateStock()
-        raise ValueError เป็นด่านแรก) เพื่อให้ error message เป็นมิตรกับผู้ใช้
+        เช็คว่าจำนวนมากกว่า 0 (BUG-108) และสต็อกพอก่อนตัดจริง (ไม่ปล่อยให้
+        ProductRepository.updateStock() raise ValueError เป็นด่านแรก) เพื่อให้
+        error message เป็นมิตรกับผู้ใช้
         """
         print("\n--- [3] ตัดสต็อกสินค้า (Cut Stock) ---")
         product_id = input("รหัสสินค้าที่จะตัดสต็อก: ").strip()
@@ -118,6 +122,9 @@ class InventoryApp:
             return
 
         amount = Validator.inputNonNegativeInt("จำนวนที่ต้องการตัดออก: ")
+        if amount == 0:
+            print("ข้อผิดพลาด: จำนวนที่ตัดต้องมากกว่า 0")
+            return
         if amount > product.quantity:
             print("ข้อผิดพลาด: สต็อกไม่พอสำหรับตัดจำนวนนี้")
             return
@@ -169,6 +176,9 @@ class InventoryApp:
         ที่ is_low_stock() เป็น True เอง (CsvReportExporter ไม่รู้จัก Repository
         เลย ตาม Single Responsibility ที่ออกแบบไว้ใน Week 10 — InventoryApp
         เป็นตัวเชื่อมสองฝั่งนี้เข้าด้วยกันแทน)
+
+        ถ้าเขียนไฟล์ไม่ได้ (OSError เช่น โฟลเดอร์ไม่มีอยู่) จะแจ้งข้อผิดพลาดแล้วกลับเมนู
+        โดยไม่บันทึก log EXPORT_LOW_STOCK_CSV (BUG-104)
         """
         print("\n--- [7] Export รายงานสินค้าใกล้หมดเป็น CSV (CR-02) ---")
         filename = input(
@@ -178,7 +188,14 @@ class InventoryApp:
             filename = "low_stock_report.csv"
 
         all_products = self.repo.findAll()
-        rows_written = CsvReportExporter.export_low_stock_products(all_products, filename)
+        try:
+            rows_written = CsvReportExporter.export_low_stock_products(all_products, filename)
+        except OSError as e:
+            # BUG-104: โฟลเดอร์ปลายทางไม่มีอยู่, ชื่อไฟล์มีอักขระต้องห้าม หรือไม่มีสิทธิ์เขียน
+            # AtomicFileWriter ลบไฟล์ชั่วคราวให้แล้ว และไฟล์เดิม (ถ้ามี) ไม่ถูกแตะ
+            print(f"ข้อผิดพลาด: ไม่สามารถบันทึกไฟล์ '{filename}' ได้ ({e.strerror or e})")
+            print("กรุณาตรวจสอบชื่อไฟล์และโฟลเดอร์ปลายทาง แล้วลองใหม่")
+            return
 
         self.logger.log(
             "EXPORT_LOW_STOCK_CSV",

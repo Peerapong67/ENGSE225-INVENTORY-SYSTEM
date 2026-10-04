@@ -137,6 +137,15 @@ def test_update_stock_on_missing_product_raises(repo):
         repo.updateStock("NO_SUCH_ID", 5)
 
 
+def test_update_stock_with_zero_raises_and_records_no_movement(repo, db):
+    """BUG-108: เปลี่ยนสต็อก 0 ชิ้นไม่ใช่การเคลื่อนไหวจริง ต้องไม่ถูกบันทึกลง stock_movements"""
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0))
+    with pytest.raises(ValueError):
+        repo.updateStock("P1", 0)
+    count = db.executeQuery("SELECT COUNT(*) AS cnt FROM stock_movements").fetchone()["cnt"]
+    assert count == 0
+
+
 def test_update_stock_rolls_back_quantity_when_movement_insert_fails(repo, db, monkeypatch):
     """ถ้า INSERT ลง stock_movements ล้มเหลว UPDATE quantity ที่ทำไปแล้วต้องถูก rollback
     ไม่ให้ยอดคงเหลือเปลี่ยนโดยไม่มีประวัติการเคลื่อนไหว"""

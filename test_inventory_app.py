@@ -8,6 +8,8 @@ import os
 import sys
 import builtins
 
+import pytest
+
 from inventory_app import InventoryApp
 from product import Product
 from database_connection import DatabaseConnection
@@ -330,6 +332,62 @@ def test_add_product_with_duplicate_barcode_shows_error_no_crash(monkeypatch, db
     out = capsys.readouterr().out
     assert "ข้อผิดพลาด" in out
     assert repo.findById("102") is None  # ต้องไม่ถูกบันทึกลงฐานข้อมูล
+
+
+def test_add_product_with_huge_quantity_reprompts_no_crash(monkeypatch, db, repo, capsys):
+    """BUG-105 (UAT-14): จำนวนเกินช่วง SQLite INTEGER ต้องถามใหม่ ไม่ทำให้โปรแกรมพังด้วย OverflowError"""
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["P1", "Item", "99999999999999999999", "10", "20.0", "Food", "",
+                               "99999999999999999999", "4"])
+    app.addOrUpdateProduct()
+
+    saved = repo.findById("P1")
+    assert saved.quantity == 10
+    assert saved.reorder_point == 4
+
+
+def test_add_product_blank_reorder_point_uses_default_5(monkeypatch, db, repo, capsys):
+    """BUG-107 (UAT-02): prompt บอก [ค่าเริ่มต้น 5] กด Enter ต้องได้ 5 โดยไม่ถูกถามซ้ำ"""
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["P1", "Item", "10", "20.0", "Food", "", ""])
+    app.addOrUpdateProduct()
+
+    assert repo.findById("P1").reorder_point == 5
+    assert "กรุณากรอกจำนวนเต็มเท่านั้น" not in capsys.readouterr().out
+
+
+def test_cut_stock_zero_shows_error_and_records_nothing(monkeypatch, db, repo, capsys):
+    """BUG-108 (UAT-06): ตัดสต็อก 0 ชิ้นต้องแจ้งข้อผิดพลาด ไม่บันทึก movement และไม่ log CUT_STOCK"""
+    repo.upsertProduct(Product("P1", "Item", 10, 5.0))
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, ["P1", "0"])
+    app.cutStock()
+
+    out = capsys.readouterr().out
+    assert "ข้อผิดพลาด" in out
+    assert "ตัดสต็อกสำเร็จ" not in out
+    assert repo.findById("P1").quantity == 10
+    assert db.executeQuery("SELECT COUNT(*) AS cnt FROM stock_movements").fetchone()["cnt"] == 0
+    assert _count_logs(db, "CUT_STOCK") == 0
+
+
+@pytest.mark.parametrize("bad_name", [os.path.join("no_such_folder", "low.csv"),
+                                      os.path.join("a_file.txt", "low.csv")])
+def test_export_csv_to_unwritable_path_shows_error_no_crash(monkeypatch, db, repo, capsys, tmp_path, bad_name):
+    """BUG-104 (UAT-09): path ปลายทางเขียนไม่ได้ (โฟลเดอร์ไม่มีอยู่ หรือเป็นไฟล์ ไม่ใช่โฟลเดอร์)
+    ต้องแจ้งข้อผิดพลาดแล้วกลับเมนู ใช้สองกรณีนี้เพราะล้มเหลวได้ทั้งบน Windows และ Linux (CI)"""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "a_file.txt").write_text("not a folder", encoding="utf-8")
+    repo.upsertProduct(Product("P1", "Almost Out", 2, 5.0, reorder_point=5))
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, [bad_name])
+    app.exportLowStockCsv()  # ต้องไม่ throw exception ออกมาให้โปรแกรมพัง
+
+    out = capsys.readouterr().out
+    assert "ข้อผิดพลาด" in out
+    assert "Export สำเร็จ" not in out
+    assert _count_logs(db, "EXPORT_LOW_STOCK_CSV") == 0
+    assert list(tmp_path.rglob("*.tmp")) == []
 
 
 def test_add_product_with_nan_or_inf_price_reprompts_no_crash(monkeypatch, db, repo, capsys):

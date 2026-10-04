@@ -34,6 +34,14 @@ def test_create_product_with_negative_price_raises():
         Product(product_id="P4", name="Bad Price", quantity=1, price=-5.0)
 
 
+@pytest.mark.parametrize("field", ["quantity", "reorder_point"])
+def test_create_product_with_integer_beyond_sqlite_range_raises(field):
+    """BUG-105: จำนวนเต็มเกิน 2**63 - 1 เก็บลง SQLite INTEGER ไม่ได้"""
+    values = {"quantity": 1, "reorder_point": 5, field: 2 ** 63}
+    with pytest.raises(ValueError):
+        Product(product_id="P4", name="Too Big", price=1.0, **values)
+
+
 @pytest.mark.parametrize("bad_price", [float("nan"), float("inf")])
 def test_create_product_with_non_finite_price_raises(bad_price):
     """BUG-103: nan < 0 และ inf < 0 เป็น False จึงต้องเช็ค isfinite แยกต่างหาก"""

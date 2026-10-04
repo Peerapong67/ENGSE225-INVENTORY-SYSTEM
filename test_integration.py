@@ -65,7 +65,7 @@ def _actions(db):
 
 
 def _read_csv(path):
-    with open(path, encoding="utf-8", newline="") as f:
+    with open(path, encoding="utf-8-sig", newline="") as f:
         return list(csv.reader(f))
 
 
