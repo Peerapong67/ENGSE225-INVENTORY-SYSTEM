@@ -39,11 +39,11 @@ def _count_logs(db, action=None):
 # showMenu()
 # ------------------------------------------------------------
 
-def test_show_menu_prints_all_six_options(db, capsys):
+def test_show_menu_prints_all_eight_options(db, capsys):
     app = InventoryApp()
     app.showMenu()
     out = capsys.readouterr().out
-    for expected in ["1.", "2.", "3.", "4.", "5.", "6."]:
+    for expected in ["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8."]:
         assert expected in out
 
 
@@ -215,6 +215,15 @@ def test_search_product_finds_match_and_logs(monkeypatch, db, repo, capsys):
     out = capsys.readouterr().out
     assert "Mama Noodles" in out
     assert _count_logs(db, "SEARCH_PRODUCT") == 1
+
+
+def test_search_product_header_matches_menu_number(monkeypatch, db, repo, capsys):
+    """หัวข้อหน้าค้นหาต้องเป็นเมนู [5] ให้ตรงกับ showMenu() (เดิมแสดงผิดเป็น [3])"""
+    app = InventoryApp()
+    _mock_inputs(monkeypatch, [""])
+    app.searchProduct()
+    out = capsys.readouterr().out
+    assert "--- [5] ค้นหาสินค้า" in out
 
 
 def test_search_product_empty_keyword_shows_error(monkeypatch, db, repo, capsys):

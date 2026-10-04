@@ -233,7 +233,7 @@ class InventoryApp:
 
     def searchProduct(self):
         """ค้นหาสินค้าตามชื่อหรือหมวดหมู่ พร้อมแสดงผลแบบ Pagination"""
-        print("\n--- [3] ค้นหาสินค้า (Search Product) ---")
+        print("\n--- [5] ค้นหาสินค้า (Search Product) ---")
         keyword = input("คำค้นหา (ชื่อสินค้า หรือ หมวดหมู่): ").strip()
         if not keyword:
             print("ข้อผิดพลาด: คำค้นหาต้องไม่เป็นค่าว่าง")
