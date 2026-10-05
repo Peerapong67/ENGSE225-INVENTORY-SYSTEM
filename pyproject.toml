@@ -1,3 +1,62 @@
+# ============================================================
+# Packaging (sdist + wheel) — build ด้วย: python -m build
+# ใช้ hatchling เพราะโปรเจกต์เป็น flat layout (โมดูลอยู่ที่ root ไม่มี package)
+# และต้องวาง schema.sql ไว้ข้าง database_connection.py ใน site-packages
+# (DatabaseConnection หา schema.sql จาก __file__ ถ้าไม่เจอจะไม่สร้างตาราง)
+# ============================================================
+[build-system]
+requires = ["hatchling>=1.24,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "engse225-inventory-system"
+version = "2.0.1"
+description = "Console inventory management system (ENGSE225) - Python + SQLite, standard library only"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+authors = [{ name = "ENGSE225 Inventory System Team" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Repository = "https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM"
+
+# wheel: เฉพาะโมดูลที่ใช้รันจริง + schema.sql (ไม่รวม app_v1.py ที่เป็นต้นแบบเดิม และไม่รวมเทสต์)
+# ไฟล์ทั้งหมดถูกวางที่ root ของ site-packages รันด้วย: python -m inventory_app
+[tool.hatch.build.targets.wheel]
+only-include = [
+    "inventory_app.py",
+    "validator.py",
+    "product.py",
+    "product_repository.py",
+    "database_connection.py",
+    "logger.py",
+    "csv_report_exporter.py",
+    "atomic_file_writer.py",
+    "schema.sql",
+]
+
+# sdist: ซอร์สครบสำหรับ build และรันเทสต์ซ้ำได้ (โค้ด, เทสต์, SQL, config, requirements, สคริปต์ติดตั้ง)
+[tool.hatch.build.targets.sdist]
+include = [
+    "/*.py",
+    "/*.sql",
+    "README.md",
+    "CHANGELOG.md",
+    "requirements.txt",
+    "requirements-dev.txt",
+    ".flake8",
+    "scripts",
+]
+
 # ตั้งค่า Bandit (Security Scan) — รันด้วย: python -m bandit -c pyproject.toml -r .
 [tool.bandit]
 exclude_dirs = [".git", "__pycache__", "reports", ".venv", "venv", "env", ".pytest_cache"]

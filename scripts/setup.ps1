@@ -143,6 +143,14 @@ if (Test-Path $VenvPy) {
 }
 
 # ------------------------------------------------------------
+# pip ที่มากับ venv อาจมีช่องโหว่ CVE-2026-13346 (PYSEC-2026-3721) ที่แก้แล้วใน pip 26.2
+# ดู documents/Dependency_Security_Audit_Report.md
+Write-Step "อัปเกรด pip ใน .venv เป็นเวอร์ชันที่ไม่มีช่องโหว่ที่ทราบ (>= 26.2)"
+& $VenvPy -m pip install --disable-pip-version-check -q --upgrade "pip>=26.2"
+$pipVersion = & $VenvPy -c "import pip; print(pip.__version__)"
+Add-Result "Upgrade pip" ($LASTEXITCODE -eq 0) "pip $pipVersion"
+
+# ------------------------------------------------------------
 if ($SkipTests) {
     Write-Step "ติดตั้ง dependency"
     Add-Result "Install dependencies" $true "ข้าม (-SkipTests) ตัวโปรแกรมใช้แค่ standard library"

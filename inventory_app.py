@@ -9,6 +9,18 @@ from csv_report_exporter import CsvReportExporter
 
 
 class InventoryApp:
+    # ตารางจับคู่เมนูกับชื่อเมธอด (dictionary dispatch) แทน if/elif 8 ทาง
+    # เมนู 8 (ออกจากโปรแกรม) จัดการแยกใน run() เพราะต้องหยุดลูป
+    MENU_ACTIONS = {
+        "1": "showAllProducts",
+        "2": "addOrUpdateProduct",
+        "3": "cutStock",
+        "4": "showReport",
+        "5": "searchProduct",
+        "6": "showLowStockAlerts",
+        "7": "exportLowStockCsv",
+    }
+
     def __init__(self):
         """สร้าง InventoryApp พร้อมเชื่อม ProductRepository และ Logger (singleton)
         เข้าด้วยกัน — ProductRepository จะไปดึง DatabaseConnection singleton ที่มี
@@ -39,25 +51,14 @@ class InventoryApp:
             self.showMenu()
             choice = input("เลือกเมนู: ").strip()
 
-            if choice == "1":
-                self.showAllProducts()
-            elif choice == "2":
-                self.addOrUpdateProduct()
-            elif choice == "3":
-                self.cutStock()
-            elif choice == "4":
-                self.showReport()
-            elif choice == "5":
-                self.searchProduct()
-            elif choice == "6":
-                self.showLowStockAlerts()
-            elif choice == "7":
-                self.exportLowStockCsv()
-            elif choice == "8":
+            if choice == "8":
                 print("ขอบคุณที่ใช้บริการ")
                 break
-            else:
+            action = self.MENU_ACTIONS.get(choice)
+            if action is None:
                 print(">> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-8")
+                continue
+            getattr(self, action)()
 
     def addOrUpdateProduct(self):
         """เพิ่มสินค้าใหม่ หรือแก้ไขสินค้าที่มีอยู่แล้ว (upsert ผ่าน ProductRepository)
@@ -74,6 +75,30 @@ class InventoryApp:
 
         existing = self.repo.findById(product_id)
 
+        new_product = self._readProductFields(product_id)
+        if new_product is None:
+            return
+
+        if not self._confirmOverwrite(existing, new_product):
+            return
+
+        try:
+            self.repo.upsertProduct(new_product)
+        except ValueError as e:
+            print(f"ข้อผิดพลาด: {e}")
+            return
+
+        action = "UPDATE_PRODUCT" if existing is not None else "ADD_PRODUCT"
+        self.logger.log(action, f"product_id={product_id}")
+        print("บันทึกสำเร็จ")
+
+    def _readProductFields(self, product_id: str):
+        """รับข้อมูลสินค้าที่เหลือ (ชื่อ จำนวน ราคา หมวดหมู่ บาร์โค้ด จุดสั่งซื้อ)
+        แล้วสร้าง Product ให้ addOrUpdateProduct()
+
+        Returns:
+            Product ที่ผ่านการ validate หรือ None ถ้าข้อมูลไม่ถูกต้อง (แจ้งข้อผิดพลาดแล้ว)
+        """
         name = input("ชื่อสินค้า: ").strip()
         quantity = Validator.inputNonNegativeInt("จำนวนคงเหลือ: ")
         price = Validator.inputNonNegativeFloat("ราคาต่อหน่วย: ")
@@ -85,27 +110,25 @@ class InventoryApp:
         )
 
         try:
-            new_product = Product(product_id, name, quantity, price, category,
-                                  barcode=barcode, reorder_point=reorder_point)
+            return Product(product_id, name, quantity, price, category,
+                           barcode=barcode, reorder_point=reorder_point)
         except ValueError as e:
             print(f"ข้อผิดพลาด: {e}")
-            return
+            return None
 
-        if existing is not None:
-            confirmed = Validator.confirm(existing.to_dict(), new_product.to_dict())
-            if not confirmed:
-                print("ยกเลิกการบันทึก")
-                return
+    @staticmethod
+    def _confirmOverwrite(existing, new_product: Product) -> bool:
+        """ถามยืนยันก่อนเขียนทับสินค้าที่มีอยู่แล้ว (สินค้าใหม่ไม่ต้องถาม)
 
-        try:
-            self.repo.upsertProduct(new_product)
-        except ValueError as e:
-            print(f"ข้อผิดพลาด: {e}")
-            return
-
-        action = "UPDATE_PRODUCT" if existing is not None else "ADD_PRODUCT"
-        self.logger.log(action, f"product_id={product_id}")
-        print("บันทึกสำเร็จ")
+        Returns:
+            True ถ้าบันทึกต่อได้, False ถ้าผู้ใช้ยกเลิก
+        """
+        if existing is None:
+            return True
+        if Validator.confirm(existing.to_dict(), new_product.to_dict()):
+            return True
+        print("ยกเลิกการบันทึก")
+        return False
 
     def cutStock(self):
         """ตัดสต็อกสินค้าออกตามจำนวนที่ผู้ใช้ระบุ พร้อมเตือนถ้าสต็อกเหลือน้อย
@@ -121,12 +144,8 @@ class InventoryApp:
             print("ไม่พบสินค้ารหัสนี้")
             return
 
-        amount = Validator.inputNonNegativeInt("จำนวนที่ต้องการตัดออก: ")
-        if amount == 0:
-            print("ข้อผิดพลาด: จำนวนที่ตัดต้องมากกว่า 0")
-            return
-        if amount > product.quantity:
-            print("ข้อผิดพลาด: สต็อกไม่พอสำหรับตัดจำนวนนี้")
+        amount = self._readCutAmount(product)
+        if amount is None:
             return
 
         try:
@@ -142,6 +161,22 @@ class InventoryApp:
         if updated.is_low_stock():
             print(f"!!! คำเตือน: สินค้า '{updated.name}' เหลือสต็อกต่ำ "
                   f"({updated.quantity} ชิ้น, จุดสั่งซื้อ {updated.reorder_point}) !!!")
+
+    @staticmethod
+    def _readCutAmount(product: Product):
+        """รับจำนวนที่จะตัดสต็อก ต้องมากกว่า 0 (BUG-108) และไม่เกินสต็อกที่มี
+
+        Returns:
+            จำนวนที่ตัดได้ หรือ None ถ้าไม่ถูกต้อง (แจ้งข้อผิดพลาดแล้ว)
+        """
+        amount = Validator.inputNonNegativeInt("จำนวนที่ต้องการตัดออก: ")
+        if amount == 0:
+            print("ข้อผิดพลาด: จำนวนที่ตัดต้องมากกว่า 0")
+            return None
+        if amount > product.quantity:
+            print("ข้อผิดพลาด: สต็อกไม่พอสำหรับตัดจำนวนนี้")
+            return None
+        return amount
 
     def showReport(self):
         """แสดงรายงานสรุปคลังสินค้าทั้งหมด (จำนวนชนิด, หน่วยรวม, มูลค่ารวม, สินค้าใกล้หมด)"""
@@ -214,17 +249,7 @@ class InventoryApp:
         current_page = 1
 
         while True:
-            start_idx = (current_page - 1) * self.page_size
-            end_idx = min(start_idx + self.page_size, total_items)
-            page_items = products[start_idx:end_idx]
-
-            print(f"\n==================== {title} (หน้า {current_page}/{total_pages}) ====================")
-            print(f"{'ลำดับ':<6} {'ID':<12} {'ชื่อสินค้า':<25} {'หมวดหมู่':<15} {'คงเหลือ':<10} {'ราคา':<10}")
-            print("-" * 80)
-            for idx, p in enumerate(page_items, start=start_idx + 1):
-                print(f"{idx:<6} {p.product_id:<12} {p.name:<25} {p.category:<15} {p.quantity:<10} {p.price:<10.2f}")
-            print("-" * 80)
-            print(f"แสดงรายการที่ {start_idx + 1} - {end_idx} จากทั้งหมด {total_items} รายการ")
+            self._printPage(products, title, current_page, total_pages)
 
             if total_pages <= 1:
                 input("\nกด Enter เพื่อกลับสู่เมนู...")
@@ -232,21 +257,43 @@ class InventoryApp:
 
             print("\n[n] หน้าถัดไป | [p] หน้าก่อนหน้า | [q] ออกจากหน้านี้")
             nav = input("เลือกการทำงาน: ").strip().lower()
-
-            if nav == 'n':
-                if current_page < total_pages:
-                    current_page += 1
-                else:
-                    print(">> อยู่ที่หน้าสุดท้ายแล้ว")
-            elif nav == 'p':
-                if current_page > 1:
-                    current_page -= 1
-                else:
-                    print(">> อยู่ที่หน้าแรกแล้ว")
-            elif nav == 'q':
+            current_page = self._changePage(nav, current_page, total_pages)
+            if current_page is None:
                 break
-            else:
-                print(">> คำสั่งไม่ถูกต้อง กรุณาเลือก n, p หรือ q")
+
+    def _printPage(self, products: List[Product], title: str, current_page: int, total_pages: int):
+        """พิมพ์ตารางสินค้าของหน้าที่ current_page (ใช้โดย displayPaginatedProducts)"""
+        total_items = len(products)
+        start_idx = (current_page - 1) * self.page_size
+        end_idx = min(start_idx + self.page_size, total_items)
+        page_items = products[start_idx:end_idx]
+
+        print(f"\n==================== {title} (หน้า {current_page}/{total_pages}) ====================")
+        print(f"{'ลำดับ':<6} {'ID':<12} {'ชื่อสินค้า':<25} {'หมวดหมู่':<15} {'คงเหลือ':<10} {'ราคา':<10}")
+        print("-" * 80)
+        for idx, p in enumerate(page_items, start=start_idx + 1):
+            print(f"{idx:<6} {p.product_id:<12} {p.name:<25} {p.category:<15} {p.quantity:<10} {p.price:<10.2f}")
+        print("-" * 80)
+        print(f"แสดงรายการที่ {start_idx + 1} - {end_idx} จากทั้งหมด {total_items} รายการ")
+
+    @staticmethod
+    def _changePage(nav: str, current_page: int, total_pages: int):
+        """แปลงคำสั่งเปลี่ยนหน้าเป็นหมายเลขหน้าใหม่
+
+        Returns:
+            หมายเลขหน้าถัดไป (เท่าเดิมถ้าเลื่อนไม่ได้หรือคำสั่งผิด) หรือ None เมื่อสั่ง 'q'
+        """
+        if nav == 'q':
+            return None
+        step = {'n': 1, 'p': -1}.get(nav)
+        if step is None:
+            print(">> คำสั่งไม่ถูกต้อง กรุณาเลือก n, p หรือ q")
+            return current_page
+        target = current_page + step
+        if 1 <= target <= total_pages:
+            return target
+        print(">> อยู่ที่หน้าสุดท้ายแล้ว" if step > 0 else ">> อยู่ที่หน้าแรกแล้ว")
+        return current_page
 
     def searchProduct(self):
         """ค้นหาสินค้าตามชื่อหรือหมวดหมู่ พร้อมแสดงผลแบบ Pagination"""

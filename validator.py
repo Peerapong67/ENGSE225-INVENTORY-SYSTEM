@@ -26,19 +26,30 @@ class Validator:
             raw = input(prompt)
             if default is not None and not raw.strip():
                 return default
-            try:
-                value = int(raw)
-            except ValueError:
-                print("กรุณากรอกจำนวนเต็มเท่านั้น")
-                continue
-            if value < 0:
-                print("ค่าต้องไม่ติดลบ กรุณากรอกใหม่")
-                continue
-            # BUG-105: เลขที่เกินช่วง INTEGER ของ SQLite ทำให้ sqlite3 raise OverflowError ตอนบันทึก
-            if value > SQLITE_MAX_INTEGER:
-                print("ค่ามากเกินไป กรุณากรอกใหม่")
-                continue
-            return value
+            value = Validator._parseNonNegativeInt(raw)
+            if value is not None:
+                return value
+
+    @staticmethod
+    def _parseNonNegativeInt(raw: str) -> Optional[int]:
+        """แปลงข้อความเป็นจำนวนเต็มในช่วง 0 ถึง SQLITE_MAX_INTEGER
+
+        Returns:
+            จำนวนเต็มที่ถูกต้อง หรือ None ถ้าไม่ถูกต้อง (แจ้งข้อผิดพลาดแล้ว ให้ผู้เรียกถามใหม่)
+        """
+        try:
+            value = int(raw)
+        except ValueError:
+            print("กรุณากรอกจำนวนเต็มเท่านั้น")
+            return None
+        if value < 0:
+            print("ค่าต้องไม่ติดลบ กรุณากรอกใหม่")
+            return None
+        # BUG-105: เลขที่เกินช่วง INTEGER ของ SQLite ทำให้ sqlite3 raise OverflowError ตอนบันทึก
+        if value > SQLITE_MAX_INTEGER:
+            print("ค่ามากเกินไป กรุณากรอกใหม่")
+            return None
+        return value
 
     @staticmethod
     def inputNonNegativeFloat(prompt: str) -> float:

@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    {
+      "name": "engse225-inventory-system",
+      "version": "2.0.1",
+      "vulns": []
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1",
+      "vulns": []
+    }
+  ],
+  "fixes": []
+}

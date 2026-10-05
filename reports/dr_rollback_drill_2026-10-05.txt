@@ -1,0 +1,109 @@
+DISASTER RECOVERY & ROLLBACK DRILL - 2026-10-05
+ดู documents/Disaster_Recovery_and_Rollback_Test_Report.md
+สภาพแวดล้อม: git clone ของ main @ 441b2ea + สคริปต์ติดตั้งฉบับที่เพิ่มขั้นอัปเกรด pip ติดตั้งด้วย setup.cmd -Clean -Seed
+การซ้อมทั้งหมดทำใน clone นี้ ไม่มีการ push ขึ้นเซิร์ฟเวอร์
+
+=== DR DRILL (ฐานข้อมูล)
+=== เตรียมข้อมูล: สร้างฐานข้อมูล + seed 3 รายการ + เพิ่มสินค้า D1 ผ่านเมนู 2
+สินค้าในระบบ: 4 | integrity: ok
+สำรองข้อมูลด้วย sqlite3 backup API -> inventory_backup_2026-10-05.db (45056 bytes) integrity ของไฟล์สำรอง: ok
+เพิ่มสินค้า D2 หลังการสำรอง -> สินค้าในระบบ: 5
+
+=== DR-1: ไฟล์ฐานข้อมูลเสียหาย (เขียนทับส่วนหัวไฟล์ 100 ไบต์แรก)
+เปิดโปรแกรมหลังไฟล์เสียหาย: exit=1 | error: sqlite3.DatabaseError: file is not a database
+PRAGMA integrity_check: DatabaseError: file is not a database
+กู้คืนจาก inventory_backup_2026-10-05.db: ใช้เวลา 0.10 วินาที | integrity ok=True | เปิดโปรแกรมได้ exit=0 | สินค้า: ['101', '102', '103', 'D1']
+RPO: สินค้า D2 ที่เพิ่มหลังการสำรองสูญหาย = True
+
+=== DR-2: ไฟล์ฐานข้อมูลถูกลบ
+เปิดโปรแกรมหลังไฟล์ถูกลบ: exit=0 | สร้างฐานข้อมูลว่างใหม่อัตโนมัติ สินค้าในระบบ: 0 (รายงานสรุปแสดง 'จำนวนชนิดสินค้าทั้งหมด: 0' = True)
+กู้คืนจาก inventory_backup_2026-10-05.db: ใช้เวลา 0.10 วินาที | integrity ok=True | exit=0 | สินค้าในระบบ: 4
+
+=== DR-3: ไฟล์เสียหายบางส่วน (เขียนทับ 1 page กลางไฟล์ ส่วนหัวยังปกติ)
+ขนาดไฟล์ 45056 bytes, page_size 4096 | PRAGMA integrity_check: DatabaseError: database disk image is malformed
+เปิดโปรแกรม: exit=0 | error: -
+ตรวจพบความเสียหาย = True | กู้คืนจาก inventory_backup_2026-10-05.db: ใช้เวลา 0.10 วินาที | integrity ok=True | exit=0
+
+PASS  DR-1 corrupted database restored
+PASS  DR-2 deleted database restored
+PASS  DR-3 partial corruption detected and restored
+
+DR DRILL: PASS
+
+=== ROLLBACK DRILL รอบแรก (บันทึกไว้เป็นหลักฐาน: RB-1 รอบนี้ใช้ไม่ได้เพราะ git revert ไม่รับตัวเลือก -q และ commit -am ดึงไฟล์อื่นเข้า commit ทดลอง ส่วน RB-2 ใช้ได้)
+=== สภาพก่อนซ้อม
+441b2ea docs: add smoke/regression report, O&M manual and technical KPI report
+ M .gitignore
+ M pyproject.toml
+ M scripts/setup.ps1
+ M scripts/setup.sh
+
+=== RB-1: ปล่อย commit ที่มีบั๊กแล้วถอยด้วย git revert
+commit ที่มีบั๊ก: f457452
+2 failed, 156 passed in 2.41s
+usage: git revert [--[no-]edit] [-n] [-m <parent-number>] [-s] [-S[<keyid>]] <commit>...
+   or: git revert (--continue | --skip | --abort | --quit)
+
+    --quit                end revert or cherry-pick sequence
+    --continue            resume revert or cherry-pick sequence
+    --abort               cancel revert or cherry-pick sequence
+    --skip                skip current commit and continue
+    --[no-]cleanup <mode> how to strip spaces and #comments from message
+    -n, --no-commit       don't automatically commit
+    --commit              opposite of --no-commit
+    -e, --[no-]edit       edit the commit message
+    -s, --[no-]signoff    add a Signed-off-by trailer
+    -m, --[no-]mainline <parent-number>
+                          select mainline parent
+    --[no-]rerere-autoupdate
+                          update the index with reused conflict resolution if possible
+    --[no-]strategy <strategy>
+                          merge strategy
+    -X, --[no-]strategy-option <option>
+                          option for merge strategy
+    -S, --[no-]gpg-sign[=<key-id>]
+                          GPG sign commit
+    --[no-]reference      use the 'reference' format to refer to commits
+
+หลัง git revert: f457452 drill: simulated bad release (is_low_stock uses < instead of <=)
+2 failed, 156 passed in 2.26s
+เวลาตั้งแต่ revert จนเทสต์ผ่าน: 2.7 วินาที
+โค้ดหลัง revert ตรงกับก่อนเกิดบั๊ก: no
+ประวัติยังเก็บ commit ที่มีบั๊กไว้ตรวจสอบย้อนหลัง:
+f457452 drill: simulated bad release (is_low_stock uses < instead of <=)
+441b2ea docs: add smoke/regression report, O&M manual and technical KPI report
+80c6d22 docs: add Project Completion Certificate for Version 2.0.1
+
+=== RB-2: ถอยกลับไปเวอร์ชัน 2.0.0 (c76c7b7) แล้วกลับมา 2.0.1
+worktree: c76c7b7 docs: move project documents into documents/
+145 passed in 2.48s
+เปิดฐานข้อมูลที่สร้างโดย 2.0.1 ด้วยโค้ด 2.0.0: exit=0 | แสดงสินค้า: จากทั้งหมด 4 รายการ
+กลับมาที่ 2.0.1 (441b2ea docs: add smoke/regression report, O&M manual and technical KPI report):
+158 passed in 2.23s
+
+=== ยืนยันว่าการซ้อมไม่กระทบ repo บนเซิร์ฟเวอร์
+  drill/bad-release
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/develop
+  remotes/origin/feature/atomic-file-writing
+  remotes/origin/main
+drill branch ไม่ได้ถูก push: 0 remote ref
+
+=== ROLLBACK DRILL RB-1 รอบแก้ไข (ใช้ตัดสินผล)
+=== RB-1 (รอบแก้ไข): ปล่อย commit ที่มีบั๊กแล้วถอยด้วย git revert
+จุดเริ่มต้น: 441b2ea docs: add smoke/regression report, O&M manual and technical KPI report
+ก่อนเกิดบั๊ก: 158 passed in 2.25s
+commit ที่มีบั๊ก: 4ba4a51 drill: simulated bad release (is_low_stock uses < instead of <=) | ไฟล์ใน commit: product.py 
+หลังปล่อยบั๊ก: FAILED test_inventory_app.py::test_cut_stock_triggers_low_stock_warning_at_boundary_equal_to_reorder_point
+หลังปล่อยบั๊ก: FAILED test_product.py::test_is_low_stock_true_when_quantity_equals_reorder_point
+หลังปล่อยบั๊ก: 2 failed, 156 passed in 2.26s
+หลัง git revert: 1a03e6b Revert "drill: simulated bad release (is_low_stock uses < instead of <=)" | ไฟล์ใน commit: product.py 
+หลังถอยเวอร์ชัน: 158 passed in 2.28s
+เวลาตั้งแต่สั่ง revert จนเทสต์ทั้งชุดผ่าน: 2.8 วินาที
+product.py หลัง revert ตรงกับก่อนเกิดบั๊กทุกไบต์: yes
+ประวัติยังเก็บทั้ง commit ที่มีบั๊กและ commit ที่ถอย:
+1a03e6b Revert "drill: simulated bad release (is_low_stock uses < instead of <=)"
+4ba4a51 drill: simulated bad release (is_low_stock uses < instead of <=)
+441b2ea docs: add smoke/regression report, O&M manual and technical KPI report
+ลบ branch ซ้อมแล้ว และไม่เคย push: 0 remote ref

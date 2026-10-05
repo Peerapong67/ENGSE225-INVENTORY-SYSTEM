@@ -1,0 +1,42 @@
+DEPENDENCY SECURITY AUDIT (pip-audit) - 2026-10-05
+เครื่องมือ: pip-audit 2.10.1 ติดตั้งใน venv แยก | บริการฐานข้อมูลช่องโหว่: PyPI (PyPA Advisory Database) และ OSV
+ดู documents/Dependency_Security_Audit_Report.md | ไฟล์ JSON ดิบอยู่ใน reports/pip_audit_2026-10-05/
+
+=== รอบที่ 1 (ก่อนแก้ไข) โหมด -r จากรายการแพ็กเกจ
+runtime_thirdparty [pypi] exit=1 packages=1 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+runtime_thirdparty [osv] exit=1 packages=1 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+dev_freeze [pypi] exit=1 packages=18 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+dev_freeze [osv] exit=1 packages=18 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+build_freeze [pypi] exit=1 packages=6 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+build_freeze [osv] exit=1 packages=6 vulns=2 [('pip', '26.1.2', 'PYSEC-2026-3721'), ('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+requirements [pypi] exit=0 packages=7 vulns=0 [] skipped=[]
+requirements [osv] exit=0 packages=7 vulns=0 [] skipped=[]
+requirements-dev [pypi] exit=0 packages=17 vulns=0 [] skipped=[]
+requirements-dev [osv] exit=0 packages=17 vulns=0 [] skipped=[]
+audit time (UTC): 2026-10-04 20:13
+
+=== รอบที่ 2 โหมด -r หลังอัปเกรด pip (ข้อสังเกต: โหมดนี้ไม่นับ pip เข้าผล จึงใช้ตัดสินไม่ได้)
+after_rt [pypi] exit=0 packages=0 unique_vulns=0 []
+after_rt [osv] exit=0 packages=0 unique_vulns=0 []
+after_dev [pypi] exit=0 packages=17 unique_vulns=0 []
+after_dev [osv] exit=0 packages=17 unique_vulns=0 []
+after_bld [pypi] exit=0 packages=5 unique_vulns=0 []
+after_bld [osv] exit=0 packages=5 unique_vulns=0 []
+audit time (UTC): 2026-10-04 20:17
+pip_rt [pypi] exit=0 packages=0 unique_vulns=0 pip_included=False
+pip_rt [osv] exit=0 packages=0 unique_vulns=0 pip_included=False
+pip_dev [pypi] exit=0 packages=17 unique_vulns=0 pip_included=False
+pip_dev [osv] exit=0 packages=17 unique_vulns=0 pip_included=False
+pip_bld [pypi] exit=0 packages=5 unique_vulns=0 pip_included=False
+pip_bld [osv] exit=0 packages=5 unique_vulns=0 pip_included=False
+
+=== รอบที่ 3 (ใช้ตัดสินผล) โหมด --path สแกน site-packages ที่ติดตั้งจริง พร้อม venv ควบคุมที่ยังมี pip 26.1.2
+ctrl [pypi] exit=1 packages=1 pip=['26.1.2'] unique_vulns=1 [('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+ctrl [osv] exit=1 packages=1 pip=['26.1.2'] unique_vulns=1 [('pip', '26.1.2', 'PYSEC-2026-3721')] skipped=[]
+rt [pypi] exit=0 packages=2 pip=['26.2.1'] unique_vulns=0 [] skipped=['engse225-inventory-system']
+rt [osv] exit=0 packages=2 pip=['26.2.1'] unique_vulns=0 [] skipped=[]
+dev [pypi] exit=0 packages=19 pip=['26.2.1'] unique_vulns=0 [] skipped=[]
+dev [osv] exit=0 packages=19 pip=['26.2.1'] unique_vulns=0 [] skipped=[]
+bld [pypi] exit=0 packages=7 pip=['26.2.1'] unique_vulns=0 [] skipped=[]
+bld [osv] exit=0 packages=7 pip=['26.2.1'] unique_vulns=0 [] skipped=[]
+audit time (UTC): 2026-10-04 20:20

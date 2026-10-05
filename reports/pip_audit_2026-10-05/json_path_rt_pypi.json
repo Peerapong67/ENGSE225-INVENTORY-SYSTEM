@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    {
+      "name": "engse225-inventory-system",
+      "skip_reason": "Dependency not found on PyPI and could not be audited: engse225-inventory-system (2.0.1)"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1",
+      "vulns": []
+    }
+  ],
+  "fixes": []
+}

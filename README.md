@@ -60,9 +60,10 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 ├── test_integration.py          # integration test แบบ end-to-end ผ่าน InventoryApp.run() และ entry point จริง
 ├── requirements.txt             # dependency สำหรับรันเทสต์ (pytest, pytest-cov)
 ├── requirements-dev.txt         # requirements.txt + flake8, bandit (เวอร์ชันเดียวกับ CI)
-├── pyproject.toml / .flake8     # config ของ pytest, coverage (gate 90%), bandit และ flake8
+├── pyproject.toml / .flake8     # config ของ packaging (sdist/wheel), pytest, coverage (gate 90%), bandit และ flake8
+├── Dockerfile / .dockerignore   # container image (multi-stage, ผู้ใช้ไม่ใช่ root, ไม่มี pip ใน image)
 ├── CHANGELOG.md                 # Maintenance History Log (Added / Changed / Removed / Fixed)
-├── scripts/                     # สคริปต์ติดตั้งอัตโนมัติ setup.cmd / setup.ps1 (Windows), setup.sh (Linux/macOS/Git Bash)
+├── scripts/                     # สคริปต์ติดตั้งอัตโนมัติ setup.cmd / setup.ps1 (Windows), setup.sh (Linux/macOS/Git Bash) และ verify_docker.sh (ตรวจ Docker image + Trivy)
 ├── .gitattributes               # บังคับ line ending ของสคริปต์ (*.sh = LF, *.ps1/*.cmd = CRLF)
 ├── documents/                   # เอกสารโครงการ
 │   ├── definition_of_done.md        # เกณฑ์คุณภาพกลาง ใช้กับทุก ticket
@@ -76,7 +77,15 @@ CsvReportExporter ─┬─ uses ─▶ Product (List)   (แยกอิสร�
 │   ├── Project_Completion_Certificate.md # หนังสือรับรองการปิดเฟสพัฒนา Version 2.0.1 (ลงนามจำลองโดย Sponsor)
 │   ├── Smoke_And_Regression_Test_Report.md # ผล Smoke Test ครบ 8 เมนู + Full Regression บนสภาพแวดล้อมใหม่
 │   ├── System_Operations_and_Maintenance_Manual.md # คู่มือปฏิบัติการและบำรุงรักษาระบบตาม ISO/IEC 14764
-│   └── Technical_KPI_Report.md # ตัวชี้วัดทางเทคนิค (Coverage, Defects, Quality Gates) สำหรับ PM
+│   ├── Technical_KPI_Report.md # ตัวชี้วัดทางเทคนิค (Coverage, Defects, Quality Gates) สำหรับ PM
+│   ├── Project_KPI_Scorecard.md # ตารางประเมินผลสัมฤทธิ์โครงการขั้นสุดท้าย (คะแนนรวม 4.42/5)
+│   ├── Lessons_Learned_Register.md # ทะเบียนถอดบทเรียน 20 รายการ + แผนอัปเดต OPAs
+│   ├── Release_Management_and_Board_Cleanup_Plan.md # แผนปล่อย v2.0.1, จัดระเบียบ repo และบอร์ด Jira
+│   ├── Package_Distribution_Artifact_Report.md # ชุดไฟล์กระจาย sdist, wheel และ Docker image พร้อมผลทดสอบ
+│   ├── Dependency_Security_Audit_Report.md # ผลตรวจช่องโหว่ไลบรารีภายนอกด้วย pip-audit และ Trivy
+│   ├── Disaster_Recovery_and_Rollback_Test_Report.md # ซ้อมกู้คืนฐานข้อมูลเสียหายและถอยเวอร์ชันบน Git
+│   ├── Technical_Metrics_Handover.md # ผลลดหนี้ทางเทคนิค (CC สูงสุด 14 → 6) และสถิติความเสถียรสำหรับ PM
+│   └── System_Maintenance_Dossier.md # แฟ้มประวัติวิศวกรรมบำรุงรักษาตาม ISO/IEC 14764 สำหรับทีมผู้ดูแลรุ่นถัดไป
 ├── reports/                    # รายงานผลสแกน Flake8/Bandit, Integration Test & Coverage และหลักฐานการรัน
 └── .github/workflows/tests.yml   # CI: pytest + coverage gate และ lint (Flake8/Bandit) ทุก push/PR เข้า main และ develop
 ```

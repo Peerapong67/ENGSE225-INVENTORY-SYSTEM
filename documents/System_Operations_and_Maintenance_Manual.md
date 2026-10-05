@@ -209,7 +209,7 @@ cp inventory_backup_2026-10-05.db inventory.db       # Linux / macOS / Git Bash 
 
 - **Branch:** `feature/*`, `bugfix/*` → `develop` → `main`
 - **Commit:** prefix `feat:`, `fix:`, `test:`, `style:`, `docs:`, `build:` พร้อม CR/BUG ID
-- **เวอร์ชัน:** บันทึกใน [`CHANGELOG.md`](../CHANGELOG.md) แบบ Keep a Changelog (Added / Changed / Removed / Fixed) งานที่ยังไม่ออกเวอร์ชันอยู่ใต้ `[Unreleased]` ตอนนี้ repo ยังไม่มี git tag แนะนำให้สร้าง tag `v2.0.1` ที่ `73e7cfd`
+- **เวอร์ชัน:** บันทึกใน [`CHANGELOG.md`](../CHANGELOG.md) แบบ Keep a Changelog (Added / Changed / Removed / Fixed) งานที่ยังไม่ออกเวอร์ชันอยู่ใต้ `[Unreleased]` ตอนนี้ repo มี tag เดียวคือ `v1.0.0` (ต้นแบบ) แนะนำให้สร้าง tag `v2.0.1` ที่ `73e7cfd` ตามแผนใน [`Release_Management_and_Board_Cleanup_Plan.md`](./Release_Management_and_Board_Cleanup_Plan.md)
 - **Line ending:** ไฟล์ต้นฉบับเป็น CRLF (`core.autocrlf=true`), `*.sh` เป็น LF ตาม `.gitattributes`
 - **ข้อห้าม:** ไม่ใส่ `# noqa`, `# nosec`, `# pragma: no cover` และไม่ใช้ `assert` ในโค้ดโปรแกรม (ใช้ `_verify()` ในบล็อก self-test)
 

@@ -2,11 +2,15 @@
 
 บันทึกประวัติการเปลี่ยนแปลงทั้งหมดของ Inventory Management System ตั้งแต่ต้นแบบ `app_v1.py` จนถึง Version 2.0 ใช้รูปแบบ [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) แบ่งหมวด **Added / Changed / Removed / Fixed** และระบุประเภทงานตาม ISO/IEC 14764 (Corrective / Adaptive / Perfective / Preventive) พร้อม commit หรือ Pull Request (PR) อ้างอิงทุกรายการ
 
-> **หมายเหตุเรื่องเลขเวอร์ชัน:** repo ยังไม่มี git tag เลขเวอร์ชันในไฟล์นี้กำหนดย้อนหลังตาม milestone ของโครงการ โดย Version 1.x คือช่วงต้นแบบ และ Version 2.0 คือระบบที่ refactor เป็น OOP + SQLite ซึ่งถูกล็อกขอบเขตตาม [`documents/Scope_Freeze_Sign_off_Agreement.md`](./documents/Scope_Freeze_Sign_off_Agreement.md) ช่วง Sprint ใช้รูปแบบ pre-release (`2.0.0-sprint.1`, `2.0.0-sprint.2`)
+> **หมายเหตุเรื่องเลขเวอร์ชัน:** repo มี git tag เดียวคือ `v1.0.0` (annotated tag "Baseline release" ลงวันที่ 2026-08-01 ที่ commit `4c80866`) เวอร์ชันอื่นในไฟล์นี้กำหนดย้อนหลังตาม milestone ของโครงการ โดย Version 1.0.0 คือช่วงต้นแบบ และ Version 2.0 คือระบบที่ refactor เป็น OOP + SQLite ซึ่งถูกล็อกขอบเขตตาม [`documents/Scope_Freeze_Sign_off_Agreement.md`](./documents/Scope_Freeze_Sign_off_Agreement.md) ช่วง Sprint ใช้รูปแบบ pre-release (`2.0.0-sprint.1`, `2.0.0-sprint.2`)
 
 ## [Unreleased]
 
 ### Added
+- ชุดไฟล์กระจาย: `[build-system]`/`[project]` ใน `pyproject.toml` (hatchling) สำหรับ sdist และ wheel, `Dockerfile` แบบ multi-stage และ `.dockerignore` พร้อมรายงาน [`documents/Package_Distribution_Artifact_Report.md`](./documents/Package_Distribution_Artifact_Report.md) (wheel/sdist ผ่าน 9/9, Docker image ผ่าน 11/11) — *Adaptive*
+- `scripts/verify_docker.sh` ตรวจ Docker image หลัง build: เมนู 1–8, ข้อมูลคงอยู่ใน volume, `--selftest`, ผู้ใช้ไม่ใช่ root, ไม่มีซอร์ส/เทสต์/pip ค้างใน image และสแกน Trivy — *Preventive*
+- รายงาน [`documents/Dependency_Security_Audit_Report.md`](./documents/Dependency_Security_Audit_Report.md) (pip-audit + Trivy), [`documents/Disaster_Recovery_and_Rollback_Test_Report.md`](./documents/Disaster_Recovery_and_Rollback_Test_Report.md), [`documents/Technical_Metrics_Handover.md`](./documents/Technical_Metrics_Handover.md) และแฟ้ม [`documents/System_Maintenance_Dossier.md`](./documents/System_Maintenance_Dossier.md) พร้อมหลักฐานใน `reports/*2026-10-05*`
+- เอกสารปิดโครงการ: [`documents/Project_KPI_Scorecard.md`](./documents/Project_KPI_Scorecard.md) (ผลรวม 4.42/5 ระดับดีมาก), [`documents/Lessons_Learned_Register.md`](./documents/Lessons_Learned_Register.md) (20 บทเรียน + แผนอัปเดต OPAs) และ [`documents/Release_Management_and_Board_Cleanup_Plan.md`](./documents/Release_Management_and_Board_Cleanup_Plan.md) (แผน tag/Release v2.0.1, ซิงก์ `develop`, ลบ branch ที่ merge แล้ว, จัดบอร์ด Jira)
 - รายงาน [`documents/Smoke_And_Regression_Test_Report.md`](./documents/Smoke_And_Regression_Test_Report.md) Smoke Test ครบ 8 เมนูและ Full Regression บน clone ใหม่จาก GitHub (`80c6d22`): 158 passed, Coverage 98.12%, Flake8 0, Bandit 0 พร้อมหลักฐาน [`reports/regression_evidence_2026-10-05.txt`](./reports/regression_evidence_2026-10-05.txt)
 - คู่มือปฏิบัติการและบำรุงรักษาระบบ [`documents/System_Operations_and_Maintenance_Manual.md`](./documents/System_Operations_and_Maintenance_Manual.md) (OMM-V2.0-01): ติดตั้ง, ปฏิบัติการประจำวัน, สำรอง/กู้คืนข้อมูล, แก้ไขปัญหา และกระบวนการบำรุงรักษาตาม ISO/IEC 14764
 - รายงาน [`documents/Technical_KPI_Report.md`](./documents/Technical_KPI_Report.md) (KPI-V2.0-01) สำหรับ Project Manager: Coverage 98.12%, Open Defects 0 (แก้แล้ว 7/7), Test Pass Rate 100%, Flake8/Bandit 0, UAT 16/16
@@ -17,6 +21,10 @@
 - README: ขั้นตอนสร้างฐานข้อมูลและใส่ seed data แบบละเอียด ใช้คำสั่ง Python ที่รันได้ทุก shell และแทนคำสั่ง `sqlite3 inventory.db < seed_data.sql` ซึ่งใช้ใน PowerShell ไม่ได้
 
 ### Changed
+- ปรับโครงสร้างลด Cyclomatic Complexity สูงสุดจาก 10 เหลือ 6 (เฉลี่ย 2.95 → 2.51) โดยไม่เปลี่ยนพฤติกรรม: `InventoryApp.run` ใช้ตาราง `MENU_ACTIONS`, แยก `_printPage`/`_changePage` ออกจาก `displayPaginatedProducts`, `_readProductFields`/`_confirmOverwrite` ออกจาก `addOrUpdateProduct`, `_readCutAmount` ออกจาก `cutStock`, `_parseNonNegativeInt` ออกจาก `Validator.inputNonNegativeInt` และเมธอดตรวจค่าออกจาก `Product.__init__` (ลำดับการตรวจและข้อความเดิม) ชุดทดสอบเดิม 158 รายการผ่านโดยไม่แก้เทสต์ Coverage 98.38% — *Preventive*
+- Docker image ถอน pip ออกหลังติดตั้ง wheel (Trivy พบช่องโหว่ใน `urllib3`/`msgpack` ที่ pip ฝังไว้ ซึ่ง pip-audit ตรวจไม่ได้) และติดตั้ง security update ของ Debian ตอน build — *Preventive*
+- สคริปต์ติดตั้งอัปเกรด pip ใน `.venv` เป็น 26.2 ขึ้นไป (CVE-2026-13346 / PYSEC-2026-3721) — *Preventive*
+- หมายเหตุเลขเวอร์ชันและหัวข้อ `[1.0.0]` ให้ตรงกับ tag `v1.0.0` ที่มีอยู่จริง (annotated "Baseline release" ที่ `4c80866`) แทนการระบุว่ายังไม่มี tag และรวมหัวข้อ 1.0.0/1.1.0 เดิมเป็นหัวข้อเดียว
 - สัญญา Scope Freeze SFA-01 ลงนามจำลองครบ 5 บทบาท (ฉบับ 1.0) Baseline ที่ลงนามคือ `f6d7e77` (Version 2.0.1) พร้อมอัปเดตสถานะคุณภาพเป็น 158 เทสต์, Coverage 98.12% และผล UAT รอบ 2
 - รายงาน UAT ลงนามรับรองผลจำลองครบ 4 บทบาท (ฉบับ 1.0) ผลการรับรอง: ยอมรับ บน build `f6d7e77` (Version 2.0.1)
 
@@ -127,9 +135,10 @@
 - ย้าย `tests.yml` ไปไว้ที่ `.github/workflows/` เพื่อให้ GitHub Actions รันได้จริง (`8d14fee`)
 - แก้ conflict ของ `inventory_app.py` ระหว่าง `main` กับ `develop` (`5084235`)
 
-## [1.1.0] - 2026-07-20 — ต้นแบบรุ่นที่สอง (app_v2) และ Risk Register
+## [1.0.0] - 2026-08-01 — Baseline release (tag `v1.0.0`): ต้นแบบ app_v1 / app_v2 และ Risk Register
 
 ### Added
+- `app_v1.py` ระบบสต็อกสินค้าแบบ Console เก็บข้อมูลใน `data.json` ผ่าน global dict (`69a9ad4`)
 - `app_v2.py` ต้นแบบรุ่นที่สอง และชุดทดสอบ `test_app.py` (`fe64f8c`, `d1991a5`, PR #1–#3)
 - `README_TESTER.md`, `DoD.md` และ `.gitignore` (`138bfe2`, `19980cc`, `36214fc`)
 - Risk Register ของ `app_v1.py` (`25a21c6`, `f615d73`, PR #4)
@@ -145,15 +154,9 @@
 ### Fixed
 - `test_app.py` raise `AssertionError` เมื่อเทสต์ไม่ผ่าน (เดิมไม่ทำให้การทดสอบล้ม) (`2bb8369`)
 
-## [1.0.0] - 2026-07-12 — ต้นแบบแรก
-
-### Added
-- `app_v1.py` ระบบสต็อกสินค้าแบบ Console เก็บข้อมูลใน `data.json` ผ่าน global dict (`69a9ad4`)
-
 [Unreleased]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/f6d7e77...main
 [2.0.1]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/c76c7b7...f6d7e77
 [2.0.0]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/90b6569...c76c7b7
 [2.0.0-sprint.2]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/71af63b...90b6569
-[2.0.0-sprint.1]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/4c80866...71af63b
-[1.1.0]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/69a9ad4...4c80866
-[1.0.0]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/commit/69a9ad4
+[2.0.0-sprint.1]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/compare/v1.0.0...71af63b
+[1.0.0]: https://github.com/Peerapong67/ENGSE225-INVENTORY-SYSTEM/releases/tag/v1.0.0

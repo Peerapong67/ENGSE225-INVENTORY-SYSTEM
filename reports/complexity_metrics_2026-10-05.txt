@@ -1,0 +1,162 @@
+CYCLOMATIC COMPLEXITY & MAINTAINABILITY METRICS - 2026-10-05
+ดู documents/Technical_Metrics_Handover.md
+เครื่องมือ: radon 6.0.1 (CC, MI, SLOC) และ mccabe 0.7.0 ผ่าน flake8 --select=C901 เพื่อตรวจไขว้
+ก่อน refactor = git archive v1.0.0 (app_v1.py, app_v2.py) | ปัจจุบัน = โมดูลโปรแกรมของเวอร์ชัน 2.0.1
+
+== v1.0.0 app_v1.py (ก่อน refactor): files=1 functions=3 SLOC=78
+   CC max=14 avg=5.67 median=2 count(CC>10)=1 count(CC>5)=1
+    14  app_v1.py:main
+     2  app_v1.py:load
+     1  app_v1.py:save
+   MI app_v1.py = 57.8
+== v1.0.0 app_v2.py (ต้นแบบรุ่นที่สอง): files=1 functions=15 SLOC=337
+   CC max=10 avg=3.60 median=3 count(CC>10)=0 count(CC>5)=2
+    10  app_v2.py:main
+    10  app_v2.py:show_products_paginated
+     5  app_v2.py:menu_summary
+     4  app_v2.py:input_non_negative_float
+     4  app_v2.py:input_non_negative_int
+     4  app_v2.py:menu_add_or_update
+     4  app_v2.py:menu_stock_out
+     3  app_v2.py:input_non_empty
+     2  app_v2.py:initialize_database
+     2  app_v2.py:run_unit_tests
+     2  app_v2.py:upsert_product
+     1  app_v2.py:get_connection
+     1  app_v2.py:menu_search
+     1  app_v2.py:menu_show_all
+     1  app_v2.py:write_log
+   MI app_v2.py = 46.3
+== v2.0.1 โมดูลโปรแกรม 8 ไฟล์ (ไม่รวม app_v1.py): files=8 functions=42 SLOC=571
+   CC max=10 avg=2.95 median=2.0 count(CC>10)=0 count(CC>5)=6
+    10  inventory_app.py:InventoryApp.displayPaginatedProducts
+    10  inventory_app.py:InventoryApp.run
+     9  product.py:Product.__init__
+     8  inventory_app.py:InventoryApp.addOrUpdateProduct
+     7  validator.py:Validator.inputNonNegativeInt
+     6  inventory_app.py:InventoryApp.cutStock
+     5  product_repository.py:ProductRepository.updateStock
+     5  validator.py:Validator.inputNonNegativeFloat
+     4  inventory_app.py:InventoryApp.exportLowStockCsv
+     4  inventory_app.py:InventoryApp.showLowStockAlerts
+     4  product.py:Product.from_row
+     3  atomic_file_writer.py:AtomicFileWriter.write
+     3  csv_report_exporter.py:CsvReportExporter.export_low_stock_products
+     3  product_repository.py:ProductRepository.upsertProduct
+     2  database_connection.py:DatabaseConnection.__init__
+     2  database_connection.py:DatabaseConnection._init_tables
+     2  database_connection.py:DatabaseConnection.getInstance
+     2  database_connection.py:_verify
+     2  inventory_app.py:InventoryApp.searchProduct
+     2  inventory_app.py:_verify
+     2  logger.py:Logger.__init__
+     2  logger.py:Logger.getInstance
+     2  product.py:Product.__eq__
+     2  product_repository.py:ProductRepository.__init__
+     2  product_repository.py:ProductRepository.findAll
+     2  product_repository.py:ProductRepository.findById
+     2  product_repository.py:ProductRepository.getLowStockAlerts
+     2  product_repository.py:ProductRepository.getSummary
+     2  product_repository.py:ProductRepository.search
+     1  database_connection.py:DatabaseConnection.beginTransaction
+     1  database_connection.py:DatabaseConnection.commit
+     1  database_connection.py:DatabaseConnection.executeQuery
+     1  database_connection.py:DatabaseConnection.rollback
+     1  inventory_app.py:InventoryApp.__init__
+     1  inventory_app.py:InventoryApp.showAllProducts
+     1  inventory_app.py:InventoryApp.showMenu
+     1  inventory_app.py:InventoryApp.showReport
+     1  logger.py:Logger.log
+     1  product.py:Product.__repr__
+     1  product.py:Product.is_low_stock
+     1  product.py:Product.to_dict
+     1  validator.py:Validator.confirm
+   MI atomic_file_writer.py = 89.3
+   MI csv_report_exporter.py = 100.0
+   MI database_connection.py = 72.3
+   MI inventory_app.py = 43.0
+   MI logger.py = 89.4
+   MI product.py = 71.3
+   MI product_repository.py = 74.7
+   MI validator.py = 76.8
+== v2.0.1 app_v1.py (ต้นแบบเดิมที่เก็บไว้อ้างอิง): files=1 functions=3 SLOC=78
+   CC max=14 avg=5.67 median=2 count(CC>10)=1 count(CC>5)=1
+    14  app_v1.py:main
+     2  app_v1.py:load
+     1  app_v1.py:save
+   MI app_v1.py = 60.8
+
+== mccabe (flake8 --select=C901 --max-complexity=10) บนโมดูลโปรแกรม v2.0.1:
+exit=0 (ไม่มีฟังก์ชันเกิน 10)
+== mccabe 5 อันดับแรก:
+10 InventoryApp.run
+10 InventoryApp.displayPaginatedProducts
+8 Product.__init__
+8 InventoryApp.addOrUpdateProduct
+7 Validator.inputNonNegativeInt
+
+== v2.0.1 หลัง refactor ลด CC (Preventive) โมดูลโปรแกรม 8 ไฟล์: files=8 functions=51
+   CC max=6 avg=2.51 median=2 count(CC>10)=0 count(CC>5)=1
+    6  inventory_app.py:InventoryApp.addOrUpdateProduct
+    5  inventory_app.py:InventoryApp._changePage
+    5  inventory_app.py:InventoryApp.cutStock
+    5  inventory_app.py:InventoryApp.displayPaginatedProducts
+    5  product_repository.py:ProductRepository.updateStock
+    5  validator.py:Validator.inputNonNegativeFloat
+    5  validator.py:Validator.inputNonNegativeInt
+    4  inventory_app.py:InventoryApp.exportLowStockCsv
+    4  inventory_app.py:InventoryApp.run
+    4  inventory_app.py:InventoryApp.showLowStockAlerts
+    4  product.py:Product.from_row
+    4  validator.py:Validator._parseNonNegativeInt
+    3  atomic_file_writer.py:AtomicFileWriter.write
+    3  csv_report_exporter.py:CsvReportExporter.export_low_stock_products
+    3  inventory_app.py:InventoryApp._confirmOverwrite
+    3  inventory_app.py:InventoryApp._readCutAmount
+    3  inventory_app.py:InventoryApp._readProductFields
+    3  product.py:Product.__init__
+    3  product_repository.py:ProductRepository.upsertProduct
+    2  database_connection.py:DatabaseConnection.__init__
+    2  database_connection.py:DatabaseConnection._init_tables
+    2  database_connection.py:DatabaseConnection.getInstance
+    2  database_connection.py:_verify
+    2  inventory_app.py:InventoryApp._printPage
+    2  inventory_app.py:InventoryApp.searchProduct
+    2  inventory_app.py:_verify
+    2  logger.py:Logger.__init__
+    2  logger.py:Logger.getInstance
+    2  product.py:Product.__eq__
+    2  product.py:Product._require_non_negative
+    2  product.py:Product._require_text
+    2  product.py:Product._require_valid_price
+    2  product_repository.py:ProductRepository.__init__
+    2  product_repository.py:ProductRepository.findAll
+    2  product_repository.py:ProductRepository.findById
+    2  product_repository.py:ProductRepository.getLowStockAlerts
+    2  product_repository.py:ProductRepository.getSummary
+    2  product_repository.py:ProductRepository.search
+    1  database_connection.py:DatabaseConnection.beginTransaction
+    1  database_connection.py:DatabaseConnection.commit
+    1  database_connection.py:DatabaseConnection.executeQuery
+    1  database_connection.py:DatabaseConnection.rollback
+    1  inventory_app.py:InventoryApp.__init__
+    1  inventory_app.py:InventoryApp.showAllProducts
+    1  inventory_app.py:InventoryApp.showMenu
+    1  inventory_app.py:InventoryApp.showReport
+    1  logger.py:Logger.log
+    1  product.py:Product.__repr__
+    1  product.py:Product.is_low_stock
+    1  product.py:Product.to_dict
+    1  validator.py:Validator.confirm
+   total SLOC: 600
+   MI inventory_app.py - A (44.29)
+   MI validator.py - A (74.90)
+   MI product.py - A (71.08)
+   MI product_repository.py - A (74.70)
+   MI database_connection.py - A (72.32)
+   MI logger.py - A (89.38)
+   MI csv_report_exporter.py - A (100.00)
+   MI atomic_file_writer.py - A (89.32)
+
+== mccabe (flake8 --select=C901 --max-complexity=6) หลัง refactor:
+exit=0 (ไม่มีฟังก์ชันเกิน 6)

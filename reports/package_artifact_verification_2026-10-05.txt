@@ -1,0 +1,33 @@
+PACKAGE DISTRIBUTION ARTIFACT VERIFICATION - 2026-10-05
+ดู documents/Package_Distribution_Artifact_Report.md
+build: python -m build (build 1.3.0, hatchling) จาก working tree ที่ main @ 441b2ea + pyproject.toml ที่เพิ่ม [project]
+ตรวจใน venv ใหม่ทุกครั้ง และรันโปรแกรมจากโฟลเดอร์ว่างที่ไม่มีซอร์สโค้ด
+
+Python used to create venvs: 3.13.14
+artifact: engse225_inventory_system-2.0.1.tar.gz  size=68084 bytes  sha256=e70eb0ecbed7a864008c9673227861e698a8a7b2ea7e2af4672ecb7a32b5c0e6
+artifact: engse225_inventory_system-2.0.1-py3-none-any.whl  size=30343 bytes  sha256=770e17bddbd343cd9c47cb67e2aec9c1fe162c75d6745f4ac2daa4f6853f6b07
+
+[wheel] pip install: exit=0 | Successfully installed engse225-inventory-system-2.0.1
+[wheel] installed location: <ARTIFACT_CHECK>\venv_wheel\Lib\site-packages
+schema.sql present: True
+[wheel] python -m inventory_app (menus 1-8): exit=0 traceback=False missing_markers=[] -> PASS
+[wheel] files created in run folder: ['inventory.db', 'low_stock_report.csv']
+[wheel] python -m inventory_app --selftest: exit=0 -> PASS
+[wheel] pip uninstall: exit=0 |   Successfully uninstalled engse225-inventory-system-2.0.1
+
+[sdist] pip install (build from source): exit=0 | Successfully installed engse225-inventory-system-2.0.1
+[sdist] installed location: <ARTIFACT_CHECK>\venv_sdist\Lib\site-packages
+schema.sql present: True
+[sdist] python -m inventory_app (menus 1-8): exit=0 traceback=False missing_markers=[] -> PASS
+[sdist] files created in run folder: ['inventory.db', 'low_stock_report.csv']
+[sdist] python -m inventory_app --selftest: exit=0 -> PASS
+
+[sdist tests] pip install -r requirements-dev.txt: exit=0
+[sdist tests] pytest --cov in extracted sdist: exit=0 | Required test coverage of 90.0% reached. Total coverage: 98.12% | 158 passed in 2.90s (4.3s)
+
+PASS  wheel install + run
+PASS  wheel uninstall
+PASS  sdist install + run
+PASS  sdist full test suite
+
+ARTIFACT VERIFICATION: PASS

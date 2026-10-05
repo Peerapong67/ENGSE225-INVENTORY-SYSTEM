@@ -133,6 +133,14 @@ else
 fi
 
 # ------------------------------------------------------------
+# pip ที่มากับ venv อาจมีช่องโหว่ CVE-2026-13346 (PYSEC-2026-3721) ที่แก้แล้วใน pip 26.2
+# ดู documents/Dependency_Security_Audit_Report.md
+step "อัปเกรด pip ใน .venv เป็นเวอร์ชันที่ไม่มีช่องโหว่ที่ทราบ (>= 26.2)"
+"$VENV_PY" -m pip install --disable-pip-version-check -q --upgrade "pip>=26.2"
+rc=$?
+result "Upgrade pip" "$rc" "pip $("$VENV_PY" -c 'import pip; print(pip.__version__)')"
+
+# ------------------------------------------------------------
 if [ "$SKIP_TESTS" -eq 1 ]; then
     step "ติดตั้ง dependency"
     result "Install dependencies" 0 "ข้าม (--skip-tests) ตัวโปรแกรมใช้แค่ standard library"

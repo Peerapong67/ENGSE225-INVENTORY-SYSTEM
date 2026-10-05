@@ -1,0 +1,2 @@
+engse225-inventory-system==2.0.1
+pip==26.1.2

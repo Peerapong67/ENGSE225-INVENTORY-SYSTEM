@@ -16,6 +16,11 @@ env/
 .vscode/
 .idea/
 
+# Build artifacts (sdist / wheel แนบกับ GitHub Release ไม่ commit เข้า repo)
+dist/
+build/
+*.egg-info/
+
 # Testing & Coverage (สำหรับเพื่อนที่ทำ pytest)
 .pytest_cache/
 .coverage

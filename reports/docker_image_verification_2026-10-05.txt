@@ -1,0 +1,73 @@
+sha256:f1c281ec9b775d2d6bff6940560a68ecca1cd95b9006eb25f82a3a9f89032139
+DOCKER IMAGE VERIFICATION - 2026-10-04 20:46 UTC
+docker: Docker version 29.3.0, build 5927d80
+image id=sha256:f1c281ec9b775d2d6bff6940560a68ecca1cd95b9006eb25f82a3a9f89032139
+size=46679373 bytes | user=app | workdir=/data | cmd=[python -m inventory_app] | volumes=map[/data:map[]]
+
+== 1) menus 1-8 (stdin script, docker run -i, volume inventory-verify-1281)
+บันทึกสำเร็จ
+ตัดสต็อกสำเร็จ
+!!! คำเตือน: สินค้า 'Docker Item' เหลือสต็อกต่ำ (2 ชิ้น, จุดสั่งซื้อ 5) !!!
+Export สำเร็จ: 1 รายการ ถูกบันทึกไปยังไฟล์ 'low_stock_report.csv'
+เลือกเมนู: >> ตัวเลือกไม่ถูกต้อง กรุณาเลือก 1-8
+เลือกเมนู: ขอบคุณที่ใช้บริการ
+exit=0 missing_markers=none
+PASS  menus 1-8 in container
+
+== 2) data persists in volume after container removed (new container reads D1)
+1      D1           Docker Item               A               2          10.00     
+PASS  volume persistence (qty 2 after cut)
+drwxr-xr-x 2 app  app   4096 Oct  4 20:47 .
+drwxr-xr-x 1 root root  4096 Oct  4 20:47 ..
+-rw-r--r-- 1 app  app  45056 Oct  4 20:47 inventory.db
+-rw------- 1 app  app     88 Oct  4 20:47 low_stock_report.csv
+PASS  inventory.db + CSV written to /data
+PASS  CSV has UTF-8 BOM (BUG-106)
+
+== 3) --selftest
+สรุป: ผ่านเกณฑ์ Definition of Done ของ SCRUM-12 ครบถ้วน 100%
+✓ เคลียร์ข้อมูลทดสอบเรียบร้อย
+PASS  --selftest exit 0
+
+== 4) image hardening
+uid=1000
+PASS  runs as non-root (uid 1000)
+leftover source/tests/wheel: none
+PASS  no tests, app_v1.py, /src or wheel left in image
+PASS  schema.sql installed next to database_connection.py
+PASS  pip removed from runtime image
+
+== 5) Trivy image scan (ต้องต่ออินเทอร์เน็ตเพื่อดาวน์โหลดฐานข้อมูลช่องโหว่)
+-- all findings per target (รวมที่ยังไม่มีแพตช์จาก Debian)
+[engse225-inventory-system:2.0.1 (debian 13.7): 166] [Python: 0] -- Python packages (library)
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ usr/local/lib/python3.12/site-packages/engse225_inventory_system-2.0.1.dist-inf- │ python-pkg │        0        │
+│ o/METADATA                                                                       │            │                 │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+PASS  Trivy: 0 vulnerabilities in Python packages
+-- OS packages with a fix available (--ignore-unfixed)
+
+Report Summary
+
+┌───────────────────────────────────────────────┬────────┬─────────────────┐
+│                    Target                     │  Type  │ Vulnerabilities │
+├───────────────────────────────────────────────┼────────┼─────────────────┤
+│ engse225-inventory-system:2.0.1 (debian 13.7) │ debian │        0        │
+└───────────────────────────────────────────────┴────────┴─────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+PASS  Trivy: 0 fixable OS vulnerabilities
+
+RESULT: 11 passed, 0 failed
+DOCKER IMAGE VERIFICATION: PASS

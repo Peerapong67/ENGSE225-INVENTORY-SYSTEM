@@ -38,19 +38,12 @@ class Product:
             ValueError: เมื่อ product_id/name ว่าง, quantity/price/reorder_point ติดลบ,
                 price เป็น nan/inf หรือ quantity/reorder_point เกิน SQLITE_MAX_INTEGER
         """
-        if not product_id:
-            raise ValueError("product_id ห้ามว่าง")
-        if not name:
-            raise ValueError("name ห้ามว่าง")
-        if quantity < 0:
-            raise ValueError("quantity ต้องไม่ติดลบ")
-        if price < 0:
-            raise ValueError("price ต้องไม่ติดลบ")
-        # BUG-103: nan < 0 และ inf < 0 เป็น False จึงต้องเช็คแยก
-        if not math.isfinite(price):
-            raise ValueError("price ต้องเป็นตัวเลขที่จำกัด (ไม่ใช่ nan/inf)")
-        if reorder_point < 0:
-            raise ValueError("reorder_point ต้องไม่ติดลบ")
+        # ลำดับการตรวจคงเดิม: id, name, quantity, price, reorder_point แล้วจึงตรวจค่าเกิน
+        self._require_text("product_id", product_id)
+        self._require_text("name", name)
+        self._require_non_negative("quantity", quantity)
+        self._require_valid_price(price)
+        self._require_non_negative("reorder_point", reorder_point)
         if quantity > SQLITE_MAX_INTEGER or reorder_point > SQLITE_MAX_INTEGER:
             raise ValueError("quantity/reorder_point มากเกินกว่าที่ระบบเก็บได้")
 
@@ -61,6 +54,26 @@ class Product:
         self.category = category
         self.barcode = barcode
         self.reorder_point = reorder_point
+
+    @staticmethod
+    def _require_text(field: str, value: str):
+        """raise ValueError ถ้าฟิลด์ข้อความเป็นค่าว่าง"""
+        if not value:
+            raise ValueError(f"{field} ห้ามว่าง")
+
+    @staticmethod
+    def _require_non_negative(field: str, value):
+        """raise ValueError ถ้าค่าตัวเลขติดลบ"""
+        if value < 0:
+            raise ValueError(f"{field} ต้องไม่ติดลบ")
+
+    @staticmethod
+    def _require_valid_price(price):
+        """raise ValueError ถ้าราคาติดลบ หรือเป็น nan/inf"""
+        Product._require_non_negative("price", price)
+        # BUG-103: nan < 0 และ inf < 0 เป็น False จึงต้องเช็คแยก
+        if not math.isfinite(price):
+            raise ValueError("price ต้องเป็นตัวเลขที่จำกัด (ไม่ใช่ nan/inf)")
 
     def is_low_stock(self) -> bool:
         """เช็คว่าสินค้านี้ถึงจุดต้องสั่งซื้อเพิ่มหรือยัง (CR-01)
